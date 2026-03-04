@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>অ্যাডমিন ড্যাশবোর্ড</title>
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body { font-family: 'Noto Sans Bengali', sans-serif; background: #f4f7fa; margin: 0; padding: 20px; }
+    .container { max-width: 1400px; margin: auto; background: white; border-radius: 8px; padding: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+    h2 { color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 10px; }
+    .summary-cards { display: flex; gap: 20px; margin: 20px 0; flex-wrap: wrap; }
+    .card { background: #ecf0f1; flex: 1 1 200px; padding: 20px; border-radius: 8px; text-align: center; }
+    .card h3 { margin: 0 0 10px; font-size: 16px; color: #7f8c8d; }
+    .card .value { font-size: 28px; font-weight: bold; color: #2c3e50; }
+    .charts-row { display: flex; gap: 20px; margin: 30px 0; flex-wrap: wrap; }
+    .chart-container { flex: 1 1 400px; height: 300px; }
+    table { width: 100%; border-collapse: collapse; margin-top: 30px; }
+    th, td { padding: 12px; text-align: left; border-bottom: 1px solid #ddd; }
+    th { background: #3498db; color: white; }
+    tr:hover { background: #f5f5f5; }
+    .missing { background: #ffe6e6; }
+    .btn-refresh { background: #2ecc71; margin-bottom: 20px; }
+  </style>
+</head>
+<body>
+<div class="container">
+  <h2>📊 ড্যাশবোর্ড - ক্লাস ও সেকশন অনুযায়ী তথ্য</h2>
+  <button class="btn-refresh" onclick="loadDashboard()">⟳ রিফ্রেশ</button>
+
+  <div class="summary-cards" id="summaryCards"></div>
+
+  <div class="charts-row">
+    <div class="chart-container">
+      <canvas id="classTotalChart"></canvas>
+    </div>
+    <div class="chart-container">
+      <canvas id="studentCountChart"></canvas>
+    </div>
+  </div>
+
+  <h3>⚠️ ছাত্র যাদের কোনো মাসের ফি বাকি</h3>
+  <table id="missingTable">
+    <thead><tr><th>নাম</th><th>আইডি</th><th>শ্রেণী</th><th>সেকশন</th><th>বাকি মাস</th></tr></thead>
+    <tbody></tbody>
+  </table>
+
+  <h3>📋 সকল ছাত্রের বিস্তারিত</h3>
+  <table id="allStudentsTable">
+    <thead><tr><th>শ্রেণী</th><th>সেকশন</th><th>নাম</th><th>আইডি</th><th>মোট ফি</th><th>জানু</th><th>ফেব্রু</th><th>মার্চ</th><th>এপ্রিল</th><th>মে</th><th>জুন</th><th>জুলাই</th><th>অগস্ট</th><th>সেপ্ট</th><th>অক্টো</th><th>নভে</th><th>ডিসে</th></tr></thead>
+    <tbody></tbody>
+  </table>
+</div>
+
+<script>
+  const BASE_URL = window.location.origin + window.location.pathname;
+  let classTotalChart, studentCountChart;
+
+  async function loadDashboard() {
+    try {
+      const res = await fetch(`${BASE_URL}?action=getDashboardData`);
+      const data = await res.json();
+      renderSummary(data);
+      renderCharts(data);
+      renderMissingTable(data.missingFees);
+      renderAllStudentsTable(data.students);
+    } catch (err) {
+      alert('ডেটা লোড করতে সমস্যা: ' + err);
+    }
+  }
+
+  function renderSummary(data) {
+    const cards = document.getElementById('summaryCards');
+    let html = `
+      <div class="card"><h3>মোট ছাত্র</h3><div class="value">${data.students.length}</div></div>
+      <div class="card"><h3>মোট আদায় (টাকা)</h3><div class="value">${data.grandTotal.toFixed(2)}</div></div>
+    `;
+    // Class-wise totals as cards
+    for (const [cls, info] of Object.entries(data.classTotals)) {
+      html += `<div class="card"><h3>${cls} শ্রেণী</h3><div class="value">ছাত্র: ${info.studentCount}<br>মোট: ${info.totalFees.toFixed(2)}</div></div>`;
+    }
+    cards.innerHTML = html;
+  }
+
+  function renderCharts(data) {
+    const classes = Object.keys(data.classTotals);
+    const totals = classes.map(c => data.classTotals[c].totalFees);
+    const counts = classes.map(c => data.classTotals[c].studentCount);
+
+    // Destroy previous charts if they exist
+    if (classTotalChart) classTotalChart.destroy();
+    if (studentCountChart) studentCountChart.destroy();
+
+    // Bar chart – class total fees
+    const ctx1 = document.getElementById('classTotalChart').getContext('2d');
+    classTotalChart = new Chart(ctx1, {
+      type: 'bar',
+      data: {
+        labels: classes,
+        datasets: [{
+          label: 'মোট ফি (টাকা)',
+          data: totals,
+          backgroundColor: '#3498db'
+        }]
+      },
+      options: { responsive: true, maintainAspectRatio: false }
+    });
+
+    // Pie chart – student count per class
+    const ctx2 = document.getElementById('studentCountChart').getContext('2d');
+    studentCountChart = new Chart(ctx2, {
+      type: 'pie',
+      data: {
+        labels: classes,
+        datasets: [{
+          data: counts,
+          backgroundColor: ['#e74c3c', '#f39c12', '#2ecc71', '#9b59b6', '#3498db']
+        }]
+      },
+      options: { responsive: true, maintainAspectRatio: false }
+    });
+  }
+
+  function renderMissingTable(missingStudents) {
+    const tbody = document.querySelector('#missingTable tbody');
+    if (!missingStudents.length) {
+      tbody.innerHTML = '<tr><td colspan="5">✅ কোনো বাকি ফি নেই</td></tr>';
+      return;
+    }
+    let html = '';
+    missingStudents.forEach(s => {
+      const missingMonths = s.monthly.filter(m => !m.amount || m.amount === '').map(m => m.month).join(', ');
+      html += `<tr class="missing">
+        <td>${s.name}</td><td>${s.id}</td><td>${s.class}</td><td>${s.section}</td><td>${missingMonths}</td>
+      </tr>`;
+    });
+    tbody.innerHTML = html;
+  }
+
+  function renderAllStudentsTable(students) {
+    const tbody = document.querySelector('#allStudentsTable tbody');
+    let html = '';
+    students.forEach(s => {
+      html += `<tr>
+        <td>${s.class}</td><td>${s.section}</td><td>${s.name}</td><td>${s.id}</td>
+        <td>${s.total}</td>
+        ${s.monthly.map(m => `<td>${m.amount || '-'}</td>`).join('')}
+      </tr>`;
+    });
+    tbody.innerHTML = html;
+  }
+
+  // Initial load
+  loadDashboard();
+</script>
+</body>
+</html>
