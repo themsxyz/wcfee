@@ -4,7 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ফি ম্যানেজমেন্ট – অ্যাডমিন</title>
+  <!-- pdfmake -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
   <style>
+    /* (keep all your existing styles – they remain unchanged) */
     * {
       margin: 0;
       padding: 0;
@@ -105,7 +109,6 @@
       margin-top: 0;
       flex: 0 0 auto;
     }
-    /* Fee inputs grid */
     #feeInputs {
       display: grid;
       grid-template-columns: auto 1fr;
@@ -121,8 +124,6 @@
       white-space: nowrap;
     }
     #feeInputs input { margin: 0; }
-
-    /* Two‑column layout for account creation */
     #accountInputs {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -141,8 +142,6 @@
     .field-group input {
       width: 100%;
     }
-
-    /* Loader overlay */
     .loader-overlay {
       display: none;
       position: fixed;
@@ -162,9 +161,13 @@
       animation: spin 0.8s linear infinite;
     }
     @keyframes spin { to { transform: rotate(360deg); } }
-
     #month { max-width: 200px; margin-bottom: 1.2rem; }
-
+    .button-group {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      margin-top: 1rem;
+    }
     @media (max-width: 700px) {
       #accountInputs { grid-template-columns: 1fr; }
     }
@@ -198,10 +201,13 @@
     <label for="month">মাস নির্বাচন</label>
     <select id="month"></select>
     <div id="feeInputs"></div>
-    <button onclick="submitFee()" id="submitBtn">✅ ফি জমা দিন</button>
+    <div class="button-group">
+      <button onclick="submitFee()" id="submitBtn">✅ ফি জমা দিন</button>
+      <button onclick="printReceipt()" id="printBtn">🖨️ Print Receipt</button>
+    </div>
   </div>
 
-  <!-- account creation card (hidden initially) with two‑column layout -->
+  <!-- account creation card (hidden initially) -->
   <div class="card" id="createFormDiv" style="display:none;">
     <h3>➕ নতুন ছাত্র অ্যাকাউন্ট</h3>
     <div id="accountInputs" class="two-column"></div>
@@ -215,7 +221,7 @@
 </div>
 
 <script>
-const webAppUrl = "https://script.google.com/macros/s/AKfycbxiH1hXT8FQ0VPOEafibbo_1YXOflGBhpJVOTT0t-CnF1KB1wuD6RYNhAAad9zc6teuIQ/exec"; // আপনার URL দিন
+const webAppUrl = "https://script.google.com/macros/s/AKfycbylNhLPofO4-Ayx_YsAgm0WWw6W5l1hueJGeItrkObV88cy3uXtyNU21p9EcUxEzkcdgw/exec"; // আপনার URL দিন
 
 // Loader functions
 function showLoader() { document.getElementById('loader').style.display = 'flex'; }
@@ -228,11 +234,11 @@ const months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov
 const monthSelect = document.getElementById("month");
 months.forEach(m => monthSelect.innerHTML += `<option>${m}</option>`);
 
-// Fee inputs (unchanged)
+// Fee inputs
 const feeInputsDiv = document.getElementById("feeInputs");
 feeLabels.forEach((f, i) => feeInputsDiv.innerHTML += `<label>${f}:</label><input type="number" id="${feeSections[i]}" value=0><br>`);
 
-// Account inputs – now two‑column friendly (Bengali labels)
+// Account inputs – Bengali labels, two‑column
 const accountDiv = document.getElementById("accountInputs");
 const accountFields = [
   { id: "studentName", label: "নাম" },
@@ -244,8 +250,6 @@ const accountFields = [
   { id: "section", label: "শাখা" },
   { id: "mobile", label: "মোবাইল নম্বর" }
 ];
-
-// Clear any existing content and build two‑column layout
 accountDiv.innerHTML = '';
 accountFields.forEach(f => {
   const group = document.createElement('div');
@@ -261,7 +265,7 @@ accountFields.forEach(f => {
   accountDiv.appendChild(group);
 });
 
-// Search student (with loader & Enter key)
+// Search student
 function searchStudent() {
   const raw = document.getElementById("searchId").value;
   const id = raw.trim();
@@ -290,7 +294,7 @@ function searchStudent() {
     .finally(() => hideLoader());
 }
 
-// Create account (trim all, loader)
+// Create account
 function createAccount() {
   const data = { action: "create" };
   accountFields.forEach(f => {
@@ -307,7 +311,7 @@ function createAccount() {
       if (resp.result === "created") {
         alert("অ্যাকাউন্ট তৈরি হয়েছে!");
         document.getElementById("searchId").value = data.studentIdNew;
-        searchStudent(); // show fee form now
+        searchStudent();
       } else {
         alert("ত্রুটি! আবার চেষ্টা করুন।");
       }
@@ -316,7 +320,7 @@ function createAccount() {
     .finally(() => hideLoader());
 }
 
-// Submit fee (loader)
+// Submit fee
 function submitFee() {
   const fees = {};
   feeSections.forEach(f => fees[f] = Number(document.getElementById(f).value) || 0);
@@ -340,25 +344,121 @@ function submitFee() {
     .finally(() => hideLoader());
 }
 
+// ========== NEW: Print Receipt ==========
+async function printReceipt() {
+  const studentId = document.getElementById("searchId").value.trim();
+  if (!studentId) {
+    alert("প্রথমে Student ID দিয়ে সার্চ করুন");
+    return;
+  }
+
+  showLoader();
+
+  try {
+    // 1. Get student details
+    const detailsRes = await fetch(webAppUrl, {
+      method: "POST",
+      body: JSON.stringify({ action: "getDetails", studentId: studentId })
+    });
+    const details = await detailsRes.json();
+    if (details.error) throw new Error(details.error);
+
+    // 2. Get next serial number
+    const serialRes = await fetch(webAppUrl, {
+      method: "POST",
+      body: JSON.stringify({ action: "getNextSerial" })
+    });
+    const serialData = await serialRes.json();
+    const serial = serialData.serial;
+
+    // 3. Gather fee data from inputs
+    const fees = [];
+    let total = 0;
+    feeSections.forEach((sec, idx) => {
+      const amount = Number(document.getElementById(sec).value) || 0;
+      fees.push({ name: feeLabels[idx], amount: amount });
+      total += amount;
+    });
+
+    // 4. Current date
+    const today = new Date();
+    const dateStr = today.toLocaleDateString('bn-BD', { day: 'numeric', month: 'long', year: 'numeric' });
+
+    // 5. Build PDF with pdfmake
+    const docDefinition = {
+      pageSize: 'A4',
+      pageOrientation: 'landscape',
+      content: [
+        // Page 1: two columns (School Copy and Bank Copy)
+        {
+          columns: [
+            { width: '50%', stack: buildReceipt('স্কুল কপি', serial, details, fees, total, dateStr) },
+            { width: '50%', stack: buildReceipt('ব্যাংক কপি', serial, details, fees, total, dateStr) }
+          ]
+        },
+        // Page 2: Guardian Copy (portrait)
+        {
+          pageBreak: 'before',
+          pageOrientation: 'portrait',
+          stack: buildReceipt('অভিভাবক কপি', serial, details, fees, total, dateStr)
+        }
+      ]
+    };
+
+    pdfmake.createPdf(docDefinition).open();
+  } catch (err) {
+    alert("PDF তৈরিতে সমস্যা: " + err.message);
+  } finally {
+    hideLoader();
+  }
+}
+
+// Helper to build a single receipt stack
+function buildReceipt(title, serial, details, fees, total, dateStr) {
+  const feeTableBody = [['বিবরণ', 'টাকা']];
+  fees.forEach(f => feeTableBody.push([f.name, f.amount]));
+  feeTableBody.push(['মোট', total]);
+
+  return [
+    { text: title, style: 'header', alignment: 'center', margin: [0, 0, 0, 10] },
+    { text: 'ক্রমিক নং: ' + serial, margin: [0, 0, 0, 5] },
+    { text: 'নাম: ' + details.name },
+    { text: 'রোল: ' + details.roll },
+    { text: 'শ্রেণী: ' + details.class },
+    { text: 'আইডি: ' + details.id },
+    { text: 'তারিখ: ' + dateStr, margin: [0, 0, 0, 10] },
+    {
+      table: {
+        headerRows: 1,
+        widths: ['*', 'auto'],
+        body: feeTableBody
+      },
+      layout: 'lightHorizontalLines',
+      margin: [0, 0, 0, 10]
+    },
+    {
+      columns: [
+        { width: '50%', text: 'হিসাবরক্ষকের স্বাক্ষর\n__________', alignment: 'left' },
+        { width: '50%', text: 'অভিভাবকের স্বাক্ষর\n__________', alignment: 'right' }
+      ]
+    }
+  ];
+}
+
 // Enter key support
 document.addEventListener('keypress', function(e) {
   if (e.key === 'Enter') {
     const active = document.activeElement;
-    // If in search field, trigger search
     if (active.id === 'searchId') {
       e.preventDefault();
       searchStudent();
-    }
-    // If in any create account field and create form is visible
-    else if (document.getElementById('createFormDiv').style.display === 'block') {
+    } else if (document.getElementById('createFormDiv').style.display === 'block') {
       const createInputs = accountFields.map(f => document.getElementById(f.id));
       if (createInputs.includes(active)) {
         e.preventDefault();
         createAccount();
       }
-    }
-    // If in any fee input field and fee form is visible
-    else if (document.getElementById('feeFormDiv').style.display === 'block') {
+    } else if (document.getElementById('feeFormDiv').style.display === 'block') {
       const feeInputIds = feeSections.map(f => document.getElementById(f));
       if (feeInputIds.includes(active) || active.id === 'month') {
         e.preventDefault();
