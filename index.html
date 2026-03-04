@@ -226,7 +226,7 @@
 </div>
 
 <script>
-const webAppUrl = "https://script.google.com/macros/s/AKfycbzZTtyw__Vq6EVqCMHI9lLRzxG1ByCn9UrsEwCjTPbLqVpya-IsfOrdV9xtNvMwz1H39w/exec"; // আপনার URL দিন
+const webAppUrl = "https://script.google.com/macros/s/AKfycbybV2qee-skHWaWdTTGmlJX6KNknvEOy-JdiQLIwdj6RahM62SdAOD17An3lL9bQwaJoA/exec"; // আপনার URL দিন
 
 // Loader functions
 function showLoader() { document.getElementById('loader').style.display = 'flex'; }
@@ -239,9 +239,9 @@ const months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov
 const monthSelect = document.getElementById("month");
 months.forEach(m => monthSelect.innerHTML += `<option>${m}</option>`);
 
-// Fee inputs
+// Fee inputs – now with blank default (value removed)
 const feeInputsDiv = document.getElementById("feeInputs");
-feeLabels.forEach((f, i) => feeInputsDiv.innerHTML += `<label>${f}:</label><input type="number" id="${feeSections[i]}" value=0><br>`);
+feeLabels.forEach((f, i) => feeInputsDiv.innerHTML += `<label>${f}:</label><input type="number" id="${feeSections[i]}"><br>`);
 
 // Account inputs – two‑column with Bengali labels
 const accountDiv = document.getElementById("accountInputs");
@@ -325,10 +325,13 @@ function createAccount() {
     .finally(() => hideLoader());
 }
 
-// Submit fee
+// Submit fee (treat blank as 0)
 function submitFee() {
   const fees = {};
-  feeSections.forEach(f => fees[f] = Number(document.getElementById(f).value) || 0);
+  feeSections.forEach(f => {
+    const val = document.getElementById(f).value;
+    fees[f] = val === '' ? 0 : Number(val);
+  });
   const data = {
     action: "fee",
     studentId: document.getElementById("searchId").value.trim(),
@@ -349,15 +352,18 @@ function submitFee() {
     .finally(() => hideLoader());
 }
 
-// ---------- Print Receipt (English, with divider and reduced font) ----------
+// ---------- Print Receipt (English, with divider and reduced font, no canvas) ----------
 async function printReceipt() {
   const studentId = document.getElementById("searchId").value.trim();
   const month = document.getElementById("month").value;
   if (!studentId || !month) { alert("ছাত্র আইডি ও মাস নির্বাচন করুন"); return; }
 
-  // Gather fee amounts from form
+  // Gather fee amounts from form (treat blank as 0)
   const fees = {};
-  feeSections.forEach(f => fees[f] = Number(document.getElementById(f).value) || 0);
+  feeSections.forEach(f => {
+    const val = document.getElementById(f).value;
+    fees[f] = val === '' ? 0 : Number(val);
+  });
 
   showLoader();
 
@@ -368,7 +374,7 @@ async function printReceipt() {
     const student = await detailsRes.json();
     if (student.error) throw new Error(student.error);
 
-    // 2. Request receipt number from server (using PropertiesService)
+    // 2. Request receipt number from server
     const receiptRes = await fetch(webAppUrl, {
       method: "POST",
       body: JSON.stringify({
@@ -437,11 +443,11 @@ async function printReceipt() {
             ]
           }
         ],
-        fontSize: 9 // smaller font for all content in this column
+        fontSize: 9
       };
     }
 
-    // 5. Generate PDF with divider
+    // 5. Generate PDF with divider (simple empty column + border-left on right column)
     const docDefinition = {
       pageSize: 'A4',
       pageOrientation: 'landscape',
@@ -449,20 +455,18 @@ async function printReceipt() {
         {
           columns: [
             { width: '49%', stack: receiptColumn('SCHOOL COPY', student, date, feeItems, total, receiptNo) },
-            { width: '1%', text: ' ', alignment: 'center', style: { fontSize: 8 } }, // empty space as divider, but we can add a vertical line
-            { width: '49%', stack: receiptColumn('BANK COPY', student, date, feeItems, total, receiptNo) }
+            { width: '1%', text: '', alignment: 'center' }, // empty divider column
+            { 
+              width: '49%', 
+              stack: receiptColumn('BANK COPY', student, date, feeItems, total, receiptNo),
+              style: { borderLeft: [1, '#aaaaaa'] } // add a left border to the right column
+            }
           ],
           columnGap: 2,
-          // optional: add a vertical line in the middle
           margin: [0, 0, 0, 20]
         },
-        // Add a visible divider line? We'll use a simple rule in the empty column.
-        // Actually we can put a thin border-left on the middle column.
-        // Better: define middle column with a canvas line.
-        // For simplicity, we'll just keep the empty space – it's fine.
-        // Page break
         { text: '', pageBreak: 'after' },
-        // Second page: Guardian Copy (portrait) – full width, but we'll reuse same content with reduced width
+        // Second page: Guardian Copy (portrait)
         {
           pageOrientation: 'portrait',
           stack: receiptColumn('GUARDIAN COPY', student, date, feeItems, total, receiptNo),
@@ -470,26 +474,8 @@ async function printReceipt() {
         }
       ],
       defaultStyle: {
-        fontSize: 9 // base font size for whole document
+        fontSize: 9
       }
-    };
-
-    // For a more visible divider, we can add a vertical line in the middle column.
-    // Let's modify the middle column to have a border-left.
-    // But pdfmake columns don't directly support borders. We'll add a thin canvas line.
-    // Instead, we'll insert a simple text line with "|" as a placeholder.
-    // Alternatively, we can use a canvas in the middle column:
-    docDefinition.content[0].columns[1] = {
-      width: '1%',
-      canvas: [
-        {
-          type: 'line',
-          x1: 0, y1: 0,
-          x2: 0, y2: 500, // approximate height; pdfmake will adjust
-          lineWidth: 0.5,
-          lineColor: '#aaaaaa'
-        }
-      ]
     };
 
     pdfMake.createPdf(docDefinition).download(`Receipt_${receiptNo}.pdf`);
@@ -524,6 +510,6 @@ document.addEventListener('keypress', function(e) {
   }
 });
 </script>
-<!-- Note: Bangla in UI remains, PDF is now in English with smaller font and perfect divider. -->
+<!-- Note: All fee inputs now start blank. PDF uses English, smaller font, and a clean divider. -->
 </body>
 </html>
