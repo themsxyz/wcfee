@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="bn">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ফি ম্যানেজমেন্ট – অ্যাডমিন</title>
+  <title>Fee Management – Admin</title>
   <!-- pdfmake -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
@@ -182,36 +182,36 @@
 </head>
 <body>
 <div class="container">
-  <h2>📘 ফি ম্যানেজমেন্ট</h2>
-  <div class="sub">ছাত্রদের ফি সংক্রান্ত সব কার্যক্রম</div>
+  <h2>📘 Fee Management</h2>
+  <div class="sub">Student fee entry & receipts</div>
 
   <!-- search card -->
   <div class="card">
-    <label for="searchId">🔍 Student ID লিখুন</label>
+    <label for="searchId">🔍 Enter Student ID</label>
     <div class="search-row">
-      <input type="text" id="searchId" placeholder="যেমন: ST-2025-001">
+      <input type="text" id="searchId" placeholder="e.g. ST-2025-001">
       <button onclick="searchStudent()" id="searchBtn">Search</button>
     </div>
-    <div style="font-size:0.9rem; color:#64748b; margin-top:0.8rem;">আইডি না পেলে নতুন অ্যাকাউন্ট তৈরির ফর্ম দেখাবে</div>
+    <div style="font-size:0.9rem; color:#64748b; margin-top:0.8rem;">If ID not found, account creation form will appear</div>
   </div>
 
   <!-- fee entry card (hidden initially) -->
   <div class="card" id="feeFormDiv" style="display:none;">
-    <h3>📋 ফি জমা ফর্ম</h3>
-    <label for="month">মাস নির্বাচন</label>
+    <h3>📋 Fee Entry Form</h3>
+    <label for="month">Select Month</label>
     <select id="month"></select>
     <div id="feeInputs"></div>
     <div class="button-group">
-      <button onclick="submitFee()" id="submitBtn">✅ ফি জমা দিন</button>
+      <button onclick="submitFee()" id="submitBtn">✅ Submit Fee</button>
       <button onclick="printReceipt()" id="printBtn">🖨️ Print Receipt</button>
     </div>
   </div>
 
   <!-- account creation card (hidden initially) -->
   <div class="card" id="createFormDiv" style="display:none;">
-    <h3>➕ নতুন ছাত্র অ্যাকাউন্ট</h3>
+    <h3>➕ Create Student Account</h3>
     <div id="accountInputs" class="two-column"></div>
-    <button onclick="createAccount()" id="createBtn">📌 অ্যাকাউন্ট তৈরি করুন</button>
+    <button onclick="createAccount()" id="createBtn">📌 Create Account</button>
   </div>
 </div>
 
@@ -221,7 +221,7 @@
 </div>
 
 <script>
-const webAppUrl = "https://script.google.com/macros/s/AKfycbylNhLPofO4-Ayx_YsAgm0WWw6W5l1hueJGeItrkObV88cy3uXtyNU21p9EcUxEzkcdgw/exec"; // আপনার URL দিন
+const webAppUrl = "https://script.google.com/macros/s/AKfycbylNhLPofO4-Ayx_YsAgm0WWw6W5l1hueJGeItrkObV88cy3uXtyNU21p9EcUxEzkcdgw/exec"; // Replace with your deployed URL
 
 // Loader functions
 function showLoader() { document.getElementById('loader').style.display = 'flex'; }
@@ -241,14 +241,14 @@ feeLabels.forEach((f, i) => feeInputsDiv.innerHTML += `<label>${f}:</label><inpu
 // Account inputs – Bengali labels, two‑column
 const accountDiv = document.getElementById("accountInputs");
 const accountFields = [
-  { id: "studentName", label: "নাম" },
-  { id: "father", label: "পিতার নাম" },
-  { id: "mother", label: "মাতার নাম" },
-  { id: "studentIdNew", label: "ছাত্র আইডি" },
-  { id: "roll", label: "রোল নম্বর" },
-  { id: "cls", label: "শ্রেণী" },
-  { id: "section", label: "শাখা" },
-  { id: "mobile", label: "মোবাইল নম্বর" }
+  { id: "studentName", label: "Name" },
+  { id: "father", label: "Father's Name" },
+  { id: "mother", label: "Mother's Name" },
+  { id: "studentIdNew", label: "Student ID" },
+  { id: "roll", label: "Roll" },
+  { id: "cls", label: "Class" },
+  { id: "section", label: "Section" },
+  { id: "mobile", label: "Mobile Number" }
 ];
 accountDiv.innerHTML = '';
 accountFields.forEach(f => {
@@ -269,7 +269,7 @@ accountFields.forEach(f => {
 function searchStudent() {
   const raw = document.getElementById("searchId").value;
   const id = raw.trim();
-  if (!id) { alert("Student ID দিন"); return; }
+  if (!id) { alert("Please enter Student ID"); return; }
   showLoader();
   fetch(webAppUrl)
     .then(res => res.json())
@@ -290,7 +290,7 @@ function searchStudent() {
         document.getElementById("feeFormDiv").style.display = "none";
       }
     })
-    .catch(err => alert("ডেটা আনতে সমস্যা: " + err))
+    .catch(err => alert("Error fetching data: " + err))
     .finally(() => hideLoader());
 }
 
@@ -309,14 +309,14 @@ function createAccount() {
     .then(res => res.json())
     .then(resp => {
       if (resp.result === "created") {
-        alert("অ্যাকাউন্ট তৈরি হয়েছে!");
+        alert("Account created!");
         document.getElementById("searchId").value = data.studentIdNew;
         searchStudent();
       } else {
-        alert("ত্রুটি! আবার চেষ্টা করুন।");
+        alert("Error! Please try again.");
       }
     })
-    .catch(err => alert("ত্রুটি: " + err))
+    .catch(err => alert("Error: " + err))
     .finally(() => hideLoader());
 }
 
@@ -337,25 +337,25 @@ function submitFee() {
   })
     .then(res => res.json())
     .then(resp => {
-      if (resp.result === "success") alert("ফি জমা হয়েছে!");
-      else alert("ত্রুটি! ফি জমা হয়নি।");
+      if (resp.result === "success") alert("Fee submitted!");
+      else alert("Error! Fee not submitted.");
     })
-    .catch(err => alert("ত্রুটি: " + err))
+    .catch(err => alert("Error: " + err))
     .finally(() => hideLoader());
 }
 
-// ========== NEW: Print Receipt ==========
+// ========== PRINT RECEIPT (English) ==========
 async function printReceipt() {
   const studentId = document.getElementById("searchId").value.trim();
   if (!studentId) {
-    alert("প্রথমে Student ID দিয়ে সার্চ করুন");
+    alert("Please search for a student first.");
     return;
   }
 
   showLoader();
 
   try {
-    // 1. Get student details
+    // 1. Get student details from the individual sheet
     const detailsRes = await fetch(webAppUrl, {
       method: "POST",
       body: JSON.stringify({ action: "getDetails", studentId: studentId })
@@ -371,7 +371,7 @@ async function printReceipt() {
     const serialData = await serialRes.json();
     const serial = serialData.serial;
 
-    // 3. Gather fee data from inputs
+    // 3. Gather fee data from the current form inputs
     const fees = [];
     let total = 0;
     feeSections.forEach((sec, idx) => {
@@ -382,7 +382,7 @@ async function printReceipt() {
 
     // 4. Current date
     const today = new Date();
-    const dateStr = today.toLocaleDateString('bn-BD', { day: 'numeric', month: 'long', year: 'numeric' });
+    const dateStr = today.toLocaleDateString('en-GB', { day: '2-digit', month: 'long', year: 'numeric' }); // e.g. "04 March 2026"
 
     // 5. Build PDF with pdfmake
     const docDefinition = {
@@ -392,41 +392,41 @@ async function printReceipt() {
         // Page 1: two columns (School Copy and Bank Copy)
         {
           columns: [
-            { width: '50%', stack: buildReceipt('স্কুল কপি', serial, details, fees, total, dateStr) },
-            { width: '50%', stack: buildReceipt('ব্যাংক কপি', serial, details, fees, total, dateStr) }
+            { width: '50%', stack: buildReceipt('SCHOOL COPY', serial, details, fees, total, dateStr) },
+            { width: '50%', stack: buildReceipt('BANK COPY', serial, details, fees, total, dateStr) }
           ]
         },
         // Page 2: Guardian Copy (portrait)
         {
           pageBreak: 'before',
           pageOrientation: 'portrait',
-          stack: buildReceipt('অভিভাবক কপি', serial, details, fees, total, dateStr)
+          stack: buildReceipt('GUARDIAN COPY', serial, details, fees, total, dateStr)
         }
       ]
     };
 
     pdfmake.createPdf(docDefinition).open();
   } catch (err) {
-    alert("PDF তৈরিতে সমস্যা: " + err.message);
+    alert("Error generating PDF: " + err.message);
   } finally {
     hideLoader();
   }
 }
 
-// Helper to build a single receipt stack
+// Helper to build a single receipt stack (English)
 function buildReceipt(title, serial, details, fees, total, dateStr) {
-  const feeTableBody = [['বিবরণ', 'টাকা']];
+  const feeTableBody = [['Description', 'Amount (Tk)']];
   fees.forEach(f => feeTableBody.push([f.name, f.amount]));
-  feeTableBody.push(['মোট', total]);
+  feeTableBody.push(['Total', total]);
 
   return [
     { text: title, style: 'header', alignment: 'center', margin: [0, 0, 0, 10] },
-    { text: 'ক্রমিক নং: ' + serial, margin: [0, 0, 0, 5] },
-    { text: 'নাম: ' + details.name },
-    { text: 'রোল: ' + details.roll },
-    { text: 'শ্রেণী: ' + details.class },
-    { text: 'আইডি: ' + details.id },
-    { text: 'তারিখ: ' + dateStr, margin: [0, 0, 0, 10] },
+    { text: 'Receipt No: ' + serial, margin: [0, 0, 0, 5] },
+    { text: 'Name: ' + details.name },
+    { text: 'Roll: ' + details.roll },
+    { text: 'Class: ' + details.class },
+    { text: 'ID: ' + details.id },
+    { text: 'Date: ' + dateStr, margin: [0, 0, 0, 10] },
     {
       table: {
         headerRows: 1,
@@ -438,8 +438,8 @@ function buildReceipt(title, serial, details, fees, total, dateStr) {
     },
     {
       columns: [
-        { width: '50%', text: 'হিসাবরক্ষকের স্বাক্ষর\n__________', alignment: 'left' },
-        { width: '50%', text: 'অভিভাবকের স্বাক্ষর\n__________', alignment: 'right' }
+        { width: '50%', text: 'Accountant\'s Signature\n___________________', alignment: 'left' },
+        { width: '50%', text: 'Guardian\'s Signature\n___________________', alignment: 'right' }
       ]
     }
   ];
