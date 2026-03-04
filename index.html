@@ -8,7 +8,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
   <style>
-    /* (keep all existing styles, add a little for print button) */
+    /* (same styles as before – keep them) */
     * {
       margin: 0;
       padding: 0;
@@ -226,7 +226,7 @@
 </div>
 
 <script>
-const webAppUrl = "https://script.google.com/macros/s/AKfycbyJrCSgoaR3s7RTj8NpAUr8BQKJ9NVUygiLMoj7aVaFAbpJMorNx9of4mwEI5Nnhg4oYQ/exec"; // আপনার URL দিন
+const webAppUrl = "https://script.google.com/macros/s/AKfycbzZTtyw__Vq6EVqCMHI9lLRzxG1ByCn9UrsEwCjTPbLqVpya-IsfOrdV9xtNvMwz1H39w/exec"; // আপনার URL দিন
 
 // Loader functions
 function showLoader() { document.getElementById('loader').style.display = 'flex'; }
@@ -349,7 +349,7 @@ function submitFee() {
     .finally(() => hideLoader());
 }
 
-// ---------- NEW: Print Receipt ----------
+// ---------- Print Receipt (fixed) ----------
 async function printReceipt() {
   const studentId = document.getElementById("searchId").value.trim();
   const month = document.getElementById("month").value;
@@ -368,17 +368,17 @@ async function printReceipt() {
     const student = await detailsRes.json();
     if (student.error) throw new Error(student.error);
 
-    // 2. Request receipt number from server (and store it)
+    // 2. Request receipt number from server (using PropertiesService)
     const receiptRes = await fetch(webAppUrl, {
       method: "POST",
       body: JSON.stringify({
         action: "generateReceipt",
         studentId: studentId,
-        month: month,
-        fees: fees
+        month: month
       })
     });
     const receiptData = await receiptRes.json();
+    if (!receiptData.receiptNumber) throw new Error("রশিদ নম্বর পাওয়া যায়নি");
     const receiptNo = receiptData.receiptNumber;
 
     // 3. Prepare data for PDF
@@ -394,10 +394,9 @@ async function printReceipt() {
         total += amount;
       }
     });
-    // If no fees, still show something
     if (feeItems.length === 0) feeItems.push(['কোন ফি নেই', '0 টাকা']);
 
-    // 4. Generate PDF with pdfmake
+    // 4. Generate PDF with pdfmake (using default font; Bangla may not render – see note below)
     const docDefinition = {
       pageSize: 'A4',
       pageOrientation: 'landscape',
@@ -414,17 +413,11 @@ async function printReceipt() {
         // Second page: Guardian Copy (portrait)
         {
           pageOrientation: 'portrait',
-          stack: receiptColumn('অভিভাবক কপি', student, date, feeItems, total, receiptNo, true) // full width
+          stack: receiptColumn('অভিভাবক কপি', student, date, feeItems, total, receiptNo, true)
         }
-      ],
-      defaultStyle: { font: 'Nikosh' } // we'll use built-in fonts; pdfmake supports Bangla with appropriate font. For simplicity, we'll use Roboto which has limited Bangla. In practice, include a Bangla font. But for this demo, we'll proceed.
+      ]
     };
 
-    // Use a Bangla-friendly font if available; pdfmake default font is Roboto which may not render Bangla well. 
-    // To properly render Bangla, you need to include a font like 'SolaimanLipi' via custom vfs. 
-    // For now, we'll assume the browser can render Bangla in PDF if the font supports it. 
-    // You can add a custom font by following pdfmake documentation. We'll skip for brevity.
-    
     pdfMake.createPdf(docDefinition).download(`রশিদ_${receiptNo}.pdf`);
 
   } catch (err) {
@@ -435,7 +428,7 @@ async function printReceipt() {
 }
 
 // Helper to create a receipt column content
-function receiptColumn(title, student, date, feeItems, total, receiptNo, isFullWidth = false) {
+function receiptColumn(title, student, date, feeItems, total, receiptNo) {
   return [
     { text: title, style: 'header', alignment: 'center', margin: [0, 0, 0, 10] },
     { text: 'রশিদ নং: ' + receiptNo, alignment: 'center', margin: [0, 0, 0, 10] },
@@ -476,7 +469,7 @@ function receiptColumn(title, student, date, feeItems, total, receiptNo, isFullW
   ];
 }
 
-// Enter key support (same as before)
+// Enter key support
 document.addEventListener('keypress', function(e) {
   if (e.key === 'Enter') {
     const active = document.activeElement;
@@ -499,5 +492,8 @@ document.addEventListener('keypress', function(e) {
   }
 });
 </script>
+<!-- Note: Bangla text may not render correctly in the PDF because the default font (Roboto) lacks Bangla glyphs.
+     To fix, include a Bangla font (e.g., SolaimanLipi) in pdfmake's virtual file system. 
+     See pdfmake documentation for custom fonts. -->
 </body>
 </html>
