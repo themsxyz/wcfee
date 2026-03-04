@@ -3,94 +3,137 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Admin Dashboard · ফি ম্যানেজমেন্ট</title>
-  <!-- Google Font & modern reset (same professional CSS as before) -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600&display=swap" rel="stylesheet">
+  <title>ফি ম্যানেজমেন্ট – অ্যাডমিন</title>
   <style>
-    /* (keep the exact same CSS from the previous professional version) */
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+    }
     body {
-      font-family: 'Inter', sans-serif;
-      background: linear-gradient(145deg, #f1f5f9 0%, #e6ecf4 100%);
-      min-height: 100vh;
+      background: #f8fafc;
       padding: 2rem 1.5rem;
       display: flex;
       flex-direction: column;
       align-items: center;
-      color: #1e293b;
+      color: #0f172a;
     }
-    .dashboard { max-width: 950px; width: 100%; }
-    .page-header { margin-bottom: 2rem; }
-    .page-header h2 {
-      font-weight: 600; font-size: 2rem; letter-spacing: -0.02em;
-      background: linear-gradient(135deg, #1e2b4f, #2a3f6e);
-      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-      background-clip: text; margin-bottom: 0.25rem;
+    .container {
+      max-width: 880px;
+      width: 100%;
     }
-    .page-header p {
-      color: #475569; font-weight: 400; font-size: 1rem;
-      border-left: 4px solid #3b82f6; padding-left: 1rem;
+    h2 {
+      font-weight: 500;
+      font-size: 2rem;
+      color: #0b2b4a;
+      margin-bottom: 0.25rem;
+    }
+    .sub {
+      color: #475569;
+      margin-bottom: 2rem;
+      border-left: 3px solid #2563eb;
+      padding-left: 1rem;
     }
     .card {
-      background: rgba(255, 255, 255, 0.85);
-      backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
-      border: 1px solid rgba(255,255,255,0.7);
-      border-radius: 28px; box-shadow: 0 20px 35px -10px rgba(0,20,40,0.15), 0 0 0 1px rgba(255,255,255,0.5) inset;
-      padding: 1.75rem 2rem; margin-bottom: 2rem;
-      transition: box-shadow 0.2s ease;
+      background: white;
+      border-radius: 20px;
+      padding: 1.8rem 2rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+      border: 1px solid #e2e8f0;
     }
-    .card:hover { box-shadow: 0 25px 40px -12px rgba(0,40,80,0.25); }
     .card h3 {
-      font-weight: 600; font-size: 1.4rem; color: #0f2b45;
-      margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.5rem;
-    }
-    .card h3::before {
-      content: ''; display: inline-block; width: 6px; height: 1.8rem;
-      background: #3b82f6; border-radius: 20px;
+      font-weight: 500;
+      font-size: 1.5rem;
+      color: #1e293b;
+      margin-bottom: 1.5rem;
     }
     label {
-      display: block; font-weight: 500; font-size: 0.9rem;
-      color: #334155; margin-bottom: 0.3rem; letter-spacing: 0.01em;
+      display: block;
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: #334155;
+      margin-bottom: 0.3rem;
     }
     input, select {
-      width: 100%; padding: 0.75rem 1rem; font-size: 0.95rem;
-      font-family: 'Inter', sans-serif; background-color: #ffffff;
-      border: 1.5px solid #e2e8f0; border-radius: 18px; outline: none;
-      transition: all 0.15s; box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+      width: 100%;
+      padding: 0.7rem 1rem;
+      border: 1px solid #cbd5e1;
+      border-radius: 14px;
+      font-size: 1rem;
+      outline: none;
+      background: white;
+      transition: 0.15s;
     }
-    input:focus, select:focus { border-color: #3b82f6; box-shadow: 0 0 0 4px rgba(59,130,246,0.15); }
+    input:focus, select:focus {
+      border-color: #2563eb;
+      box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
+    }
     button {
-      background: #1e3a5f; border: none; color: white; font-weight: 500;
-      font-size: 0.95rem; padding: 0.75rem 1.8rem; border-radius: 40px;
-      cursor: pointer; transition: 0.15s; box-shadow: 0 8px 18px -6px rgba(20,60,120,0.3);
-      border: 1px solid rgba(255,255,255,0.2); letter-spacing: 0.01em;
-      margin-top: 0.5rem; width: auto; min-width: 140px;
+      background: #1e3a5f;
+      border: none;
+      color: white;
+      font-weight: 500;
+      padding: 0.7rem 1.8rem;
+      border-radius: 40px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: 0.15s;
+      border: 1px solid rgba(255,255,255,0.1);
+      margin-top: 0.5rem;
     }
-    button:hover { background: #2c4b78; transform: scale(1.02); box-shadow: 0 12px 22px -8px #1e3a5f80; }
-    button:active { transform: scale(0.98); }
-    .search-row { display: flex; gap: 1rem; align-items: flex-end; flex-wrap: wrap; }
-    .search-row label { flex: 1 1 250px; margin-bottom: 0; }
-    .search-row button { margin-top: 0; flex: 0 0 auto; }
+    button:hover {
+      background: #2c4b78;
+    }
+    .search-row {
+      display: flex;
+      gap: 1rem;
+      align-items: flex-end;
+      flex-wrap: wrap;
+    }
+    .search-row label {
+      flex: 2 1 250px;
+      margin-bottom: 0;
+    }
+    .search-row button {
+      margin-top: 0;
+      flex: 0 0 auto;
+    }
     #feeInputs {
-      display: grid; grid-template-columns: auto 1fr; gap: 0.8rem 1.2rem;
-      align-items: center; margin: 1.5rem 0 1rem;
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 0.8rem 1.2rem;
+      align-items: center;
+      margin: 1.8rem 0 1.2rem;
     }
     #feeInputs br { display: none; }
-    #feeInputs label { margin: 0; font-weight: 500; color: #1e293b; white-space: nowrap; padding-right: 0.5rem; }
-    #feeInputs input { width: 100%; margin: 0; }
-    #accountInputs {
-      display: grid; grid-template-columns: auto 1fr; gap: 1rem 1.5rem;
-      align-items: center; margin: 1.2rem 0 1.8rem;
+    #feeInputs label {
+      margin: 0;
+      font-weight: 500;
+      color: #1e293b;
+      white-space: nowrap;
     }
-    #accountInputs label { margin: 0; font-weight: 500; color: #1e293b; justify-self: end; }
-    #accountInputs input { width: 100%; margin: 0; }
-    #month { max-width: 200px; margin-bottom: 1.2rem; background-color: white; }
+    #feeInputs input { margin: 0; }
+    #accountInputs {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 1rem 1.5rem;
+      align-items: center;
+      margin: 1.5rem 0 2rem;
+    }
+    #accountInputs label {
+      margin: 0;
+      font-weight: 500;
+      color: #1e293b;
+      justify-self: end;
+    }
+    #accountInputs input { margin: 0; }
+    #month { max-width: 200px; margin-bottom: 1.2rem; }
     @media (max-width: 600px) {
       body { padding: 1rem; }
       .card { padding: 1.5rem; }
-      #accountInputs { grid-template-columns: 1fr; gap: 0.6rem; }
+      #accountInputs { grid-template-columns: 1fr; gap: 0.7rem; }
       #accountInputs label { justify-self: start; }
       #feeInputs { grid-template-columns: 1fr; }
       .search-row { flex-direction: column; align-items: stretch; }
@@ -99,125 +142,126 @@
   </style>
 </head>
 <body>
-<div class="dashboard">
-  <div class="page-header">
-    <h2>📘 ফি ম্যানেজমেন্ট · অ্যাডমিন</h2>
-    <p>Student fee entry, account creation & tracking — now with trimmed ID fix</p>
-  </div>
+<div class="container">
+  <h2>📘 ফি ম্যানেজমেন্ট</h2>
+  <div class="sub">ছাত্রদের ফি সংক্রান্ত সব কার্যক্রম</div>
 
-  <!-- Search card -->
+  <!-- search card -->
   <div class="card">
-    <label for="searchId">🔍 Student ID খুঁজুন</label>
+    <label for="searchId">🔍 Student ID লিখুন</label>
     <div class="search-row">
-      <input type="text" id="searchId" placeholder="e.g. ST-2025-001">
+      <input type="text" id="searchId" placeholder="যেমন: ST-2025-001">
       <button onclick="searchStudent()">Search</button>
     </div>
-    <div style="font-size:0.85rem; color:#64748b; margin-top:0.8rem;">যদি আইডি না পাওয়া যায়, নিচে অ্যাকাউন্ট তৈরির ফর্ম দেখাবে</div>
+    <div style="font-size:0.9rem; color:#64748b; margin-top:0.8rem;">আইডি না পেলে নতুন অ্যাকাউন্ট তৈরির ফর্ম দেখাবে</div>
   </div>
 
-  <!-- Fee entry card (hidden by default) -->
+  <!-- fee entry card (hidden initially) -->
   <div class="card" id="feeFormDiv" style="display:none;">
-    <h3>📋 ফি এন্ট্রি ফর্ম</h3>
+    <h3>📋 ফি জমা ফর্ম</h3>
     <label for="month">মাস নির্বাচন</label>
     <select id="month"></select>
     <div id="feeInputs"></div>
-    <button onclick="submitFee()">✅ Submit Fee</button>
+    <button onclick="submitFee()">✅ ফি জমা দিন</button>
   </div>
 
-  <!-- Create account card (hidden by default) -->
+  <!-- account creation card (hidden initially) -->
   <div class="card" id="createFormDiv" style="display:none;">
     <h3>➕ নতুন ছাত্র অ্যাকাউন্ট</h3>
     <div id="accountInputs"></div>
-    <button onclick="createAccount()">📌 Create Account</button>
+    <button onclick="createAccount()">📌 অ্যাকাউন্ট তৈরি করুন</button>
   </div>
 </div>
 
 <script>
-const webAppUrl = "https://script.google.com/macros/s/AKfycby2dt4gRmzG2TKnKWRTRIkoaHk6Nbjh-M3khoKUkBgE4XT4Zn1CcNlejYmGfd8Hh9u1yA/exec"; // replace with your Apps Script URL
+const webAppUrl = "https://script.google.com/macros/s/AKfycbxiH1hXT8FQ0VPOEafibbo_1YXOflGBhpJVOTT0t-CnF1KB1wuD6RYNhAAad9zc6teuIQ/exec"; // আপনার URL দিন
 
-// Fee sections and months
+// Fee sections & months
 const feeSections = ["tuition","admission","readmission","exam","computer","late","sports","tc","misc"];
 const feeLabels = ["Tuition Fee","Admission Fee","Re-Admission Fee","Exam Fee","Computer Fee","Late Fee","Sports Fee","T.C Fee","Miscellaneous"];
 const months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 const monthSelect = document.getElementById("month");
-months.forEach(m=>monthSelect.innerHTML+=`<option>${m}</option>`);
+months.forEach(m => monthSelect.innerHTML += `<option>${m}</option>`);
 
 // Fee inputs
 const feeInputsDiv = document.getElementById("feeInputs");
-feeLabels.forEach((f,i)=>feeInputsDiv.innerHTML+=`<label>${f}:</label><input type="number" id="${feeSections[i]}" value=0><br>`);
+feeLabels.forEach((f, i) => feeInputsDiv.innerHTML += `<label>${f}:</label><input type="number" id="${feeSections[i]}" value=0><br>`);
 
-// Account creation inputs
+// Account inputs
 const accountDiv = document.getElementById("accountInputs");
 const accountFields = [
-  {id:"studentName", label:"Name"}, {id:"father", label:"Father Name"}, {id:"mother", label:"Mother Name"},
-  {id:"studentIdNew", label:"Student ID"}, {id:"roll", label:"Roll"}, {id:"cls", label:"Class"},
-  {id:"section", label:"Section"}, {id:"mobile", label:"Mobile Number"}
+  { id: "studentName", label: "Name" },
+  { id: "father", label: "Father Name" },
+  { id: "mother", label: "Mother Name" },
+  { id: "studentIdNew", label: "Student ID" },
+  { id: "roll", label: "Roll" },
+  { id: "cls", label: "Class" },
+  { id: "section", label: "Section" },
+  { id: "mobile", label: "Mobile Number" }
 ];
-accountFields.forEach(f=>accountDiv.innerHTML+=`<label>${f.label}:</label><input type="text" id="${f.id}"><br>`);
+accountFields.forEach(f => accountDiv.innerHTML += `<label>${f.label}:</label><input type="text" id="${f.id}"><br>`);
 
-// ========== FIXED SEARCH ==========
-function searchStudent(){
-  const rawId = document.getElementById("searchId").value;
-  const id = rawId.trim();                                   // trim search input
-  if(!id){ alert("Enter Student ID"); return; }
+// Search student (trim IDs)
+function searchStudent() {
+  const raw = document.getElementById("searchId").value;
+  const id = raw.trim();
+  if (!id) { alert("Student ID দিন"); return; }
 
   fetch(webAppUrl)
-  .then(res => res.json())
-  .then(data => {
-    let found = false;
-    // data[0] is header row, start from index 1
-    for(let i = 1; i < data.length; i++) {
-      // Trim the stored ID from sheet to avoid space mismatch
-      const storedId = (data[i][0] || "").toString().trim();
-      if(storedId === id) {
-        found = true;
-        break;
+    .then(res => res.json())
+    .then(data => {
+      let found = false;
+      // data[0] is header, start from index 1
+      for (let i = 1; i < data.length; i++) {
+        const storedId = (data[i][3] || "").toString().trim(); // ID is column D (index 3)
+        if (storedId === id) {
+          found = true;
+          break;
+        }
       }
-    }
-    if(found){
-      document.getElementById("feeFormDiv").style.display = "block";
-      document.getElementById("createFormDiv").style.display = "none";
-    } else {
-      document.getElementById("createFormDiv").style.display = "block";
-      document.getElementById("feeFormDiv").style.display = "none";
-    }
-  }).catch(err => alert("Error fetching student list: " + err));
+      if (found) {
+        document.getElementById("feeFormDiv").style.display = "block";
+        document.getElementById("createFormDiv").style.display = "none";
+      } else {
+        document.getElementById("createFormDiv").style.display = "block";
+        document.getElementById("feeFormDiv").style.display = "none";
+      }
+    })
+    .catch(err => alert("ডেটা আনতে সমস্যা: " + err));
 }
 
-// ========== FIXED CREATE ACCOUNT (trim all fields) ==========
-function createAccount(){
+// Create account (trim all)
+function createAccount() {
   const data = { action: "create" };
-  // Trim every field before sending
   accountFields.forEach(f => {
-    const elem = document.getElementById(f.id);
-    data[f.id] = elem.value.trim();                         // trim!
+    const el = document.getElementById(f.id);
+    data[f.id] = el.value.trim();
   });
 
   fetch(webAppUrl, {
     method: "POST",
     body: JSON.stringify(data)
   })
-  .then(res => res.json())
-  .then(resp => {
-    if(resp.result == "created") {
-      alert("Account created!");
-      // Optional: auto-fill search with the newly created ID and show fee form
-      document.getElementById("searchId").value = data.studentIdNew; // trimmed ID
-      searchStudent(); // re-run search to show fee form immediately
-    } else {
-      alert("Error!");
-    }
-  })
-  .catch(err => alert("Error: " + err));
+    .then(res => res.json())
+    .then(resp => {
+      if (resp.result === "created") {
+        alert("অ্যাকাউন্ট তৈরি হয়েছে!");
+        document.getElementById("searchId").value = data.studentIdNew;
+        searchStudent(); // show fee form now
+      } else {
+        alert("ত্রুটি! আবার চেষ্টা করুন।");
+      }
+    })
+    .catch(err => alert("ত্রুটি: " + err));
 }
 
-// ========== SUBMIT FEE (unchanged, but uses trimmed studentId from search field) ==========
-function submitFee(){
+// Submit fee
+function submitFee() {
   const fees = {};
   feeSections.forEach(f => fees[f] = Number(document.getElementById(f).value) || 0);
   const data = {
     action: "fee",
-    studentId: document.getElementById("searchId").value.trim(), // trim again
+    studentId: document.getElementById("searchId").value.trim(),
     month: document.getElementById("month").value,
     fees: fees
   };
@@ -225,12 +269,12 @@ function submitFee(){
     method: "POST",
     body: JSON.stringify(data)
   })
-  .then(res => res.json())
-  .then(resp => {
-    if(resp.result == "success") alert("Fee submitted!");
-    else alert("Error!");
-  })
-  .catch(err => alert("Error: " + err));
+    .then(res => res.json())
+    .then(resp => {
+      if (resp.result === "success") alert("ফি জমা হয়েছে!");
+      else alert("ত্রুটি! ফি জমা হয়নি।");
+    })
+    .catch(err => alert("ত্রুটি: " + err));
 }
 </script>
 </body>
