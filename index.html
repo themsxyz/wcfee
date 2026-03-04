@@ -11,6 +11,7 @@ input, select, button { padding:8px 10px; margin:5px 0; border-radius:5px; borde
 button { background:#40739e; color:#fff; cursor:pointer; }
 button:hover { background:#2f3640; }
 .card { background:#fff; padding:15px; border-radius:8px; box-shadow:0 2px 5px rgba(0,0,0,0.1); margin-top:20px; }
+label { display:block; margin-top:8px; }
 </style>
 </head>
 <body>
@@ -28,8 +29,6 @@ button:hover { background:#2f3640; }
 <label>Month:</label>
 <select id="month"></select><br>
 <div id="feeInputs"></div>
-<label>Submit Date:</label>
-<input type="date" id="paymentDate"><br>
 <button onclick="submitFee()">Submit Fee</button>
 </div>
 
@@ -40,42 +39,37 @@ button:hover { background:#2f3640; }
 </div>
 
 <script>
-const webAppUrl = "https://script.google.com/macros/s/AKfycbwBJ3m8MEeFcImvrJR0OFJXLGsW7bxGaUSi5QT2uTSVwiBk4ypGNde-pMo2kKxOdEh8/exec";
+const webAppUrl = "https://script.google.com/macros/s/AKfycbyaEHjShABt2BGuf0zlz2Gnt3EUng4HA--qlRfYa73r5V5aVLuwRm81BVLiv6ouxdAL/exec"; // replace with your Apps Script URL
 
-// Fee sections & months
+// Fee sections and months
 const feeSections = ["tuition","admission","readmission","exam","computer","late","sports","tc","misc"];
+const feeLabels = ["Tuition Fee","Admission Fee","Re-Admission Fee","Exam Fee","Computer Fee","Late Fee","Sports Fee","T.C Fee","Miscellaneous"];
 const months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
-const feeSectionLabels = ["Tuition Fee","Admission Fee","Re-Admission Fee","Exam Fee","Computer Fee","Late Fee","Sports Fee","T.C Fee","Miscellaneous"];
 const monthSelect = document.getElementById("month");
 months.forEach(m=>monthSelect.innerHTML+=`<option>${m}</option>`);
 
-// Create fee inputs
+// Fee inputs
 const feeInputsDiv = document.getElementById("feeInputs");
-feeSectionLabels.forEach((f,i)=>{
-  feeInputsDiv.innerHTML+=`<label>${f}:</label><input type="number" id="${feeSections[i]}" value=0><br>`;
-});
+feeLabels.forEach((f,i)=>feeInputsDiv.innerHTML+=`<label>${f}:</label><input type="number" id="${feeSections[i]}" value=0><br>`);
 
 // Account creation inputs
 const accountDiv = document.getElementById("accountInputs");
 const accountFields = [
   {id:"studentName", label:"Name"}, {id:"father", label:"Father Name"}, {id:"mother", label:"Mother Name"},
-  {id:"studentIdNew", label:"Student ID"}, {id:"roll", label:"Roll"}, {id:"cls", label:"Class"}, {id:"section", label:"Section"},
-  {id:"mobile", label:"Mobile Number"}
+  {id:"studentIdNew", label:"Student ID"}, {id:"roll", label:"Roll"}, {id:"cls", label:"Class"},
+  {id:"section", label:"Section"}, {id:"mobile", label:"Mobile Number"}
 ];
 accountFields.forEach(f=>accountDiv.innerHTML+=`<label>${f.label}:</label><input type="text" id="${f.id}"><br>`);
 
 // Search Student
 function searchStudent(){
-  const id = document.getElementById("searchId").value;
+  const id = document.getElementById("searchId").value.trim();
+  if(!id){ alert("Enter Student ID"); return; }
   fetch(webAppUrl)
   .then(res=>res.json())
   .then(data=>{
-    let found=false;
-    for(let i=1;i<data.length;i++){
-      if(data[i][0]==id){
-        found=true; break;
-      }
-    }
+    let found = false;
+    for(let i=1;i<data.length;i++){ if(data[i][0]==id){found=true; break;} }
     if(found){
       document.getElementById("feeFormDiv").style.display="block";
       document.getElementById("createFormDiv").style.display="none";
@@ -83,39 +77,27 @@ function searchStudent(){
       document.getElementById("createFormDiv").style.display="block";
       document.getElementById("feeFormDiv").style.display="none";
     }
-  });
+  }).catch(err=>alert("Error fetching student list: "+err));
 }
 
 // Submit Fee
 function submitFee(){
-  const fees = {};
+  const fees={};
   feeSections.forEach(f=>fees[f]=Number(document.getElementById(f).value)||0);
-  const data = {
-    action:"fee",
-    studentId: document.getElementById("searchId").value,
-    month: document.getElementById("month").value,
-    fees: fees
-  };
-  fetch(webAppUrl,{method:"POST", body:JSON.stringify(data)})
+  const data={action:"fee", studentId:document.getElementById("searchId").value, month:document.getElementById("month").value, fees:fees};
+  fetch(webAppUrl,{method:"POST",body:JSON.stringify(data)})
   .then(res=>res.json())
-  .then(resp=>{
-    if(resp.result=="success") alert("Fee submitted!");
-    else alert("Error!");
-  });
+  .then(resp=>{ if(resp.result=="success") alert("Fee submitted!"); else alert("Error!"); });
 }
 
 // Create Account
 function createAccount(){
-  const data = {action:"create"};
+  const data={action:"create"};
   accountFields.forEach(f=>data[f.id]=document.getElementById(f.id).value);
-  fetch(webAppUrl,{method:"POST", body:JSON.stringify(data)})
+  fetch(webAppUrl,{method:"POST",body:JSON.stringify(data)})
   .then(res=>res.json())
-  .then(resp=>{
-    if(resp.result=="created") alert("Account created!");
-    else alert("Error!");
-  });
+  .then(resp=>{ if(resp.result=="created") alert("Account created!"); else alert("Error!"); });
 }
 </script>
-
 </body>
 </html>
