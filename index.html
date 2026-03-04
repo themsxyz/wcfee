@@ -3,24 +3,24 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Admin Page 1 - Fee Submission</title>
+<title>Admin Page 1 - Fee Management</title>
 </head>
 <body>
-<h2>ছাত্র/ছাত্রী ফি এন্ট্রি</h2>
+<h2>ছাত্র/ছাত্রী ফি ম্যানেজমেন্ট</h2>
 
+<label>Search Student by ID:</label>
+<input type="text" id="searchId">
+<button onclick="searchStudent()">Search</button>
+
+<div id="feeFormDiv" style="display:none;">
+<h3>Fee Entry Form</h3>
 <form id="feeForm">
-  <input type="text" id="studentId" placeholder="Student ID" required><br>
-  <input type="text" id="studentName" placeholder="Name" required><br>
-  <input type="text" id="roll" placeholder="Roll Number" required><br>
-  <input type="text" id="cls" placeholder="Class" required><br>
-  <input type="text" id="section" placeholder="Section" required><br>
   <label>Month:</label>
-  <select id="month" required>
+  <select id="month">
     <option>Jan</option><option>Feb</option><option>Mar</option><option>Apr</option>
     <option>May</option><option>Jun</option><option>Jul</option><option>Aug</option>
     <option>Sep</option><option>Oct</option><option>Nov</option><option>Dec</option>
   </select><br>
-  
   <label>Tuition Fee:</label><input type="number" id="tuition"><br>
   <label>Admission Fee:</label><input type="number" id="admission"><br>
   <label>Re-Admission Fee:</label><input type="number" id="readmission"><br>
@@ -31,22 +31,68 @@
   <label>T.C Fee:</label><input type="number" id="tc"><br>
   <label>Miscellaneous:</label><input type="number" id="misc"><br>
   <label>Payment Date:</label><input type="date" id="paymentDate"><br><br>
-
   <button type="submit">Submit Fee</button>
 </form>
+</div>
+
+<div id="createFormDiv" style="display:none;">
+<h3>Create New Student Account</h3>
+<form id="createForm">
+  <input type="text" id="studentName" placeholder="Name" required><br>
+  <input type="text" id="fatherName" placeholder="Father Name"><br>
+  <input type="text" id="motherName" placeholder="Mother Name"><br>
+  <input type="text" id="studentIdNew" placeholder="Student ID" required><br>
+  <input type="text" id="roll" placeholder="Roll Number"><br>
+  <input type="text" id="cls" placeholder="Class"><br>
+  <input type="text" id="section" placeholder="Section"><br>
+  <input type="text" id="mobile" placeholder="Mobile Number"><br>
+  <h4>Initial Fees (optional)</h4>
+  <label>Tuition Fee:</label><input type="number" id="tuition0"><br>
+  <label>Admission Fee:</label><input type="number" id="admission0"><br>
+  <label>Re-Admission Fee:</label><input type="number" id="readmission0"><br>
+  <label>Exam Fee:</label><input type="number" id="exam0"><br>
+  <label>Computer Fee:</label><input type="number" id="computer0"><br>
+  <label>Late Fee:</label><input type="number" id="late0"><br>
+  <label>Sports Fee:</label><input type="number" id="sports0"><br>
+  <label>T.C Fee:</label><input type="number" id="tc0"><br>
+  <label>Miscellaneous:</label><input type="number" id="misc0"><br><br>
+  <button type="submit">Create Account</button>
+</form>
+</div>
 
 <script>
-const webAppUrl = "https://script.google.com/macros/s/AKfycbwEFmsn8aThCjDxHiOYMW7FcQ9MTNQY73QDBw7QnG2RGdGwm3pvELSjZBJdAZTffbBI/exec"; // Replace with your Apps Script Web App URL
+const webAppUrl = "https://script.google.com/macros/s/AKfycbwzIJwVBNlFnpKpgYXSpI9To_TtACeaga0A6JAayjhutX4Mx5ZiovNYomTE6fYlOpuziQ/exec"; // replace with Apps Script URL
 
+function searchStudent(){
+  const id = document.getElementById("searchId").value;
+
+  fetch(webAppUrl)
+  .then(res => res.json())
+  .then(data => {
+    let found = false;
+    for(let i=1;i<data.length;i++){
+      if(data[i][0]==id){
+        found = true;
+        break;
+      }
+    }
+
+    if(found){
+      document.getElementById("feeFormDiv").style.display="block";
+      document.getElementById("createFormDiv").style.display="none";
+    } else {
+      document.getElementById("createFormDiv").style.display="block";
+      document.getElementById("feeFormDiv").style.display="none";
+    }
+  });
+}
+
+// Fee Form submission
 document.getElementById("feeForm").addEventListener("submit", function(e){
   e.preventDefault();
-
   const data = {
-    studentId: document.getElementById("studentId").value,
-    studentName: document.getElementById("studentName").value,
-    roll: document.getElementById("roll").value,
-    cls: document.getElementById("cls").value,
-    section: document.getElementById("section").value,
+    action:"fee",
+    studentId: document.getElementById("searchId").value,
     month: document.getElementById("month").value,
     tuition: document.getElementById("tuition").value,
     admission: document.getElementById("admission").value,
@@ -60,17 +106,45 @@ document.getElementById("feeForm").addEventListener("submit", function(e){
     paymentDate: document.getElementById("paymentDate").value
   };
 
-  fetch(webAppUrl, {
-    method: "POST",
+  fetch(webAppUrl,{
+    method:"POST",
     body: JSON.stringify(data)
   })
-  .then(res => res.json())
-  .then(resp => {
+  .then(res=>res.json())
+  .then(resp=>{
     if(resp.result=="success"){
       alert("Fee submitted successfully!");
       document.getElementById("feeForm").reset();
     } else {
-      alert("Error! Try again.");
+      alert("Error submitting fee!");
+    }
+  });
+});
+
+// Create Account Form submission
+document.getElementById("createForm").addEventListener("submit", function(e){
+  e.preventDefault();
+  const data = {
+    action:"create",
+    studentId: document.getElementById("studentIdNew").value,
+    studentName: document.getElementById("studentName").value,
+    roll: document.getElementById("roll").value,
+    cls: document.getElementById("cls").value,
+    section: document.getElementById("section").value,
+    mobile: document.getElementById("mobile").value
+  };
+
+  fetch(webAppUrl,{
+    method:"POST",
+    body: JSON.stringify(data)
+  })
+  .then(res=>res.json())
+  .then(resp=>{
+    if(resp.result=="created"){
+      alert("Student account created successfully!");
+      document.getElementById("createForm").reset();
+    } else {
+      alert("Error creating account!");
     }
   });
 });
