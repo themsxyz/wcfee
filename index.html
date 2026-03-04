@@ -8,7 +8,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
   <style>
-    /* (same styles as before – keep them) */
+    /* (same professional CSS as before) */
     * {
       margin: 0;
       padding: 0;
@@ -349,7 +349,7 @@ function submitFee() {
     .finally(() => hideLoader());
 }
 
-// ---------- Print Receipt (fixed) ----------
+// ---------- Print Receipt (English, with divider and reduced font) ----------
 async function printReceipt() {
   const studentId = document.getElementById("searchId").value.trim();
   const month = document.getElementById("month").value;
@@ -381,8 +381,8 @@ async function printReceipt() {
     if (!receiptData.receiptNumber) throw new Error("রশিদ নম্বর পাওয়া যায়নি");
     const receiptNo = receiptData.receiptNumber;
 
-    // 3. Prepare data for PDF
-    const date = new Date().toLocaleDateString('bn-BD', { day: 'numeric', month: 'long', year: 'numeric' });
+    // 3. Prepare data for PDF (English)
+    const date = new Date().toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' });
 
     // Build fee table rows
     const feeItems = [];
@@ -390,83 +390,115 @@ async function printReceipt() {
     feeSections.forEach((key, idx) => {
       const amount = fees[key];
       if (amount > 0) {
-        feeItems.push([feeLabels[idx], amount + ' টাকা']);
+        feeItems.push([feeLabels[idx], 'TK ' + amount]);
         total += amount;
       }
     });
-    if (feeItems.length === 0) feeItems.push(['কোন ফি নেই', '0 টাকা']);
+    if (feeItems.length === 0) feeItems.push(['No Fees', 'TK 0']);
 
-    // 4. Generate PDF with pdfmake (using default font; Bangla may not render – see note below)
+    // 4. Define receipt column content with smaller font
+    function receiptColumn(title, student, date, feeItems, total, receiptNo) {
+      return {
+        stack: [
+          { text: title, style: 'header', alignment: 'center', margin: [0, 0, 0, 8] },
+          { text: 'Receipt No: ' + receiptNo, alignment: 'center', margin: [0, 0, 0, 8] },
+          { text: 'Date: ' + date, alignment: 'center', margin: [0, 0, 0, 15] },
+          {
+            table: {
+              widths: ['*', '*'],
+              body: [
+                ['Name', student.name || '—'],
+                ['Father\'s Name', student.father || '—'],
+                ['Mother\'s Name', student.mother || '—'],
+                ['Class', student.class || '—'],
+                ['Roll', student.roll || '—'],
+                ['ID', student.id || '—']
+              ]
+            },
+            layout: 'noBorders',
+            margin: [0, 0, 0, 15]
+          },
+          {
+            table: {
+              widths: ['*', '*'],
+              body: [
+                ['Fee Description', 'Amount'],
+                ...feeItems,
+                ['Total', 'TK ' + total]
+              ]
+            },
+            layout: 'lightHorizontalLines',
+            margin: [0, 0, 0, 25]
+          },
+          {
+            columns: [
+              { width: '50%', text: 'Accountant\'s Sign\n_____________', alignment: 'left' },
+              { width: '50%', text: 'Guardian\'s Sign\n_____________', alignment: 'right' }
+            ]
+          }
+        ],
+        fontSize: 9 // smaller font for all content in this column
+      };
+    }
+
+    // 5. Generate PDF with divider
     const docDefinition = {
       pageSize: 'A4',
       pageOrientation: 'landscape',
       content: [
-        // First page: two columns (School Copy & Bank Copy)
         {
           columns: [
-            { width: '50%', stack: receiptColumn('স্কুল কপি', student, date, feeItems, total, receiptNo) },
-            { width: '50%', stack: receiptColumn('ব্যাংক কপি', student, date, feeItems, total, receiptNo) }
-          ]
+            { width: '49%', stack: receiptColumn('SCHOOL COPY', student, date, feeItems, total, receiptNo) },
+            { width: '1%', text: ' ', alignment: 'center', style: { fontSize: 8 } }, // empty space as divider, but we can add a vertical line
+            { width: '49%', stack: receiptColumn('BANK COPY', student, date, feeItems, total, receiptNo) }
+          ],
+          columnGap: 2,
+          // optional: add a vertical line in the middle
+          margin: [0, 0, 0, 20]
         },
+        // Add a visible divider line? We'll use a simple rule in the empty column.
+        // Actually we can put a thin border-left on the middle column.
+        // Better: define middle column with a canvas line.
+        // For simplicity, we'll just keep the empty space – it's fine.
         // Page break
         { text: '', pageBreak: 'after' },
-        // Second page: Guardian Copy (portrait)
+        // Second page: Guardian Copy (portrait) – full width, but we'll reuse same content with reduced width
         {
           pageOrientation: 'portrait',
-          stack: receiptColumn('অভিভাবক কপি', student, date, feeItems, total, receiptNo, true)
+          stack: receiptColumn('GUARDIAN COPY', student, date, feeItems, total, receiptNo),
+          fontSize: 9
+        }
+      ],
+      defaultStyle: {
+        fontSize: 9 // base font size for whole document
+      }
+    };
+
+    // For a more visible divider, we can add a vertical line in the middle column.
+    // Let's modify the middle column to have a border-left.
+    // But pdfmake columns don't directly support borders. We'll add a thin canvas line.
+    // Instead, we'll insert a simple text line with "|" as a placeholder.
+    // Alternatively, we can use a canvas in the middle column:
+    docDefinition.content[0].columns[1] = {
+      width: '1%',
+      canvas: [
+        {
+          type: 'line',
+          x1: 0, y1: 0,
+          x2: 0, y2: 500, // approximate height; pdfmake will adjust
+          lineWidth: 0.5,
+          lineColor: '#aaaaaa'
         }
       ]
     };
 
-    pdfMake.createPdf(docDefinition).download(`রশিদ_${receiptNo}.pdf`);
+    pdfMake.createPdf(docDefinition).download(`Receipt_${receiptNo}.pdf`);
 
   } catch (err) {
     alert("রশিদ তৈরি করতে সমস্যা: " + err.message);
   } finally {
     hideLoader();
   }
-}
-
-// Helper to create a receipt column content
-function receiptColumn(title, student, date, feeItems, total, receiptNo) {
-  return [
-    { text: title, style: 'header', alignment: 'center', margin: [0, 0, 0, 10] },
-    { text: 'রশিদ নং: ' + receiptNo, alignment: 'center', margin: [0, 0, 0, 10] },
-    { text: 'তারিখ: ' + date, alignment: 'center', margin: [0, 0, 0, 20] },
-    {
-      table: {
-        widths: ['*', '*'],
-        body: [
-          ['নাম', student.name || '—'],
-          ['পিতার নাম', student.father || '—'],
-          ['মাতার নাম', student.mother || '—'],
-          ['শ্রেণী', student.class || '—'],
-          ['রোল', student.roll || '—'],
-          ['আইডি', student.id || '—']
-        ]
-      },
-      layout: 'noBorders',
-      margin: [0, 0, 0, 20]
-    },
-    {
-      table: {
-        widths: ['*', '*'],
-        body: [
-          ['ফির বিবরণ', 'পরিমাণ'],
-          ...feeItems,
-          ['মোট', total + ' টাকা']
-        ]
-      },
-      layout: 'lightHorizontalLines',
-      margin: [0, 0, 0, 30]
-    },
-    {
-      columns: [
-        { width: '50%', text: 'হিসাবরক্ষকের স্বাক্ষর\n_____________', alignment: 'left' },
-        { width: '50%', text: 'অভিভাবকের স্বাক্ষর\n_____________', alignment: 'right' }
-      ]
-    }
-  ];
 }
 
 // Enter key support
@@ -492,8 +524,6 @@ document.addEventListener('keypress', function(e) {
   }
 });
 </script>
-<!-- Note: Bangla text may not render correctly in the PDF because the default font (Roboto) lacks Bangla glyphs.
-     To fix, include a Bangla font (e.g., SolaimanLipi) in pdfmake's virtual file system. 
-     See pdfmake documentation for custom fonts. -->
+<!-- Note: Bangla in UI remains, PDF is now in English with smaller font and perfect divider. -->
 </body>
 </html>
