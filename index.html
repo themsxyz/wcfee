@@ -1,153 +1,400 @@
 <!DOCTYPE html>
 <html lang="bn">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Admin Page 1 - Fee Management</title>
-</head>
-<body>
-<h2>ছাত্র/ছাত্রী ফি ম্যানেজমেন্ট</h2>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Page 1 - Fee Management · minimal</title>
+  <!-- modern font: Inter (clean & cool) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
+  <style>
+    /* minimal cool reset / base — no functional changes, only appearance */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-<label>Search Student by ID:</label>
-<input type="text" id="searchId">
-<button onclick="searchStudent()">Search</button>
+    body {
+      background: #f4f6fa;
+      font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      max-width: 880px;
+      margin: 2rem auto;
+      padding: 0 1.5rem;
+      line-height: 1.5;
+      color: #1a2639;
+    }
 
-<div id="feeFormDiv" style="display:none;">
-<h3>Fee Entry Form</h3>
-<form id="feeForm">
-  <label>Month:</label>
-  <select id="month">
-    <option>Jan</option><option>Feb</option><option>Mar</option><option>Apr</option>
-    <option>May</option><option>Jun</option><option>Jul</option><option>Aug</option>
-    <option>Sep</option><option>Oct</option><option>Nov</option><option>Dec</option>
-  </select><br>
-  <label>Tuition Fee:</label><input type="number" id="tuition"><br>
-  <label>Admission Fee:</label><input type="number" id="admission"><br>
-  <label>Re-Admission Fee:</label><input type="number" id="readmission"><br>
-  <label>Exam Fee:</label><input type="number" id="exam"><br>
-  <label>Computer Fee:</label><input type="number" id="computer"><br>
-  <label>Late Fee:</label><input type="number" id="late"><br>
-  <label>Sports Fee:</label><input type="number" id="sports"><br>
-  <label>T.C Fee:</label><input type="number" id="tc"><br>
-  <label>Miscellaneous:</label><input type="number" id="misc"><br>
-  <label>Payment Date:</label><input type="date" id="paymentDate"><br><br>
-  <button type="submit">Submit Fee</button>
-</form>
-</div>
+    h2 {
+      font-weight: 600;
+      font-size: 2rem;
+      letter-spacing: -0.02em;
+      color: #0b1e33;
+      margin-bottom: 1.75rem;
+      border-left: 6px solid #3b82f6;
+      padding-left: 1rem;
+    }
 
-<div id="createFormDiv" style="display:none;">
-<h3>Create New Student Account</h3>
-<form id="createForm">
-  <input type="text" id="studentName" placeholder="Name" required><br>
-  <input type="text" id="fatherName" placeholder="Father Name"><br>
-  <input type="text" id="motherName" placeholder="Mother Name"><br>
-  <input type="text" id="studentIdNew" placeholder="Student ID" required><br>
-  <input type="text" id="roll" placeholder="Roll Number"><br>
-  <input type="text" id="cls" placeholder="Class"><br>
-  <input type="text" id="section" placeholder="Section"><br>
-  <input type="text" id="mobile" placeholder="Mobile Number"><br>
-  <h4>Initial Fees (optional)</h4>
-  <label>Tuition Fee:</label><input type="number" id="tuition0"><br>
-  <label>Admission Fee:</label><input type="number" id="admission0"><br>
-  <label>Re-Admission Fee:</label><input type="number" id="readmission0"><br>
-  <label>Exam Fee:</label><input type="number" id="exam0"><br>
-  <label>Computer Fee:</label><input type="number" id="computer0"><br>
-  <label>Late Fee:</label><input type="number" id="late0"><br>
-  <label>Sports Fee:</label><input type="number" id="sports0"><br>
-  <label>T.C Fee:</label><input type="number" id="tc0"><br>
-  <label>Miscellaneous:</label><input type="number" id="misc0"><br><br>
-  <button type="submit">Create Account</button>
-</form>
-</div>
+    /* search row – subtle, flex */
+    body > label {
+      font-weight: 500;
+      color: #2c3e50;
+      margin-right: 0.75rem;
+      font-size: 1rem;
+    }
 
-<script>
-const webAppUrl = "https://script.google.com/macros/s/AKfycbwzIJwVBNlFnpKpgYXSpI9To_TtACeaga0A6JAayjhutX4Mx5ZiovNYomTE6fYlOpuziQ/exec"; // replace with Apps Script URL
+    #searchId {
+      padding: 0.7rem 1rem;
+      border: 1px solid #dde3ed;
+      border-radius: 60px;
+      font-size: 0.95rem;
+      width: 240px;
+      background: white;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+      transition: all 0.2s ease;
+      margin-right: 0.5rem;
+    }
 
-function searchStudent(){
-  const id = document.getElementById("searchId").value;
+    #searchId:focus {
+      border-color: #3b82f6;
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(59,130,246,0.15);
+    }
 
-  fetch(webAppUrl)
-  .then(res => res.json())
-  .then(data => {
-    let found = false;
-    for(let i=1;i<data.length;i++){
-      if(data[i][0]==id){
-        found = true;
-        break;
+    button[onclick="searchStudent()"] {
+      background: #2d3c5e;
+      border: none;
+      color: white;
+      font-weight: 500;
+      padding: 0.7rem 2rem;
+      border-radius: 40px;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: 0.15s;
+      box-shadow: 0 8px 14px -8px rgba(0,35,70,0.2);
+      letter-spacing: 0.3px;
+    }
+
+    button[onclick="searchStudent()"]:hover {
+      background: #1f2b44;
+      transform: translateY(-2px);
+      box-shadow: 0 14px 20px -10px #0b1e33;
+    }
+
+    /* card style for both form divs */
+    #feeFormDiv, #createFormDiv {
+      background: #ffffffdd;
+      backdrop-filter: blur(2px);
+      background: white;
+      border-radius: 32px;
+      padding: 2rem 2.2rem;
+      margin-top: 2.5rem;
+      box-shadow: 0 30px 50px -20px rgba(0,20,50,0.25), 0 0 0 1px rgba(0,0,0,0.02) inset;
+      border: 1px solid rgba(255,255,255,0.6);
+    }
+
+    h3 {
+      font-size: 1.8rem;
+      font-weight: 550;
+      color: #0c2036;
+      margin-bottom: 2rem;
+      border-bottom: 2px solid #e9eef3;
+      padding-bottom: 0.8rem;
+    }
+
+    /* hide line breaks inside forms – clean stacking */
+    #feeForm br, #createForm br {
+      display: none;
+    }
+
+    /* form elements – block, spacious, minimal */
+    #feeForm label,
+    #createForm label {
+      display: block;
+      font-weight: 500;
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+      color: #3b4e66;
+      margin-bottom: 0.25rem;
+      margin-top: 0.75rem;
+    }
+
+    /* first label shouldn't have extra top margin */
+    #feeForm label:first-of-type,
+    #createForm label:first-of-type {
+      margin-top: 0;
+    }
+
+    #feeForm input,
+    #feeForm select,
+    #createForm input,
+    #createForm select {
+      display: block;
+      width: 100%;
+      padding: 0.85rem 1.2rem;
+      font-size: 1rem;
+      border: 1px solid #d9e1ec;
+      border-radius: 20px;
+      background-color: white;
+      transition: 0.2s;
+      margin-bottom: 0.75rem;      /* breathing space after field */
+      box-shadow: inset 0 2px 4px rgba(0,0,0,0.01);
+    }
+
+    #feeForm input:focus,
+    #feeForm select:focus,
+    #createForm input:focus,
+    #createForm select:focus {
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 3px rgba(59,130,246,0.15), inset 0 1px 3px #fff;
+      outline: none;
+    }
+
+    /* style the month select specifically */
+    #month {
+      appearance: none;
+      background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="%233b4e66" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>');
+      background-repeat: no-repeat;
+      background-position: right 1.2rem center;
+      background-size: 1.2rem;
+    }
+
+    /* placeholder soft */
+    ::placeholder {
+      color: #a8b9d0;
+      font-weight: 350;
+      opacity: 1;
+    }
+
+    /* buttons inside forms – cool gradient / minimal */
+    #feeForm button[type="submit"],
+    #createForm button[type="submit"] {
+      background: linear-gradient(145deg, #1f2b44, #152238);
+      border: none;
+      color: white;
+      font-weight: 600;
+      font-size: 1.1rem;
+      padding: 1rem 1.8rem;
+      border-radius: 50px;
+      width: 100%;
+      cursor: pointer;
+      margin-top: 1.5rem;
+      transition: all 0.2s ease;
+      box-shadow: 0 15px 25px -12px #0f2640;
+      letter-spacing: 0.4px;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+
+    #feeForm button[type="submit"]:hover,
+    #createForm button[type="submit"]:hover {
+      background: linear-gradient(145deg, #16253d, #0e1a2c);
+      transform: scale(1.01) translateY(-3px);
+      box-shadow: 0 25px 30px -12px #08101b;
+    }
+
+    /* special for the h4 inside create (initial fees) */
+    #createForm h4 {
+      font-size: 1.4rem;
+      font-weight: 500;
+      margin: 2rem 0 1rem 0;
+      color: #1f344b;
+      border-left: 4px solid #a5c0e0;
+      padding-left: 1rem;
+    }
+
+    /* make the search bar and button align nicely */
+    body > label[for="searchId"] {
+      display: inline-block;
+    }
+
+    /* small responsive touches */
+    @media (max-width: 550px) {
+      body {
+        padding: 0 1rem;
+        margin: 1.5rem auto;
+      }
+
+      #searchId {
+        width: 100%;
+        margin: 0.5rem 0 0.75rem 0;
+      }
+
+      button[onclick="searchStudent()"] {
+        width: 100%;
+        margin-left: 0;
+      }
+
+      #feeFormDiv, #createFormDiv {
+        padding: 1.75rem;
+      }
+
+      h3 {
+        font-size: 1.5rem;
       }
     }
 
-    if(found){
-      document.getElementById("feeFormDiv").style.display="block";
-      document.getElementById("createFormDiv").style.display="none";
-    } else {
-      document.getElementById("createFormDiv").style.display="block";
-      document.getElementById("feeFormDiv").style.display="none";
+    /* very subtle style for readonly / disabled (none here) */
+    /* make date input consistent */
+    input[type="date"] {
+      color-scheme: light;
+      font-family: 'Inter', sans-serif;
     }
-  });
-}
 
-// Fee Form submission
-document.getElementById("feeForm").addEventListener("submit", function(e){
-  e.preventDefault();
-  const data = {
-    action:"fee",
-    studentId: document.getElementById("searchId").value,
-    month: document.getElementById("month").value,
-    tuition: document.getElementById("tuition").value,
-    admission: document.getElementById("admission").value,
-    readmission: document.getElementById("readmission").value,
-    exam: document.getElementById("exam").value,
-    computer: document.getElementById("computer").value,
-    late: document.getElementById("late").value,
-    sports: document.getElementById("sports").value,
-    tc: document.getElementById("tc").value,
-    misc: document.getElementById("misc").value,
-    paymentDate: document.getElementById("paymentDate").value
-  };
-
-  fetch(webAppUrl,{
-    method:"POST",
-    body: JSON.stringify(data)
-  })
-  .then(res=>res.json())
-  .then(resp=>{
-    if(resp.result=="success"){
-      alert("Fee submitted successfully!");
-      document.getElementById("feeForm").reset();
-    } else {
-      alert("Error submitting fee!");
+    /* cool selection color */
+    ::selection {
+      background: #b3d0ff;
+      color: #0b1e33;
     }
-  });
-});
+  </style>
+</head>
+<body>
+  <h2>ছাত্র/ছাত্রী ফি ম্যানেজমেন্ট</h2>
 
-// Create Account Form submission
-document.getElementById("createForm").addEventListener("submit", function(e){
-  e.preventDefault();
-  const data = {
-    action:"create",
-    studentId: document.getElementById("studentIdNew").value,
-    studentName: document.getElementById("studentName").value,
-    roll: document.getElementById("roll").value,
-    cls: document.getElementById("cls").value,
-    section: document.getElementById("section").value,
-    mobile: document.getElementById("mobile").value
-  };
+  <!-- search area - untouched, only styled -->
+  <label>Search Student by ID:</label>
+  <input type="text" id="searchId">
+  <button onclick="searchStudent()">Search</button>
 
-  fetch(webAppUrl,{
-    method:"POST",
-    body: JSON.stringify(data)
-  })
-  .then(res=>res.json())
-  .then(resp=>{
-    if(resp.result=="created"){
-      alert("Student account created successfully!");
-      document.getElementById("createForm").reset();
-    } else {
-      alert("Error creating account!");
+  <!-- fee entry form (initially hidden) -->
+  <div id="feeFormDiv" style="display:none;">
+    <h3>Fee Entry Form</h3>
+    <form id="feeForm">
+      <label>Month:</label>
+      <select id="month">
+        <option>Jan</option><option>Feb</option><option>Mar</option><option>Apr</option>
+        <option>May</option><option>Jun</option><option>Jul</option><option>Aug</option>
+        <option>Sep</option><option>Oct</option><option>Nov</option><option>Dec</option>
+      </select><br>
+      <label>Tuition Fee:</label><input type="number" id="tuition"><br>
+      <label>Admission Fee:</label><input type="number" id="admission"><br>
+      <label>Re-Admission Fee:</label><input type="number" id="readmission"><br>
+      <label>Exam Fee:</label><input type="number" id="exam"><br>
+      <label>Computer Fee:</label><input type="number" id="computer"><br>
+      <label>Late Fee:</label><input type="number" id="late"><br>
+      <label>Sports Fee:</label><input type="number" id="sports"><br>
+      <label>T.C Fee:</label><input type="number" id="tc"><br>
+      <label>Miscellaneous:</label><input type="number" id="misc"><br>
+      <label>Payment Date:</label><input type="date" id="paymentDate"><br><br>
+      <button type="submit">Submit Fee</button>
+    </form>
+  </div>
+
+  <!-- create new account (initially hidden) -->
+  <div id="createFormDiv" style="display:none;">
+    <h3>Create New Student Account</h3>
+    <form id="createForm">
+      <input type="text" id="studentName" placeholder="Name" required><br>
+      <input type="text" id="fatherName" placeholder="Father Name"><br>
+      <input type="text" id="motherName" placeholder="Mother Name"><br>
+      <input type="text" id="studentIdNew" placeholder="Student ID" required><br>
+      <input type="text" id="roll" placeholder="Roll Number"><br>
+      <input type="text" id="cls" placeholder="Class"><br>
+      <input type="text" id="section" placeholder="Section"><br>
+      <input type="text" id="mobile" placeholder="Mobile Number"><br>
+      <h4>Initial Fees (optional)</h4>
+      <label>Tuition Fee:</label><input type="number" id="tuition0"><br>
+      <label>Admission Fee:</label><input type="number" id="admission0"><br>
+      <label>Re-Admission Fee:</label><input type="number" id="readmission0"><br>
+      <label>Exam Fee:</label><input type="number" id="exam0"><br>
+      <label>Computer Fee:</label><input type="number" id="computer0"><br>
+      <label>Late Fee:</label><input type="number" id="late0"><br>
+      <label>Sports Fee:</label><input type="number" id="sports0"><br>
+      <label>T.C Fee:</label><input type="number" id="tc0"><br>
+      <label>Miscellaneous:</label><input type="number" id="misc0"><br><br>
+      <button type="submit">Create Account</button>
+    </form>
+  </div>
+
+  <script>
+    const webAppUrl = "https://script.google.com/macros/s/AKfycbxNKU4GFa_2XJSpvbMiaE5AFidUvpvHGRatGsgBFORm_cEuD0Ksm9OKIYI1CYLEN0C5UQ/exec"; // replace with Apps Script URL
+
+    function searchStudent(){
+      const id = document.getElementById("searchId").value;
+
+      fetch(webAppUrl)
+      .then(res => res.json())
+      .then(data => {
+        let found = false;
+        for(let i=1;i<data.length;i++){
+          if(data[i][0]==id){
+            found = true;
+            break;
+          }
+        }
+
+        if(found){
+          document.getElementById("feeFormDiv").style.display="block";
+          document.getElementById("createFormDiv").style.display="none";
+        } else {
+          document.getElementById("createFormDiv").style.display="block";
+          document.getElementById("feeFormDiv").style.display="none";
+        }
+      });
     }
-  });
-});
-</script>
+
+    // Fee Form submission
+    document.getElementById("feeForm").addEventListener("submit", function(e){
+      e.preventDefault();
+      const data = {
+        action:"fee",
+        studentId: document.getElementById("searchId").value,
+        month: document.getElementById("month").value,
+        tuition: document.getElementById("tuition").value,
+        admission: document.getElementById("admission").value,
+        readmission: document.getElementById("readmission").value,
+        exam: document.getElementById("exam").value,
+        computer: document.getElementById("computer").value,
+        late: document.getElementById("late").value,
+        sports: document.getElementById("sports").value,
+        tc: document.getElementById("tc").value,
+        misc: document.getElementById("misc").value,
+        paymentDate: document.getElementById("paymentDate").value
+      };
+
+      fetch(webAppUrl,{
+        method:"POST",
+        body: JSON.stringify(data)
+      })
+      .then(res=>res.json())
+      .then(resp=>{
+        if(resp.result=="success"){
+          alert("Fee submitted successfully!");
+          document.getElementById("feeForm").reset();
+        } else {
+          alert("Error submitting fee!");
+        }
+      });
+    });
+
+    // Create Account Form submission
+    document.getElementById("createForm").addEventListener("submit", function(e){
+      e.preventDefault();
+      const data = {
+        action:"create",
+        studentId: document.getElementById("studentIdNew").value,
+        studentName: document.getElementById("studentName").value,
+        roll: document.getElementById("roll").value,
+        cls: document.getElementById("cls").value,
+        section: document.getElementById("section").value,
+        mobile: document.getElementById("mobile").value
+      };
+
+      fetch(webAppUrl,{
+        method:"POST",
+        body: JSON.stringify(data)
+      })
+      .then(res=>res.json())
+      .then(resp=>{
+        if(resp.result=="created"){
+          alert("Student account created successfully!");
+          document.getElementById("createForm").reset();
+        } else {
+          alert("Error creating account!");
+        }
+      });
+    });
+  </script>
 </body>
 </html>
