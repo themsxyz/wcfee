@@ -354,7 +354,7 @@ function submitFee() {
     .finally(() => hideLoader());
 }
 
-// ---------- Print Receipt (final design with three columns) ----------
+// ---------- Print Receipt (professional three‑column layout) ----------
 async function printReceipt() {
   const studentId = document.getElementById("searchId").value.trim();
   const month = document.getElementById("month").value;
@@ -404,7 +404,7 @@ async function printReceipt() {
       total += amount;
     });
 
-    // Student details table: exactly 2 columns x 6 rows
+    // Student details table: 6 rows, each as [label, value]
     const studentRows = [
       ['Name', student.name || '—'],
       ['Class', student.class || '—'],
@@ -414,81 +414,123 @@ async function printReceipt() {
       ['Mobile', student.mobile || '—']
     ];
 
-    // Helper to create one receipt column (same format for all copies)
-   function createColumn(copyName) {
-  return {
-    width: '*',
-    stack: [
-      { text: copyName, style: 'header', alignment: 'center', margin: [0, 0, 0, 8] },
+    // ----- pdfMake document definition -----
+    // A4 landscape dimensions in points: width = 841.89, height = 595.28
+    const pageWidth = 841.89;
+    const pageHeight = 595.28;
+    const margin = 40; // left/right/top/bottom margins
+    const contentWidth = pageWidth - 2 * margin;
+    const contentHeight = pageHeight - 2 * margin;
+    const gap = 10; // gap between columns
+    const colWidth = (contentWidth - 2 * gap) / 3; // width of each column
 
-      { text: 'Receipt No: ' + receiptNo, alignment: 'center', margin: [0, 0, 0, 4] },
-      { text: 'Date & Time: ' + dateTime, alignment: 'center', margin: [0, 0, 0, 12] },
+    // Helper to create one receipt column
+    function createColumn(copyName) {
+      return {
+        width: '*', // pdfMake will use the calculated colWidth automatically
+        stack: [
+          { text: copyName, style: 'header', alignment: 'center', margin: [0, 0, 0, 8] },
 
-      {
-        table: {
-          widths: ['*', '*'],
-          body: studentRows
-        },
-        layout: 'noBorders',
-        margin: [0, 0, 0, 16]
-      },
+          { text: 'Receipt No: ' + receiptNo, alignment: 'center', margin: [0, 0, 0, 4] },
+          { text: 'Date & Time: ' + dateTime, alignment: 'center', margin: [0, 0, 0, 12] },
 
-      {
-        table: {
-          widths: ['*', '*'],
-          body: [
-            ['Description', 'Amount'],
-            ...feeItems,
-            ['Total', total + ' Tk']
-          ]
-        },
-        layout: 'lightHorizontalLines',
-        margin: [0, 0, 0, 20]
-      },
-
-      {
-        columns: [
+          // Student details table (no borders)
           {
-            width: '50%',
-            stack: [
-              { text: '_____________________', alignment: 'left' },
-              { text: 'Accountant\'s Sign', alignment: 'left', margin: [0, 2, 0, 0] }
-            ]
+            table: {
+              widths: ['auto', '*'], // label auto, value fills
+              body: studentRows
+            },
+            layout: 'noBorders',
+            margin: [0, 0, 0, 16]
           },
+
+          // Fee table (all sections, light horizontal lines)
           {
-            width: '50%',
-            stack: [
-              { text: '_____________________', alignment: 'right' },
-              { text: 'Guardian\'s Sign', alignment: 'right', margin: [0, 2, 0, 0] }
+            table: {
+              widths: ['*', 'auto'], // description fills, amount auto
+              body: [
+                [{ text: 'Description', style: 'tableHeader' }, { text: 'Amount', style: 'tableHeader' }],
+                ...feeItems,
+                [{ text: 'Total', style: 'totalLabel' }, { text: total + ' Tk', style: 'totalAmount' }]
+              ]
+            },
+            layout: 'lightHorizontalLines',
+            margin: [0, 0, 0, 20]
+          },
+
+          // Signature section
+          {
+            columns: [
+              {
+                width: '50%',
+                stack: [
+                  { text: '_____________________', alignment: 'left' },
+                  { text: 'Accountant\'s Sign', alignment: 'left', margin: [0, 2, 0, 0] }
+                ]
+              },
+              {
+                width: '50%',
+                stack: [
+                  { text: '_____________________', alignment: 'right' },
+                  { text: 'Guardian\'s Sign', alignment: 'right', margin: [0, 2, 0, 0] }
+                ]
+              }
             ]
           }
-        ]
-      }
-    ],
-    margin: [5, 0, 5, 0]
-  };
-}
-    // 4. PDF definition: three columns side by side, evenly spaced
-    const docDefinition = {
-  pageSize: 'A4',
-  pageOrientation: 'landscape',
-  content: [
-    {
-      columns: [
-        createColumn('School Copy'),
-        createColumn('Bank Copy'),
-        createColumn('Guardian Copy')
-      ],
-      columnGap: 10
-    },
-    {
-      canvas: [
-        { type: 'line', x1: 280, y1: 0, x2: 280, y2: 520, lineWidth: 1, dash: { length: 5 } },
-        { type: 'line', x1: 560, y1: 0, x2: 560, y2: 520, lineWidth: 1, dash: { length: 5 } }
-      ]
+        ],
+        margin: [5, 0, 5, 0] // small left/right separation between columns
+      };
     }
-  ]
-};
+
+    const docDefinition = {
+      pageSize: 'A4',
+      pageOrientation: 'landscape',
+      pageMargins: [margin, margin, margin, margin], // left, top, right, bottom
+      content: [
+        // Three columns
+        {
+          columns: [
+            createColumn('School Copy'),
+            createColumn('Bank Copy'),
+            createColumn('Guardian Copy')
+          ],
+          columnGap: gap
+        },
+        // Dashed cut lines between columns (drawn after columns to appear on top)
+        {
+          canvas: [
+            {
+              type: 'line',
+              x1: colWidth, y1: 0,
+              x2: colWidth, y2: contentHeight,
+              lineWidth: 1,
+              lineColor: '#aaaaaa',
+              dash: { length: 5 }
+            },
+            {
+              type: 'line',
+              x1: colWidth + gap + colWidth, y1: 0,
+              x2: colWidth + gap + colWidth, y2: contentHeight,
+              lineWidth: 1,
+              lineColor: '#aaaaaa',
+              dash: { length: 5 }
+            }
+          ],
+          margin: [0, 0, 0, 0], // canvas inherits page margins, so (0,0) positions it at left/top of content area
+          width: contentWidth,
+          height: contentHeight
+        }
+      ],
+      styles: {
+        header: { fontSize: 14, bold: true },
+        tableHeader: { bold: true, fillColor: '#f2f2f2' },
+        totalLabel: { bold: true },
+        totalAmount: { bold: true }
+      },
+      defaultStyle: {
+        fontSize: 10 // ensure everything fits comfortably
+      }
+    };
 
     pdfMake.createPdf(docDefinition).download(`Receipt_${receiptNo}.pdf`);
 
@@ -498,7 +540,6 @@ async function printReceipt() {
     hideLoader();
   }
 }
-
 // Enter key support
 document.addEventListener('keypress', function(e) {
   if (e.key === 'Enter') {
