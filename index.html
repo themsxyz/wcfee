@@ -8,7 +8,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
   <style>
-    /* (same styles as before – keep them) */
+    /* (keep all existing styles – unchanged) */
     * {
       margin: 0;
       padding: 0;
@@ -239,9 +239,11 @@ const months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov
 const monthSelect = document.getElementById("month");
 months.forEach(m => monthSelect.innerHTML += `<option>${m}</option>`);
 
-// Fee inputs
+// Fee inputs – now set value to empty string for zero (so field appears blank)
 const feeInputsDiv = document.getElementById("feeInputs");
-feeLabels.forEach((f, i) => feeInputsDiv.innerHTML += `<label>${f}:</label><input type="number" id="${feeSections[i]}" value=0><br>`);
+feeLabels.forEach((f, i) => {
+  feeInputsDiv.innerHTML += `<label>${f}:</label><input type="number" id="${feeSections[i]}" value="" placeholder="0"><br>`;
+});
 
 // Account inputs – two‑column with Bengali labels
 const accountDiv = document.getElementById("accountInputs");
@@ -325,10 +327,13 @@ function createAccount() {
     .finally(() => hideLoader());
 }
 
-// Submit fee
+// Submit fee – convert blank to 0
 function submitFee() {
   const fees = {};
-  feeSections.forEach(f => fees[f] = Number(document.getElementById(f).value) || 0);
+  feeSections.forEach(f => {
+    const val = document.getElementById(f).value;
+    fees[f] = val === '' ? 0 : Number(val);
+  });
   const data = {
     action: "fee",
     studentId: document.getElementById("searchId").value.trim(),
@@ -349,15 +354,18 @@ function submitFee() {
     .finally(() => hideLoader());
 }
 
-// ---------- Print Receipt (English version) ----------
+// ---------- Print Receipt (three columns on one landscape page) ----------
 async function printReceipt() {
   const studentId = document.getElementById("searchId").value.trim();
   const month = document.getElementById("month").value;
   if (!studentId || !month) { alert("ছাত্র আইডি ও মাস নির্বাচন করুন"); return; }
 
-  // Gather fee amounts from form
+  // Gather fee amounts from form, ignoring zeros
   const fees = {};
-  feeSections.forEach(f => fees[f] = Number(document.getElementById(f).value) || 0);
+  feeSections.forEach(f => {
+    const val = document.getElementById(f).value;
+    fees[f] = val === '' ? 0 : Number(val);
+  });
 
   showLoader();
 
@@ -368,7 +376,7 @@ async function printReceipt() {
     const student = await detailsRes.json();
     if (student.error) throw new Error(student.error);
 
-    // 2. Request receipt number from server (using PropertiesService)
+    // 2. Request receipt number from server
     const receiptRes = await fetch(webAppUrl, {
       method: "POST",
       body: JSON.stringify({
@@ -382,9 +390,12 @@ async function printReceipt() {
     const receiptNo = receiptData.receiptNumber;
 
     // 3. Prepare data for PDF – all in English
-    const date = new Date().toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' }); // e.g., "March 5, 2026"
+    const now = new Date();
+    const dateStr = now.toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' });
+    const timeStr = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+    const dateTime = dateStr + ' ' + timeStr;
 
-    // Build fee table rows
+    // Build fee table rows (only items with amount > 0)
     const feeItems = [];
     let total = 0;
     feeSections.forEach((key, idx) => {
@@ -396,24 +407,74 @@ async function printReceipt() {
     });
     if (feeItems.length === 0) feeItems.push(['No fees', '0 Tk']);
 
-    // 4. Generate PDF with pdfmake (English content)
+    // Helper to create one receipt column
+    function createColumn(copyName) {
+      return {
+        stack: [
+          { text: copyName, style: 'header', alignment: 'center', margin: [0, 0, 0, 8] },
+          { text: 'Receipt No: ' + receiptNo, alignment: 'center', margin: [0, 0, 0, 4] },
+          { text: 'Date & Time: ' + dateTime, alignment: 'center', margin: [0, 0, 0, 12] },
+          // Student details table (2 columns, 3 rows)
+          {
+            table: {
+              widths: ['*', '*'],
+              body: [
+                ['Name', student.name || '—'],
+                ['Class', student.class || '—'],
+                ['Roll', student.roll || '—'],
+                ['Section', student.section || '—'],
+                ['ID', student.id || '—'],
+                ['Mobile', student.mobile || '—']
+              ]
+            },
+            layout: 'noBorders',
+            margin: [0, 0, 0, 16]
+          },
+          // Fee table
+          {
+            table: {
+              widths: ['*', '*'],
+              body: [
+                ['Description', 'Amount'],
+                ...feeItems,
+                ['Total', total + ' Tk']
+              ]
+            },
+            layout: 'lightHorizontalLines',
+            margin: [0, 0, 0, 20]
+          },
+          // Signature line
+          {
+            columns: [
+              { width: '50%', text: "Accountant's Sign\n_____________", alignment: 'left' },
+              { width: '50%', text: "Guardian's Sign\n_____________", alignment: 'right' }
+            ]
+          }
+        ],
+        margin: [0, 0, 10, 0] // small right margin for spacing
+      };
+    }
+
+    // 4. Define PDF with three columns on one landscape page
     const docDefinition = {
       pageSize: 'A4',
       pageOrientation: 'landscape',
       content: [
-        // First page: two columns (School Copy & Bank Copy)
         {
           columns: [
-            { width: '50%', stack: receiptColumn('School Copy', student, date, feeItems, total, receiptNo) },
-            { width: '50%', stack: receiptColumn('Bank Copy', student, date, feeItems, total, receiptNo) }
+            createColumn('School Copy'),
+            // vertical divider: we can add a canvas line between columns
+            { width: 1, text: '', margin: [0, 0, 0, 0] }, // spacer
+            createColumn('Bank Copy'),
+            { width: 1, text: '', margin: [0, 0, 0, 0] }, // spacer
+            createColumn('Guardian Copy')
+          ],
+          columnGap: 10,
+          // Draw vertical lines between columns using canvas
+          canvas: [
+            { type: 'line', x1: 307, y1: 30, x2: 307, y2: 700, lineWidth: 1, lineColor: '#aaaaaa' }, // approx 1/3 width
+            { type: 'line', x1: 614, y1: 30, x2: 614, y2: 700, lineWidth: 1, lineColor: '#aaaaaa' }  // 2/3 width
           ]
-        },
-        // Page break
-        { text: '', pageBreak: 'after' },
-        // Second page: Guardian Copy (portrait)
-        {
-          pageOrientation: 'portrait',
-          stack: receiptColumn('Guardian Copy', student, date, feeItems, total, receiptNo, true)
         }
       ]
     };
@@ -425,48 +486,6 @@ async function printReceipt() {
   } finally {
     hideLoader();
   }
-}
-
-// Helper to create a receipt column content (all English)
-function receiptColumn(title, student, date, feeItems, total, receiptNo) {
-  return [
-    { text: title, style: 'header', alignment: 'center', margin: [0, 0, 0, 10] },
-    { text: 'Receipt No: ' + receiptNo, alignment: 'center', margin: [0, 0, 0, 10] },
-    { text: 'Date: ' + date, alignment: 'center', margin: [0, 0, 0, 20] },
-    {
-      table: {
-        widths: ['*', '*'],
-        body: [
-          ['Name', student.name || '—'],
-          ["Father's Name", student.father || '—'],
-          ["Mother's Name", student.mother || '—'],
-          ['Class', student.class || '—'],
-          ['Roll', student.roll || '—'],
-          ['ID', student.id || '—']
-        ]
-      },
-      layout: 'noBorders',
-      margin: [0, 0, 0, 20]
-    },
-    {
-      table: {
-        widths: ['*', '*'],
-        body: [
-          ['Description', 'Amount'],
-          ...feeItems,
-          ['Total', total + ' Tk']
-        ]
-      },
-      layout: 'lightHorizontalLines',
-      margin: [0, 0, 0, 30]
-    },
-    {
-      columns: [
-        { width: '50%', text: "Accountant's Sign\n_____________", alignment: 'left' },
-        { width: '50%', text: "Guardian's Sign\n_____________", alignment: 'right' }
-      ]
-    }
-  ];
 }
 
 // Enter key support
