@@ -8,7 +8,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
   <style>
-    /* (all existing styles remain unchanged) */
+    /* ----- RESET & BASE (keep existing + new navbar styles) ----- */
     * {
       margin: 0;
       padding: 0;
@@ -22,11 +22,126 @@
       flex-direction: column;
       align-items: center;
       color: #0f172a;
+      position: relative;
+      min-height: 100vh;
     }
     .container {
       max-width: 1000px;
       width: 100%;
     }
+
+    /* ----- APPLE‑STYLE NAVBAR ----- */
+    .navbar {
+      width: 100%;
+      max-width: 1000px;
+      margin-bottom: 1.5rem;
+      background: rgba(255,255,255,0.8);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-radius: 40px;
+      padding: 0.5rem 1.5rem;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.02), 0 0 0 1px rgba(0,0,0,0.02);
+      border: 1px solid rgba(255,255,255,0.6);
+    }
+    .nav-container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .logo-area {
+      font-weight: 500;
+      font-size: 1.25rem;
+      letter-spacing: -0.02em;
+      color: #1e293b;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .logo-area span {
+      background: #1e3a5f;
+      color: white;
+      font-size: 0.75rem;
+      padding: 2px 10px;
+      border-radius: 100px;
+      font-weight: 400;
+    }
+    /* hamburger button */
+    .hamburger {
+      background: transparent;
+      border: none;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      transition: background 0.2s;
+      margin: 0;
+      padding: 0;
+    }
+    .hamburger:hover {
+      background: rgba(0,0,0,0.05);
+    }
+    .hamburger .line {
+      width: 22px;
+      height: 2px;
+      background: #1e293b;
+      border-radius: 2px;
+      transition: 0.2s;
+    }
+    /* menu dropdown (hidden initially) */
+    .nav-menu {
+      position: absolute;
+      top: calc(3.5rem + 1rem); /* below navbar + spacing */
+      right: 1.5rem;
+      background: rgba(255,255,255,0.9);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-radius: 24px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1), 0 0 0 1px rgba(0,0,0,0.02);
+      padding: 0.75rem 0;
+      min-width: 200px;
+      opacity: 0;
+      transform: translateY(-10px);
+      pointer-events: none;
+      transition: 0.2s ease;
+      z-index: 1000;
+      border: 1px solid rgba(255,255,255,0.8);
+    }
+    .nav-menu.show {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: all;
+    }
+    .nav-menu a {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 0.75rem 1.5rem;
+      color: #1e293b;
+      text-decoration: none;
+      font-size: 1rem;
+      font-weight: 450;
+      transition: background 0.15s;
+    }
+    .nav-menu a:hover {
+      background: rgba(0,0,0,0.03);
+    }
+    .nav-menu a i { /* simple emoji fallback for icons */
+      font-style: normal;
+      width: 24px;
+      text-align: center;
+    }
+    .nav-divider {
+      height: 1px;
+      background: #e2e8f0;
+      margin: 0.5rem 1rem;
+    }
+
+    /* rest of your existing styles (unchanged) */
     h2 {
       font-weight: 500;
       font-size: 2rem;
@@ -182,10 +297,34 @@
       .search-row { flex-direction: column; align-items: stretch; }
       button { width: 100%; }
       .button-group { flex-direction: column; }
+      /* navbar mobile adj */
+      .navbar { padding: 0.2rem 1rem; }
+      .nav-menu { right: 1rem; min-width: 180px; }
     }
   </style>
 </head>
 <body>
+  <!-- 🍔 APPLE STYLE NAVBAR (added) -->
+  <nav class="navbar">
+    <div class="nav-container">
+      <div class="logo-area">
+        📋 ফি ম্যানেজার <span>ADMIN</span>
+      </div>
+      <button class="hamburger" id="hamburgerBtn" aria-label="Menu">
+        <div class="line"></div>
+        <div class="line"></div>
+        <div class="line"></div>
+      </button>
+    </div>
+    <!-- dropdown menu -->
+    <div class="nav-menu" id="navMenu">
+      <a href="analysis.html"><i>📊</i> Analysis</a>
+      <a href="sheet.html"><i>📑</i> Sheet</a>
+      <div class="nav-divider"></div>
+      <a href="mailto:muktadirshabab@hotmail.com"><i>📞</i> Helpline</a>
+    </div>
+  </nav>
+
 <div class="container">
   <h2>📘 ফি ম্যানেজমেন্ট</h2>
   <div class="sub">ছাত্রদের ফি সংক্রান্ত সব কার্যক্রম</div>
@@ -354,7 +493,7 @@ function submitFee() {
     .finally(() => hideLoader());
 }
 
-// ---------- NEW Print Receipt (three equal columns, like your example) ----------
+// ---------- Print Receipt (three equal columns) ----------
 async function printReceipt() {
   const studentId = document.getElementById("searchId").value.trim();
   const month = document.getElementById("month").value;
@@ -408,7 +547,7 @@ async function printReceipt() {
     }
 
     // Column generator
-        function createReceiptColumn(copyName) {
+    function createReceiptColumn(copyName) {
       const studentRows = buildStudentRows();
       const { items: feeItems, total } = buildFeeItems();
       const currentDateTime = new Date().toLocaleString(); // get local date & time
@@ -420,7 +559,6 @@ async function printReceipt() {
           { text: copyName, style: 'copyTitle', alignment: 'center', margin: [0,0,0,8] },
           { text: `Receipt No: ${receiptNo}`, alignment: 'center', margin: [0,0,0,2] },
           { text: `Month: ${month}`, alignment: 'center', margin: [0,0,0,2] },
-          // New line added here
           { text: `Fee taking date & time: ${currentDateTime}`, alignment: 'center', margin: [0,0,0,2] },
           { table: { widths: ['auto','*'], body: studentRows }, layout: 'noBorders', margin:[0,0,0,12] },
           {
@@ -465,7 +603,6 @@ async function printReceipt() {
           ],
           columnGap: 8
         },
-        // Dotted cut lines
         {
           canvas:[
             { type:'line', x1: contentWidth/3, y1:0, x2: contentWidth/3, y2:contentHeight, lineWidth:1, dash:[3,3], lineColor:'#888' },
@@ -517,6 +654,29 @@ document.addEventListener('keypress', function(e) {
       }
     }
   }
+});
+
+// ---------- HAMBURGER MENU TOGGLE (new) ----------
+const hamburgerBtn = document.getElementById('hamburgerBtn');
+const navMenu = document.getElementById('navMenu');
+
+hamburgerBtn.addEventListener('click', (e) => {
+  e.stopPropagation();
+  navMenu.classList.toggle('show');
+});
+
+// Close menu when clicking outside
+document.addEventListener('click', (e) => {
+  if (!navMenu.contains(e.target) && !hamburgerBtn.contains(e.target)) {
+    navMenu.classList.remove('show');
+  }
+});
+
+// Optional: close menu when a link is clicked (for single page, but links will navigate anyway)
+navMenu.querySelectorAll('a').forEach(link => {
+  link.addEventListener('click', () => {
+    navMenu.classList.remove('show');
+  });
 });
 </script>
 </body>
