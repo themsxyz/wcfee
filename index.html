@@ -354,13 +354,13 @@ function submitFee() {
     .finally(() => hideLoader());
 }
 
-// ---------- Print Receipt (professional three‑column layout) ----------
+// Replace the existing printReceipt() function with this version
 async function printReceipt() {
   const studentId = document.getElementById("searchId").value.trim();
   const month = document.getElementById("month").value;
   if (!studentId || !month) { alert("ছাত্র আইডি ও মাস নির্বাচন করুন"); return; }
 
-  // Gather fee amounts (zeros allowed)
+  // Gather fee amounts (empty = 0)
   const fees = {};
   feeSections.forEach(f => {
     const val = document.getElementById(f).value;
@@ -389,13 +389,13 @@ async function printReceipt() {
     if (!receiptData.receiptNumber) throw new Error("রশিদ নম্বর পাওয়া যায়নি");
     const receiptNo = receiptData.receiptNumber;
 
-    // 3. Prepare data
+    // 3. Prepare common data
     const now = new Date();
     const dateStr = now.toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' });
     const timeStr = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
     const dateTime = dateStr + ' ' + timeStr;
 
-    // Fee table rows – include ALL sections with amount (0 if zero)
+    // Fee table rows
     const feeItems = [];
     let total = 0;
     feeSections.forEach((key, idx) => {
@@ -404,7 +404,7 @@ async function printReceipt() {
       total += amount;
     });
 
-    // Student details table: 6 rows, each as [label, value]
+    // Student details rows
     const studentRows = [
       ['Name', student.name || '—'],
       ['Class', student.class || '—'],
@@ -414,40 +414,36 @@ async function printReceipt() {
       ['Mobile', student.mobile || '—']
     ];
 
-    // ----- pdfMake document definition -----
-    // A4 landscape dimensions in points: width = 841.89, height = 595.28
-    const pageWidth = 841.89;
+    // ----- Page geometry (A4 landscape) -----
+    const pageWidth = 841.89;   // points
     const pageHeight = 595.28;
-    const margin = 40; // left/right/top/bottom margins
+    const margin = 40;           // left/right/top/bottom
     const contentWidth = pageWidth - 2 * margin;
     const contentHeight = pageHeight - 2 * margin;
-    const gap = 10; // gap between columns
-    const colWidth = (contentWidth - 2 * gap) / 3; // width of each column
+    const colWidth = contentWidth / 3;   // each receipt gets exactly one third
 
-    // Helper to create one receipt column
-    function createColumn(copyName) {
+    // Helper to build one receipt stack (same for all copies)
+    function createReceiptStack(copyName) {
       return {
-        width: '*', // pdfMake will use the calculated colWidth automatically
         stack: [
           { text: copyName, style: 'header', alignment: 'center', margin: [0, 0, 0, 8] },
-
           { text: 'Receipt No: ' + receiptNo, alignment: 'center', margin: [0, 0, 0, 4] },
           { text: 'Date & Time: ' + dateTime, alignment: 'center', margin: [0, 0, 0, 12] },
 
           // Student details table (no borders)
           {
             table: {
-              widths: ['auto', '*'], // label auto, value fills
+              widths: ['auto', '*'],   // label auto, value fills remaining
               body: studentRows
             },
             layout: 'noBorders',
             margin: [0, 0, 0, 16]
           },
 
-          // Fee table (all sections, light horizontal lines)
+          // Fee table (light horizontal lines)
           {
             table: {
-              widths: ['*', 'auto'], // description fills, amount auto
+              widths: ['*', 'auto'],   // description fills, amount auto
               body: [
                 [{ text: 'Description', style: 'tableHeader' }, { text: 'Amount', style: 'tableHeader' }],
                 ...feeItems,
@@ -477,26 +473,31 @@ async function printReceipt() {
               }
             ]
           }
-        ],
-        margin: [5, 0, 5, 0] // small left/right separation between columns
+        ]
       };
     }
 
+    // ----- Main document definition -----
     const docDefinition = {
       pageSize: 'A4',
       pageOrientation: 'landscape',
-      pageMargins: [margin, margin, margin, margin], // left, top, right, bottom
+      pageMargins: [margin, margin, margin, margin],
       content: [
-        // Three columns
+        // Three‑column table (each cell contains one receipt)
         {
-          columns: [
-            createColumn('School Copy'),
-            createColumn('Bank Copy'),
-            createColumn('Guardian Copy')
-          ],
-          columnGap: gap
+          table: {
+            widths: ['*', '*', '*'],
+            body: [
+              [
+                createReceiptStack('School Copy'),
+                createReceiptStack('Bank Copy'),
+                createReceiptStack('Guardian Copy')
+              ]
+            ]
+          },
+          layout: 'noBorders'   // hide table borders, keep only content
         },
-        // Dashed cut lines between columns (drawn after columns to appear on top)
+        // Dashed cut lines (overlay, absolute positioned)
         {
           canvas: [
             {
@@ -509,14 +510,14 @@ async function printReceipt() {
             },
             {
               type: 'line',
-              x1: colWidth + gap + colWidth, y1: 0,
-              x2: colWidth + gap + colWidth, y2: contentHeight,
+              x1: colWidth * 2, y1: 0,
+              x2: colWidth * 2, y2: contentHeight,
               lineWidth: 1,
               lineColor: '#aaaaaa',
               dash: { length: 5 }
             }
           ],
-          margin: [0, 0, 0, 0], // canvas inherits page margins, so (0,0) positions it at left/top of content area
+          absolutePosition: { x: margin, y: margin }, // overlay exactly on the table area
           width: contentWidth,
           height: contentHeight
         }
@@ -528,7 +529,7 @@ async function printReceipt() {
         totalAmount: { bold: true }
       },
       defaultStyle: {
-        fontSize: 10 // ensure everything fits comfortably
+        fontSize: 10   // comfortable inside each column
       }
     };
 
