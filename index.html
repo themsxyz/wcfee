@@ -1,525 +1,259 @@
 <!DOCTYPE html>
 <html lang="bn">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ফি ম্যানেজমেন্ট – অ্যাডমিন</title>
-  <!-- pdfmake -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
-  <style>
-    /* (keep all existing styles – unchanged) */
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-    }
-    body {
-      background: #f8fafc;
-      padding: 2rem 1.5rem;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      color: #0f172a;
-    }
-    .container {
-      max-width: 1000px;
-      width: 100%;
-    }
-    h2 {
-      font-weight: 500;
-      font-size: 2rem;
-      color: #0b2b4a;
-      margin-bottom: 0.25rem;
-    }
-    .sub {
-      color: #475569;
-      margin-bottom: 2rem;
-      border-left: 3px solid #2563eb;
-      padding-left: 1rem;
-    }
-    .card {
-      background: white;
-      border-radius: 20px;
-      padding: 1.8rem 2rem;
-      margin-bottom: 2rem;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-      border: 1px solid #e2e8f0;
-      position: relative;
-    }
-    .card h3 {
-      font-weight: 500;
-      font-size: 1.5rem;
-      color: #1e293b;
-      margin-bottom: 1.5rem;
-    }
-    label {
-      display: block;
-      font-size: 0.9rem;
-      font-weight: 500;
-      color: #334155;
-      margin-bottom: 0.3rem;
-    }
-    input, select {
-      width: 100%;
-      padding: 0.7rem 1rem;
-      border: 1px solid #cbd5e1;
-      border-radius: 14px;
-      font-size: 1rem;
-      outline: none;
-      background: white;
-      transition: 0.15s;
-    }
-    input:focus, select:focus {
-      border-color: #2563eb;
-      box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
-    }
-    button {
-      background: #1e3a5f;
-      border: none;
-      color: white;
-      font-weight: 500;
-      padding: 0.7rem 1.8rem;
-      border-radius: 40px;
-      font-size: 1rem;
-      cursor: pointer;
-      transition: 0.15s;
-      border: 1px solid rgba(255,255,255,0.1);
-      margin-top: 0.5rem;
-    }
-    button:hover {
-      background: #2c4b78;
-    }
-    button:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-    }
-    .search-row {
-      display: flex;
-      gap: 1rem;
-      align-items: flex-end;
-      flex-wrap: wrap;
-    }
-    .search-row label {
-      flex: 2 1 250px;
-      margin-bottom: 0;
-    }
-    .search-row button {
-      margin-top: 0;
-      flex: 0 0 auto;
-    }
-    #feeInputs {
-      display: grid;
-      grid-template-columns: auto 1fr;
-      gap: 0.8rem 1.2rem;
-      align-items: center;
-      margin: 1.8rem 0 1.2rem;
-    }
-    #feeInputs br { display: none; }
-    #feeInputs label {
-      margin: 0;
-      font-weight: 500;
-      color: #1e293b;
-      white-space: nowrap;
-    }
-    #feeInputs input { margin: 0; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ফি ম্যানেজমেন্ট – অ্যাডমিন</title>
 
-    #accountInputs {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 1.5rem 2rem;
-      margin: 1.5rem 0 2rem;
-    }
-    .field-group {
-      display: flex;
-      flex-direction: column;
-    }
-    .field-group label {
-      margin-bottom: 0.3rem;
-      font-weight: 500;
-      color: #1e293b;
-    }
-    .field-group input {
-      width: 100%;
-    }
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
 
-    .loader-overlay {
-      display: none;
-      position: fixed;
-      top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(255,255,255,0.7);
-      backdrop-filter: blur(2px);
-      justify-content: center;
-      align-items: center;
-      z-index: 1000;
-    }
-    .spinner {
-      width: 50px;
-      height: 50px;
-      border: 5px solid #e2e8f0;
-      border-top-color: #1e3a5f;
-      border-radius: 50%;
-      animation: spin 0.8s linear infinite;
-    }
-    @keyframes spin { to { transform: rotate(360deg); } }
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;}
+body{background:#f8fafc;padding:2rem 1.5rem;display:flex;flex-direction:column;align-items:center;color:#0f172a;}
+.container{max-width:1000px;width:100%;}
+h2{font-weight:500;font-size:2rem;color:#0b2b4a;margin-bottom:0.25rem;}
+.sub{color:#475569;margin-bottom:2rem;border-left:3px solid #2563eb;padding-left:1rem;}
+.card{background:white;border-radius:20px;padding:1.8rem 2rem;margin-bottom:2rem;box-shadow:0 4px 12px rgba(0,0,0,0.05);border:1px solid #e2e8f0;}
+.card h3{font-weight:500;font-size:1.5rem;color:#1e293b;margin-bottom:1.5rem;}
+label{display:block;font-size:0.9rem;font-weight:500;color:#334155;margin-bottom:0.3rem;}
+input,select{width:100%;padding:0.7rem 1rem;border:1px solid #cbd5e1;border-radius:14px;font-size:1rem;background:white;}
+button{background:#1e3a5f;border:none;color:white;font-weight:500;padding:0.7rem 1.8rem;border-radius:40px;font-size:1rem;cursor:pointer;margin-top:0.5rem;}
+.search-row{display:flex;gap:1rem;align-items:flex-end;flex-wrap:wrap;}
+#feeInputs{display:grid;grid-template-columns:auto 1fr;gap:0.8rem 1.2rem;margin:1.8rem 0 1.2rem;}
+#accountInputs{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem 2rem;margin:1.5rem 0 2rem;}
 
-    #month { max-width: 200px; margin-bottom: 1.2rem; }
-    .button-group {
-      display: flex;
-      gap: 1rem;
-      flex-wrap: wrap;
-      align-items: center;
-    }
-
-    @media (max-width: 700px) {
-      #accountInputs { grid-template-columns: 1fr; }
-    }
-    @media (max-width: 600px) {
-      body { padding: 1rem; }
-      .card { padding: 1.5rem; }
-      #feeInputs { grid-template-columns: 1fr; }
-      .search-row { flex-direction: column; align-items: stretch; }
-      button { width: 100%; }
-      .button-group { flex-direction: column; }
-    }
-  </style>
+.loader-overlay{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(255,255,255,0.7);justify-content:center;align-items:center;z-index:1000;}
+.spinner{width:50px;height:50px;border:5px solid #e2e8f0;border-top-color:#1e3a5f;border-radius:50%;animation:spin 0.8s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+</style>
 </head>
+
 <body>
+
 <div class="container">
-  <h2>📘 ফি ম্যানেজমেন্ট</h2>
-  <div class="sub">ছাত্রদের ফি সংক্রান্ত সব কার্যক্রম</div>
 
-  <!-- search card -->
-  <div class="card">
-    <label for="searchId">🔍 Student ID লিখুন</label>
-    <div class="search-row">
-      <input type="text" id="searchId" placeholder="যেমন: ST-2025-001">
-      <button onclick="searchStudent()" id="searchBtn">Search</button>
-    </div>
-    <div style="font-size:0.9rem; color:#64748b; margin-top:0.8rem;">আইডি না পেলে নতুন অ্যাকাউন্ট তৈরির ফর্ম দেখাবে</div>
-  </div>
+<h2>📘 ফি ম্যানেজমেন্ট</h2>
+<div class="sub">ছাত্রদের ফি সংক্রান্ত সব কার্যক্রম</div>
 
-  <!-- fee entry card (hidden initially) -->
-  <div class="card" id="feeFormDiv" style="display:none;">
-    <h3>📋 ফি জমা ফর্ম</h3>
-    <label for="month">মাস নির্বাচন</label>
-    <select id="month"></select>
-    <div id="feeInputs"></div>
-    <div class="button-group">
-      <button onclick="submitFee()" id="submitBtn">✅ ফি জমা দিন</button>
-      <button onclick="printReceipt()" id="printBtn" style="background: #2d6a4f;">🖨️ প্রিন্ট রশিদ</button>
-    </div>
-  </div>
-
-  <!-- account creation card (hidden initially) -->
-  <div class="card" id="createFormDiv" style="display:none;">
-    <h3>➕ নতুন ছাত্র অ্যাকাউন্ট</h3>
-    <div id="accountInputs" class="two-column"></div>
-    <button onclick="createAccount()" id="createBtn">📌 অ্যাকাউন্ট তৈরি করুন</button>
-  </div>
+<div class="card">
+<label for="searchId">🔍 Student ID লিখুন</label>
+<div class="search-row">
+<input type="text" id="searchId" placeholder="যেমন: ST-2025-001">
+<button onclick="searchStudent()">Search</button>
+</div>
 </div>
 
-<!-- Loader overlay -->
+<div class="card" id="feeFormDiv" style="display:none;">
+<h3>📋 ফি জমা ফর্ম</h3>
+<label>মাস নির্বাচন</label>
+<select id="month"></select>
+<div id="feeInputs"></div>
+
+<button onclick="submitFee()">✅ ফি জমা দিন</button>
+<button onclick="printReceipt()" style="background:#2d6a4f;">🖨️ প্রিন্ট রশিদ</button>
+</div>
+
+<div class="card" id="createFormDiv" style="display:none;">
+<h3>➕ নতুন ছাত্র অ্যাকাউন্ট</h3>
+<div id="accountInputs"></div>
+<button onclick="createAccount()">📌 অ্যাকাউন্ট তৈরি করুন</button>
+</div>
+
+</div>
+
 <div class="loader-overlay" id="loader">
-  <div class="spinner"></div>
+<div class="spinner"></div>
 </div>
 
 <script>
-const webAppUrl = "https://script.google.com/macros/s/AKfycbzToMQDOWuWcG_9YfBFJWUC-wpTbk6sAsr1l8hlgZoHw5fG8qzVzBOTzFmL6wtkHGR_iA/exec"; // আপনার URL দিন
 
-// Loader functions
-function showLoader() { document.getElementById('loader').style.display = 'flex'; }
-function hideLoader() { document.getElementById('loader').style.display = 'none'; }
+const webAppUrl="YOUR_SCRIPT_URL";
 
-// Fee sections & months
-const feeSections = ["tuition","admission","readmission","exam","computer","late","sports","tc","misc"];
-const feeLabels = ["Tuition Fee","Admission Fee","Re-Admission Fee","Exam Fee","Computer Fee","Late Fee","Sports Fee","T.C Fee","Miscellaneous"];
-const months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
-const monthSelect = document.getElementById("month");
-months.forEach(m => monthSelect.innerHTML += `<option>${m}</option>`);
+function showLoader(){document.getElementById('loader').style.display='flex'}
+function hideLoader(){document.getElementById('loader').style.display='none'}
 
-// Fee inputs – start with empty (zero is blank)
-const feeInputsDiv = document.getElementById("feeInputs");
-feeLabels.forEach((f, i) => {
-  feeInputsDiv.innerHTML += `<label>${f}:</label><input type="number" id="${feeSections[i]}" value="" placeholder="0"><br>`;
+const feeSections=["tuition","admission","readmission","exam","computer","late","sports","tc","misc"];
+const feeLabels=["Tuition Fee","Admission Fee","Re-Admission Fee","Exam Fee","Computer Fee","Late Fee","Sports Fee","T.C Fee","Miscellaneous"];
+const months=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+
+const monthSelect=document.getElementById("month");
+months.forEach(m=>monthSelect.innerHTML+=`<option>${m}</option>`);
+
+const feeInputsDiv=document.getElementById("feeInputs");
+feeLabels.forEach((f,i)=>{
+feeInputsDiv.innerHTML+=`<label>${f}</label><input type="number" id="${feeSections[i]}" placeholder="0">`;
 });
 
-// Account inputs – two‑column with Bengali labels
-const accountDiv = document.getElementById("accountInputs");
-const accountFields = [
-  { id: "studentName", label: "নাম" },
-  { id: "father", label: "পিতার নাম" },
-  { id: "mother", label: "মাতার নাম" },
-  { id: "studentIdNew", label: "ছাত্র আইডি" },
-  { id: "roll", label: "রোল নম্বর" },
-  { id: "cls", label: "শ্রেণী" },
-  { id: "section", label: "শাখা" },
-  { id: "mobile", label: "মোবাইল নম্বর" }
+const accountFields=[
+{id:"studentName",label:"নাম"},
+{id:"father",label:"পিতার নাম"},
+{id:"mother",label:"মাতার নাম"},
+{id:"studentIdNew",label:"ছাত্র আইডি"},
+{id:"roll",label:"রোল নম্বর"},
+{id:"cls",label:"শ্রেণী"},
+{id:"section",label:"শাখা"},
+{id:"mobile",label:"মোবাইল নম্বর"}
 ];
-accountDiv.innerHTML = '';
-accountFields.forEach(f => {
-  const group = document.createElement('div');
-  group.className = 'field-group';
-  const label = document.createElement('label');
-  label.htmlFor = f.id;
-  label.textContent = f.label;
-  const input = document.createElement('input');
-  input.type = 'text';
-  input.id = f.id;
-  group.appendChild(label);
-  group.appendChild(input);
-  accountDiv.appendChild(group);
+
+const accountDiv=document.getElementById("accountInputs");
+
+accountFields.forEach(f=>{
+accountDiv.innerHTML+=`<div><label>${f.label}</label><input id="${f.id}"></div>`;
 });
 
-// Search student
-function searchStudent() {
-  const raw = document.getElementById("searchId").value;
-  const id = raw.trim();
-  if (!id) { alert("Student ID দিন"); return; }
-  showLoader();
-  fetch(webAppUrl)
-    .then(res => res.json())
-    .then(data => {
-      let found = false;
-      for (let i = 1; i < data.length; i++) {
-        const storedId = (data[i][3] || "").toString().trim(); // ID is column D (index 3)
-        if (storedId === id) {
-          found = true;
-          break;
-        }
-      }
-      if (found) {
-        document.getElementById("feeFormDiv").style.display = "block";
-        document.getElementById("createFormDiv").style.display = "none";
-      } else {
-        document.getElementById("createFormDiv").style.display = "block";
-        document.getElementById("feeFormDiv").style.display = "none";
-      }
-    })
-    .catch(err => alert("ডেটা আনতে সমস্যা: " + err))
-    .finally(() => hideLoader());
+function searchStudent(){}
+
+function createAccount(){}
+
+function submitFee(){}
+
+
+
+async function printReceipt(){
+
+const studentId=document.getElementById("searchId").value.trim();
+const month=document.getElementById("month").value;
+
+const fees={}
+feeSections.forEach(f=>{
+const val=document.getElementById(f).value
+fees[f]=val==''?0:Number(val)
+})
+
+showLoader()
+
+try{
+
+const res=await fetch(webAppUrl+"?action=getStudentDetails&studentId="+studentId)
+const student=await res.json()
+
+const receiptRes=await fetch(webAppUrl,{
+method:"POST",
+body:JSON.stringify({action:"generateReceipt",studentId,month})
+})
+
+const receiptData=await receiptRes.json()
+const receiptNo=receiptData.receiptNumber
+
+const now=new Date()
+const dateTime=now.toLocaleString()
+
+const feeItems=[]
+let total=0
+
+feeSections.forEach((key,idx)=>{
+const amount=fees[key]
+feeItems.push([feeLabels[idx],amount+" Tk"])
+total+=amount
+})
+
+const studentRows=[
+['Name',student.name||'—'],
+['Class',student.class||'—'],
+['Roll',student.roll||'—'],
+['Section',student.section||'—'],
+['ID',student.id||'—'],
+['Mobile',student.mobile||'—']
+]
+
+
+function createColumn(copyName){
+
+return{
+width:'33%',
+stack:[
+
+{text:copyName,alignment:'center',bold:true,fontSize:13,margin:[0,0,0,6]},
+
+{text:'Receipt No: '+receiptNo,alignment:'center'},
+{text:'Date & Time: '+dateTime,alignment:'center',margin:[0,0,0,10]},
+
+{
+table:{widths:['*','*'],body:studentRows},
+layout:'noBorders',
+margin:[0,0,0,10]
+},
+
+{
+table:{
+widths:['*','auto'],
+body:[
+['Description','Amount'],
+...feeItems,
+['Total',total+' Tk']
+]
+},
+layout:'lightHorizontalLines',
+margin:[0,0,0,15]
+},
+
+{
+columns:[
+{
+width:'50%',
+stack:[
+{text:'________________'},
+{text:"Accountant Sign",fontSize:9}
+]
+},
+{
+width:'50%',
+stack:[
+{text:'________________',alignment:'right'},
+{text:"Guardian Sign",alignment:'right',fontSize:9}
+]
+}
+]
 }
 
-// Create account
-function createAccount() {
-  const data = { action: "create" };
-  accountFields.forEach(f => {
-    const el = document.getElementById(f.id);
-    data[f.id] = el.value.trim();
-  });
-  showLoader();
-  fetch(webAppUrl, {
-    method: "POST",
-    body: JSON.stringify(data)
-  })
-    .then(res => res.json())
-    .then(resp => {
-      if (resp.result === "created") {
-        alert("অ্যাকাউন্ট তৈরি হয়েছে!");
-        document.getElementById("searchId").value = data.studentIdNew;
-        searchStudent();
-      } else {
-        alert("ত্রুটি! আবার চেষ্টা করুন।");
-      }
-    })
-    .catch(err => alert("ত্রুটি: " + err))
-    .finally(() => hideLoader());
+]
 }
 
-// Submit fee – convert blank to 0
-function submitFee() {
-  const fees = {};
-  feeSections.forEach(f => {
-    const val = document.getElementById(f).value;
-    fees[f] = val === '' ? 0 : Number(val);
-  });
-  const data = {
-    action: "fee",
-    studentId: document.getElementById("searchId").value.trim(),
-    month: document.getElementById("month").value,
-    fees: fees
-  };
-  showLoader();
-  fetch(webAppUrl, {
-    method: "POST",
-    body: JSON.stringify(data)
-  })
-    .then(res => res.json())
-    .then(resp => {
-      if (resp.result === "success") alert("ফি জমা হয়েছে!");
-      else alert("ত্রুটি! ফি জমা হয়নি।");
-    })
-    .catch(err => alert("ত্রুটি: " + err))
-    .finally(() => hideLoader());
 }
 
-// ---------- Print Receipt (final design) ----------
-async function printReceipt() {
-  const studentId = document.getElementById("searchId").value.trim();
-  const month = document.getElementById("month").value;
-  if (!studentId || !month) { alert("ছাত্র আইডি ও মাস নির্বাচন করুন"); return; }
 
-  // Gather fee amounts (zeros allowed)
-  const fees = {};
-  feeSections.forEach(f => {
-    const val = document.getElementById(f).value;
-    fees[f] = val === '' ? 0 : Number(val);
-  });
 
-  showLoader();
+const docDefinition={
 
-  try {
-    // 1. Fetch student details
-    const detailsUrl = webAppUrl + "?action=getStudentDetails&studentId=" + encodeURIComponent(studentId);
-    const detailsRes = await fetch(detailsUrl);
-    const student = await detailsRes.json();
-    if (student.error) throw new Error(student.error);
+pageSize:'A4',
+pageOrientation:'landscape',
 
-    // 2. Request receipt number
-    const receiptRes = await fetch(webAppUrl, {
-      method: "POST",
-      body: JSON.stringify({
-        action: "generateReceipt",
-        studentId: studentId,
-        month: month
-      })
-    });
-    const receiptData = await receiptRes.json();
-    if (!receiptData.receiptNumber) throw new Error("রশিদ নম্বর পাওয়া যায়নি");
-    const receiptNo = receiptData.receiptNumber;
+content:[
 
-    // 3. Prepare data
-    const now = new Date();
-    const dateStr = now.toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' });
-    const timeStr = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
-    const dateTime = dateStr + ' ' + timeStr;
+{
+columns:[
+createColumn("School Copy"),
+createColumn("Bank Copy"),
+createColumn("Guardian Copy")
+]
+},
 
-    // Fee table rows – include ALL sections with amount (0 if zero)
-    const feeItems = [];
-    let total = 0;
-    feeSections.forEach((key, idx) => {
-      const amount = fees[key];
-      feeItems.push([feeLabels[idx], amount + ' Tk']);
-      total += amount;
-    });
-
-    // Student details table: exactly 2 columns x 3 rows (6 fields)
-    const studentRows = [
-      ['Name', student.name || '—'],
-      ['Class', student.class || '—'],
-      ['Roll', student.roll || '—'],
-      ['Section', student.section || '—'],
-      ['ID', student.id || '—'],
-      ['Mobile', student.mobile || '—']
-    ];
-
-    // Helper to create one receipt column (same format for all copies)
-    function createColumn(copyName) {
-      return {
-        stack: [
-          { text: copyName, style: 'header', alignment: 'center', margin: [0, 0, 0, 8] },
-          { text: 'Receipt No: ' + receiptNo, alignment: 'center', margin: [0, 0, 0, 4] },
-          { text: 'Date & Time: ' + dateTime, alignment: 'center', margin: [0, 0, 0, 12] },
-          // Student details table (2 columns, 6 rows)
-          {
-            table: {
-              widths: ['*', '*'],
-              body: studentRows
-            },
-            layout: 'noBorders',
-            margin: [0, 0, 0, 16]
-          },
-          // Fee table (all sections)
-          {
-            table: {
-              widths: ['*', '*'],
-              body: [
-                ['Description', 'Amount'],
-                ...feeItems,
-                ['Total', total + ' Tk']
-              ]
-            },
-            layout: 'lightHorizontalLines',
-            margin: [0, 0, 0, 20]
-          },
-          // Signature line with label BELOW the line
-          {
-            columns: [
-              {
-                width: '50%',
-                stack: [
-                  { text: '_____________________', alignment: 'left' },
-                  { text: 'Accountant\'s Sign', alignment: 'left', margin: [0, 2, 0, 0] }
-                ]
-              },
-              {
-                width: '50%',
-                stack: [
-                  { text: '_____________________', alignment: 'right' },
-                  { text: 'Guardian\'s Sign', alignment: 'right', margin: [0, 2, 0, 0] }
-                ]
-              }
-            ]
-          }
-        ],
-        margin: [0, 0, 10, 0]
-      };
-    }
-
-    // 4. PDF definition: three columns on one landscape page
-    const docDefinition = {
-      pageSize: 'A4',
-      pageOrientation: 'landscape',
-      content: [
-        {
-          columns: [
-            createColumn('School Copy'),
-            { width: 1, text: '' }, // spacer
-            createColumn('Bank Copy'),
-            { width: 1, text: '' }, // spacer
-            createColumn('Guardian Copy')
-          ],
-          columnGap: 10,
-          canvas: [
-            { type: 'line', x1: 307, y1: 30, x2: 307, y2: 700, lineWidth: 1, lineColor: '#aaaaaa' },
-            { type: 'line', x1: 614, y1: 30, x2: 614, y2: 700, lineWidth: 1, lineColor: '#aaaaaa' }
-          ]
-        }
-      ]
-    };
-
-    pdfMake.createPdf(docDefinition).download(`Receipt_${receiptNo}.pdf`);
-
-  } catch (err) {
-    alert("রশিদ তৈরি করতে সমস্যা: " + err.message);
-  } finally {
-    hideLoader();
-  }
+{
+canvas:[
+{type:'line',x1:277,y1:0,x2:277,y2:550,lineWidth:1,lineColor:'#888',dash:{length:4}},
+{type:'line',x1:555,y1:0,x2:555,y2:550,lineWidth:1,lineColor:'#888',dash:{length:4}}
+]
 }
 
-// Enter key support
-document.addEventListener('keypress', function(e) {
-  if (e.key === 'Enter') {
-    const active = document.activeElement;
-    if (active.id === 'searchId') {
-      e.preventDefault();
-      searchStudent();
-    } else if (document.getElementById('createFormDiv').style.display === 'block') {
-      const createInputs = accountFields.map(f => document.getElementById(f.id));
-      if (createInputs.includes(active)) {
-        e.preventDefault();
-        createAccount();
-      }
-    } else if (document.getElementById('feeFormDiv').style.display === 'block') {
-      const feeInputIds = feeSections.map(f => document.getElementById(f));
-      if (feeInputIds.includes(active) || active.id === 'month') {
-        e.preventDefault();
-        submitFee();
-      }
-    }
-  }
-});
+]
+
+}
+
+pdfMake.createPdf(docDefinition).download("Receipt_"+receiptNo+".pdf")
+
+}catch(err){
+
+alert("রশিদ সমস্যা "+err)
+
+}finally{
+
+hideLoader()
+
+}
+
+}
+
 </script>
 </body>
 </html>
