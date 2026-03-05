@@ -404,7 +404,7 @@ async function printReceipt() {
       total += amount;
     });
 
-    // Student details table: exactly 2 columns x 3 rows
+    // Student details table: exactly 2 columns x 3 rows (6 fields)
     const studentRows = [
       ['Name', student.name || '—'],
       ['Class', student.class || '—'],
@@ -414,14 +414,14 @@ async function printReceipt() {
       ['Mobile', student.mobile || '—']
     ];
 
-    // Helper to create one receipt column
+    // Helper to create one receipt column (same format for all copies)
     function createColumn(copyName) {
       return {
         stack: [
           { text: copyName, style: 'header', alignment: 'center', margin: [0, 0, 0, 8] },
           { text: 'Receipt No: ' + receiptNo, alignment: 'center', margin: [0, 0, 0, 4] },
           { text: 'Date & Time: ' + dateTime, alignment: 'center', margin: [0, 0, 0, 12] },
-          // Student details table (2 columns, 3 rows)
+          // Student details table (2 columns, 6 rows)
           {
             table: {
               widths: ['*', '*'],
