@@ -239,7 +239,7 @@ const months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov
 const monthSelect = document.getElementById("month");
 months.forEach(m => monthSelect.innerHTML += `<option>${m}</option>`);
 
-// Fee inputs – now set value to empty string for zero (so field appears blank)
+// Fee inputs – start with empty (zero is blank)
 const feeInputsDiv = document.getElementById("feeInputs");
 feeLabels.forEach((f, i) => {
   feeInputsDiv.innerHTML += `<label>${f}:</label><input type="number" id="${feeSections[i]}" value="" placeholder="0"><br>`;
@@ -272,7 +272,7 @@ accountFields.forEach(f => {
   accountDiv.appendChild(group);
 });
 
-// Search student (with loader & Enter key)
+// Search student
 function searchStudent() {
   const raw = document.getElementById("searchId").value;
   const id = raw.trim();
@@ -354,13 +354,13 @@ function submitFee() {
     .finally(() => hideLoader());
 }
 
-// ---------- Print Receipt (three columns on one landscape page) ----------
+// ---------- Print Receipt (final design) ----------
 async function printReceipt() {
   const studentId = document.getElementById("searchId").value.trim();
   const month = document.getElementById("month").value;
   if (!studentId || !month) { alert("ছাত্র আইডি ও মাস নির্বাচন করুন"); return; }
 
-  // Gather fee amounts from form, ignoring zeros
+  // Gather fee amounts (zeros allowed)
   const fees = {};
   feeSections.forEach(f => {
     const val = document.getElementById(f).value;
@@ -376,7 +376,7 @@ async function printReceipt() {
     const student = await detailsRes.json();
     if (student.error) throw new Error(student.error);
 
-    // 2. Request receipt number from server
+    // 2. Request receipt number
     const receiptRes = await fetch(webAppUrl, {
       method: "POST",
       body: JSON.stringify({
@@ -389,23 +389,30 @@ async function printReceipt() {
     if (!receiptData.receiptNumber) throw new Error("রশিদ নম্বর পাওয়া যায়নি");
     const receiptNo = receiptData.receiptNumber;
 
-    // 3. Prepare data for PDF – all in English
+    // 3. Prepare data
     const now = new Date();
     const dateStr = now.toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' });
     const timeStr = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
     const dateTime = dateStr + ' ' + timeStr;
 
-    // Build fee table rows (only items with amount > 0)
+    // Fee table rows – include ALL sections with amount (0 if zero)
     const feeItems = [];
     let total = 0;
     feeSections.forEach((key, idx) => {
       const amount = fees[key];
-      if (amount > 0) {
-        feeItems.push([feeLabels[idx], amount + ' Tk']);
-        total += amount;
-      }
+      feeItems.push([feeLabels[idx], amount + ' Tk']);
+      total += amount;
     });
-    if (feeItems.length === 0) feeItems.push(['No fees', '0 Tk']);
+
+    // Student details table: exactly 2 columns x 3 rows
+    const studentRows = [
+      ['Name', student.name || '—'],
+      ['Class', student.class || '—'],
+      ['Roll', student.roll || '—'],
+      ['Section', student.section || '—'],
+      ['ID', student.id || '—'],
+      ['Mobile', student.mobile || '—']
+    ];
 
     // Helper to create one receipt column
     function createColumn(copyName) {
@@ -418,19 +425,12 @@ async function printReceipt() {
           {
             table: {
               widths: ['*', '*'],
-              body: [
-                ['Name', student.name || '—'],
-                ['Class', student.class || '—'],
-                ['Roll', student.roll || '—'],
-                ['Section', student.section || '—'],
-                ['ID', student.id || '—'],
-                ['Mobile', student.mobile || '—']
-              ]
+              body: studentRows
             },
             layout: 'noBorders',
             margin: [0, 0, 0, 16]
           },
-          // Fee table
+          // Fee table (all sections)
           {
             table: {
               widths: ['*', '*'],
@@ -443,19 +443,31 @@ async function printReceipt() {
             layout: 'lightHorizontalLines',
             margin: [0, 0, 0, 20]
           },
-          // Signature line
+          // Signature line with label BELOW the line
           {
             columns: [
-              { width: '50%', text: "Accountant's Sign\n_____________", alignment: 'left' },
-              { width: '50%', text: "Guardian's Sign\n_____________", alignment: 'right' }
+              {
+                width: '50%',
+                stack: [
+                  { text: '_____________________', alignment: 'left' },
+                  { text: 'Accountant\'s Sign', alignment: 'left', margin: [0, 2, 0, 0] }
+                ]
+              },
+              {
+                width: '50%',
+                stack: [
+                  { text: '_____________________', alignment: 'right' },
+                  { text: 'Guardian\'s Sign', alignment: 'right', margin: [0, 2, 0, 0] }
+                ]
+              }
             ]
           }
         ],
-        margin: [0, 0, 10, 0] // small right margin for spacing
+        margin: [0, 0, 10, 0]
       };
     }
 
-    // 4. Define PDF with three columns on one landscape page
+    // 4. PDF definition: three columns on one landscape page
     const docDefinition = {
       pageSize: 'A4',
       pageOrientation: 'landscape',
@@ -463,17 +475,15 @@ async function printReceipt() {
         {
           columns: [
             createColumn('School Copy'),
-            // vertical divider: we can add a canvas line between columns
-            { width: 1, text: '', margin: [0, 0, 0, 0] }, // spacer
+            { width: 1, text: '' }, // spacer
             createColumn('Bank Copy'),
-            { width: 1, text: '', margin: [0, 0, 0, 0] }, // spacer
+            { width: 1, text: '' }, // spacer
             createColumn('Guardian Copy')
           ],
           columnGap: 10,
-          // Draw vertical lines between columns using canvas
           canvas: [
-            { type: 'line', x1: 307, y1: 30, x2: 307, y2: 700, lineWidth: 1, lineColor: '#aaaaaa' }, // approx 1/3 width
-            { type: 'line', x1: 614, y1: 30, x2: 614, y2: 700, lineWidth: 1, lineColor: '#aaaaaa' }  // 2/3 width
+            { type: 'line', x1: 307, y1: 30, x2: 307, y2: 700, lineWidth: 1, lineColor: '#aaaaaa' },
+            { type: 'line', x1: 614, y1: 30, x2: 614, y2: 700, lineWidth: 1, lineColor: '#aaaaaa' }
           ]
         }
       ]
