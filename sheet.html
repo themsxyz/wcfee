@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>শিক্ষার্থী ডিরেক্টরি | শ্রেণি ভিত্তিক তালিকা</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: linear-gradient(145deg, #eef5ff 0%, #e0eaf8 100%);
+      font-family: 'Inter', 'Segoe UI', 'Noto Sans Bengali', system-ui, -apple-system, sans-serif;
+      padding: 2rem 1.5rem;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    /* header section */
+    .hero {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .hero h1 {
+      font-size: 2.4rem;
+      background: linear-gradient(135deg, #0b355c, #1f6392);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+      letter-spacing: -0.3px;
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .hero h1 span {
+      background: none;
+      color: #1e466e;
+    }
+
+    .subtitle {
+      color: #4a627a;
+      margin-top: 0.5rem;
+      font-weight: 500;
+      border-bottom: 2px solid rgba(25, 118, 210, 0.2);
+      display: inline-block;
+      padding-bottom: 6px;
+    }
+
+    /* card style panel */
+    .control-panel {
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(8px);
+      border-radius: 2rem;
+      padding: 1.2rem 1.8rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 10px 25px -8px rgba(0, 0, 0, 0.08), 0 2px 4px rgba(0, 0, 0, 0.02);
+      border: 1px solid rgba(255,255,255,0.6);
+      transition: all 0.2s ease;
+    }
+
+    .filter-row {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .search-wrapper {
+      flex: 2;
+      min-width: 220px;
+      position: relative;
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #6b8cae;
+      font-size: 1.1rem;
+      pointer-events: none;
+    }
+
+    #searchInput {
+      width: 100%;
+      padding: 0.9rem 1rem 0.9rem 2.6rem;
+      border: 1px solid #cfdfed;
+      border-radius: 3rem;
+      font-size: 0.95rem;
+      background: white;
+      transition: all 0.2s;
+      font-family: inherit;
+      outline: none;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+    }
+
+    #searchInput:focus {
+      border-color: #1976D2;
+      box-shadow: 0 0 0 3px rgba(25,118,210,0.2);
+    }
+
+    .clear-search {
+      position: absolute;
+      right: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      font-size: 1.2rem;
+      cursor: pointer;
+      color: #8aa0b5;
+      transition: color 0.2s;
+      padding: 0 4px;
+    }
+    .clear-search:hover {
+      color: #1f3b4c;
+    }
+
+    .action-buttons {
+      display: flex;
+      gap: 0.8rem;
+      align-items: center;
+    }
+
+    .refresh-btn {
+      background: #1976D2;
+      border: none;
+      padding: 0.7rem 1.4rem;
+      border-radius: 3rem;
+      font-weight: 600;
+      font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: white;
+      cursor: pointer;
+      transition: 0.2s;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+      font-family: inherit;
+    }
+
+    .refresh-btn:hover {
+      background: #0f5aae;
+      transform: scale(0.97);
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    .refresh-btn:active {
+      transform: scale(0.96);
+    }
+
+    /* class chips modern */
+    .class-filter {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.65rem;
+      margin-top: 0.5rem;
+      align-items: center;
+    }
+
+    .filter-label {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #2c5a7a;
+      background: #eef2fa;
+      padding: 0.3rem 1rem;
+      border-radius: 2rem;
+    }
+
+    .class-chip {
+      background: #f0f4fa;
+      padding: 0.45rem 1.2rem;
+      border-radius: 3rem;
+      font-size: 0.85rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+      color: #2c3e50;
+      border: 1px solid transparent;
+      backdrop-filter: blur(2px);
+    }
+
+    .class-chip.active {
+      background: linear-gradient(105deg, #1976D2, #2196F3);
+      color: white;
+      box-shadow: 0 8px 16px -8px rgba(25,118,210,0.4);
+      border-color: rgba(255,255,255,0.3);
+    }
+
+    .class-chip:hover:not(.active) {
+      background: #e2e9f3;
+      transform: translateY(-1px);
+    }
+
+    /* stats modern */
+    .stats-modern {
+      background: white;
+      border-radius: 1.8rem;
+      padding: 1rem 1.8rem;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+      box-shadow: 0 6px 14px rgba(0, 0, 0, 0.03);
+      border: 1px solid #eef2f8;
+    }
+
+    .stats-left {
+      display: flex;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+      align-items: baseline;
+    }
+
+    .total-badge {
+      background: #eef2ff;
+      padding: 0.4rem 1.2rem;
+      border-radius: 3rem;
+      font-weight: 600;
+      color: #1e466e;
+    }
+
+    .class-badge {
+      background: #e9f0f5;
+      padding: 0.4rem 1.2rem;
+      border-radius: 3rem;
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: #2b6a9e;
+    }
+
+    /* class sections - enhanced */
+    .class-section {
+      margin-bottom: 2rem;
+      background: white;
+      border-radius: 2rem;
+      overflow: hidden;
+      box-shadow: 0 12px 28px -12px rgba(0, 0, 0, 0.1);
+      transition: transform 0.2s, box-shadow 0.2s;
+      border: 1px solid rgba(255,255,255,0.4);
+    }
+
+    .class-section:hover {
+      box-shadow: 0 20px 30px -14px rgba(0, 0, 0, 0.15);
+    }
+
+    .class-header {
+      background: linear-gradient(98deg, #1f5680, #1976D2);
+      padding: 1rem 1.8rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: white;
+      font-weight: 700;
+      font-size: 1.3rem;
+      letter-spacing: -0.2px;
+    }
+
+    .class-header span:first-child {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .student-count {
+      background: rgba(255,255,255,0.2);
+      padding: 0.25rem 0.9rem;
+      border-radius: 40px;
+      font-size: 0.85rem;
+      font-weight: 500;
+    }
+
+    /* table responsive */
+    .table-wrapper {
+      overflow-x: auto;
+      scroll-behavior: smooth;
+    }
+
+    .student-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.95rem;
+    }
+
+    .student-table th {
+      text-align: left;
+      padding: 1rem 1.2rem;
+      background: #fafcff;
+      font-weight: 600;
+      color: #2c5a7a;
+      border-bottom: 1px solid #e2edf7;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+
+    .student-table td {
+      padding: 1rem 1.2rem;
+      border-bottom: 1px solid #ecf3f9;
+      color: #1f384f;
+      transition: background 0.15s;
+    }
+
+    .student-table tr:hover td {
+      background: #f6faff;
+    }
+
+    .mobile-col {
+      font-family: 'SF Mono', monospace;
+      font-size: 0.85rem;
+      letter-spacing: 0.2px;
+    }
+
+    .no-data {
+      text-align: center;
+      padding: 3rem;
+      background: white;
+      border-radius: 2rem;
+      color: #6b8db0;
+      font-weight: 500;
+    }
+
+    .loading-skeleton {
+      text-align: center;
+      padding: 3rem;
+      background: rgba(255,255,255,0.7);
+      border-radius: 2rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 14px;
+      color: #1976D2;
+    }
+
+    .spinner {
+      width: 28px;
+      height: 28px;
+      border: 3px solid #e0e7ff;
+      border-top: 3px solid #1976D2;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .error {
+      background: #fff0f0;
+      border-left: 5px solid #d32f2f;
+      padding: 1.2rem;
+      border-radius: 1.5rem;
+      color: #b91c1c;
+      text-align: center;
+    }
+
+    /* responsive touches */
+    @media (max-width: 720px) {
+      body {
+        padding: 1rem;
+      }
+      .control-panel {
+        padding: 1rem;
+      }
+      .class-header {
+        padding: 0.8rem 1.2rem;
+        font-size: 1.1rem;
+      }
+      .student-table th,
+      .student-table td {
+        padding: 0.8rem 0.9rem;
+        font-size: 0.8rem;
+      }
+      .hero h1 {
+        font-size: 1.8rem;
+      }
+      .filter-row {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .action-buttons {
+        justify-content: flex-end;
+      }
+      .stats-left {
+        gap: 0.8rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .class-chip {
+        padding: 0.35rem 1rem;
+        font-size: 0.75rem;
+      }
+      .refresh-btn {
+        padding: 0.5rem 1rem;
+        font-size: 0.8rem;
+      }
+    }
+
+    /* custom scroll */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #eef2f7;
+      border-radius: 10px;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #bdd4e8;
+      border-radius: 10px;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="hero">
+    <h1>
+      <span>📖</span> শিক্ষার্থী ডিরেক্টরি
+    </h1>
+    <div class="subtitle">শ্রেণি ভিত্তিক তালিকা · দ্রুত অনুসন্ধান</div>
+  </div>
+
+  <div class="control-panel">
+    <div class="filter-row">
+      <div class="search-wrapper">
+        <span class="search-icon">🔍</span>
+        <input type="text" id="searchInput" placeholder="নাম, আইডি বা মোবাইল নম্বর দ্বারা খুঁজুন...">
+        <button class="clear-search" id="clearSearchBtn" aria-label="clear search">✕</button>
+      </div>
+      <div class="action-buttons">
+        <button class="refresh-btn" id="refreshDataBtn">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 4v6h-6M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+          রিফ্রেশ
+        </button>
+      </div>
+    </div>
+    <div class="class-filter" id="classFilter">
+      <span class="filter-label">📂 শ্রেণি ফিল্টার :</span>
+      <span class="class-chip active" data-class="all">সব শ্রেণি</span>
+      <span class="class-chip" data-class="Play">Play</span>
+      <span class="class-chip" data-class="Nursery">Nursery</span>
+      <span class="class-chip" data-class="KG">KG</span>
+      <span class="class-chip" data-class="1">১ম</span>
+      <span class="class-chip" data-class="2">২য়</span>
+      <span class="class-chip" data-class="3">৩য়</span>
+      <span class="class-chip" data-class="4">৪র্থ</span>
+      <span class="class-chip" data-class="5">৫ম</span>
+    </div>
+  </div>
+
+  <div class="stats-modern" id="statsPanel">
+    <div class="stats-left">
+      <div class="total-badge">👥 মোট শিক্ষার্থী: <strong id="totalCount">0</strong></div>
+      <div class="class-badge" id="classCountBadge">🎯 সব শ্রেণি</div>
+    </div>
+    <div id="liveRefreshStatus" style="font-size:0.75rem; color:#6f8fae;">✓ হালনাগাদকৃত</div>
+  </div>
+
+  <div id="studentsContainer">
+    <div class="loading-skeleton">
+      <div class="spinner"></div>
+      <span>তথ্য আনা হচ্ছে...</span>
+    </div>
+  </div>
+</div>
+
+<script>
+  // === CONFIGURATION ===
+  const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxNRK_9rL6pFDKcbeVaZtuMEe0uHX7u0mOW8RlkOsT0Ex5knIMBL36f9_dl5re5a61T/exec';
+  const classOrder = ['Play', 'Nursery', 'KG', '1', '2', '3', '4', '5'];
+  
+  // Global state
+  let allStudents = [];       // raw from API
+  let filteredStudents = [];  // after class + search filter
+  let isLoading = false;
+
+  // DOM elements
+  const searchInput = document.getElementById('searchInput');
+  const clearSearchBtn = document.getElementById('clearSearchBtn');
+  const refreshBtn = document.getElementById('refreshDataBtn');
+  const studentsContainer = document.getElementById('studentsContainer');
+  const totalCountSpan = document.getElementById('totalCount');
+  const classCountBadgeSpan = document.getElementById('classCountBadge');
+  const liveRefreshStatus = document.getElementById('liveRefreshStatus');
+
+  // Helper: escape HTML
+  function escapeHtml(str) {
+    if (!str) return '';
+    return str.replace(/[&<>]/g, function(m) {
+      if (m === '&') return '&amp;';
+      if (m === '<') return '&lt;';
+      if (m === '>') return '&gt;';
+      return m;
+    }).replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g, function(c) {
+      return c;
+    });
+  }
+
+  // Show loading state inside container
+  function showLoading(loading = true) {
+    if (loading) {
+      studentsContainer.innerHTML = `<div class="loading-skeleton"><div class="spinner"></div><span>ডাটা লোড হচ্ছে...</span></div>`;
+    }
+  }
+
+  // fetch fresh data from Apps Script
+  async function fetchStudentData(showStatusMessage = true) {
+    if (isLoading) return;
+    isLoading = true;
+    if (showStatusMessage) {
+      liveRefreshStatus.innerHTML = '⏳ রিফ্রেশ হচ্ছে...';
+      liveRefreshStatus.style.color = '#f57c00';
+    }
+    showLoading(true);
+    try {
+      const response = await fetch(SCRIPT_URL, { cache: 'no-store' });
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      const data = await response.json();
+      if (data.error) throw new Error(data.error);
+      parseStudentData(data);
+      if (showStatusMessage) {
+        liveRefreshStatus.innerHTML = '✅ ডাটা আপডেট হয়েছে';
+        liveRefreshStatus.style.color = '#2e7d32';
+        setTimeout(() => {
+          if (liveRefreshStatus) liveRefreshStatus.style.color = '#6f8fae';
+        }, 2000);
+      }
+    } catch (err) {
+      console.error(err);
+      studentsContainer.innerHTML = `<div class="error">❌ ডাটা লোড করতে ব্যর্থ হয়েছে। ইন্টারনেট সংযোগ বা স্ক্রিপ্ট URL চেক করুন। <br> <small>${err.message}</small></div>`;
+      totalCountSpan.innerText = '0';
+      if (showStatusMessage) {
+        liveRefreshStatus.innerHTML = '⚠️ লোড ব্যর্থ';
+        liveRefreshStatus.style.color = '#d32f2f';
+      }
+    } finally {
+      isLoading = false;
+    }
+  }
+
+  function parseStudentData(rows) {
+    if (!rows || rows.length < 2) {
+      allStudents = [];
+      applyFiltersAndRender();
+      return;
+    }
+    const headers = rows[0];
+    const classIdx = headers.indexOf('Class');
+    const nameIdx = headers.indexOf('Name');
+    const idIdx = headers.indexOf('ID');
+    const mobileIdx = headers.indexOf('Mobile');
+    
+    if (classIdx === -1 || nameIdx === -1 || idIdx === -1 || mobileIdx === -1) {
+      console.error('Missing columns', headers);
+      studentsContainer.innerHTML = `<div class="error">❌ প্রয়োজনীয় কলাম (Class, Name, ID, Mobile) পাওয়া যায়নি। শীট চেক করুন।</div>`;
+      allStudents = [];
+      applyFiltersAndRender();
+      return;
+    }
+    
+    const students = [];
+    for (let i = 1; i < rows.length; i++) {
+      const row = rows[i];
+      let cls = row[classIdx] ? row[classIdx].toString().trim() : '';
+      if (cls === '') continue;
+      // Normalize numeric classes to string representation (keep original)
+      const nameVal = row[nameIdx] ? row[nameIdx].toString().trim() : 'নাম নেই';
+      const idVal = row[idIdx] ? row[idIdx].toString().trim() : '';
+      const mobileVal = row[mobileIdx] ? row[mobileIdx].toString().trim() : '';
+      students.push({
+        class: cls,
+        name: nameVal,
+        id: idVal,
+        mobile: mobileVal
+      });
+    }
+    allStudents = students;
+    applyFiltersAndRender();
+  }
+
+  // get active class filter value
+  function getActiveClassFilter() {
+    const activeChip = document.querySelector('.class-chip.active');
+    return activeChip ? activeChip.getAttribute('data-class') : 'all';
+  }
+
+  // get search term
+  function getSearchTerm() {
+    return searchInput.value.toLowerCase().trim();
+  }
+
+  // filter based on current UI state
+  function computeFilteredStudents() {
+    const activeClass = getActiveClassFilter();
+    const searchTerm = getSearchTerm();
+    return allStudents.filter(student => {
+      if (activeClass !== 'all' && student.class !== activeClass) return false;
+      if (searchTerm !== '') {
+        return student.name.toLowerCase().includes(searchTerm) ||
+               student.id.toLowerCase().includes(searchTerm) ||
+               student.mobile.includes(searchTerm);
+      }
+      return true;
+    });
+  }
+
+  // render grouped by class with beautiful tables
+  function renderGroupedStudents(studentsArray) {
+    if (!studentsArray.length) {
+      studentsContainer.innerHTML = '<div class="no-data">📭 কোন শিক্ষার্থী পাওয়া যায়নি। ফিল্টার পরিবর্তন করুন বা রিফ্রেশ চাপুন।</div>';
+      totalCountSpan.innerText = '0';
+      const activeClassLabel = getActiveClassFilter();
+      classCountBadgeSpan.innerText = activeClassLabel === 'all' ? 'সব শ্রেণি' : `শ্রেণি: ${activeClassLabel}`;
+      return;
+    }
+    
+    // Group by class
+    const grouped = {};
+    for (let student of studentsArray) {
+      const cls = student.class;
+      if (!grouped[cls]) grouped[cls] = [];
+      grouped[cls].push(student);
+    }
+    
+    let html = '';
+    // render in predefined order
+    for (let cls of classOrder) {
+      if (grouped[cls] && grouped[cls].length) {
+        html += buildClassSection(cls, grouped[cls]);
+        delete grouped[cls];
+      }
+    }
+    // remaining classes (if any extra not in standard order)
+    for (let cls in grouped) {
+      if (grouped[cls].length) {
+        html += buildClassSection(cls, grouped[cls]);
+      }
+    }
+    
+    studentsContainer.innerHTML = html;
+    totalCountSpan.innerText = studentsArray.length;
+    const activeClassLabel = getActiveClassFilter();
+    if (activeClassLabel === 'all') {
+      classCountBadgeSpan.innerText = `📚 সব শ্রেণি (${studentsArray.length} জন)`;
+    } else {
+      classCountBadgeSpan.innerText = `📌 শ্রেণি: ${activeClassLabel} (${studentsArray.length} জন)`;
+    }
+  }
+  
+  function buildClassSection(className, studentsList) {
+    let rowsHtml = '';
+    for (let s of studentsList) {
+      rowsHtml += `
+        <tr>
+          <td style="font-weight:500;">${escapeHtml(s.name)}</td>
+          <td><code style="background:#f0f4f9; padding:2px 8px; border-radius:20px; font-size:0.8rem;">${escapeHtml(s.id)}</code></td>
+          <td class="mobile-col">📞 ${escapeHtml(s.mobile) || '—'}</td>
+        </tr>
+      `;
+    }
+    return `
+      <div class="class-section">
+        <div class="class-header">
+          <span>📖 ${escapeHtml(className)}</span>
+          <span class="student-count">${studentsList.length} জন</span>
+        </div>
+        <div class="table-wrapper">
+          <table class="student-table">
+            <thead>
+              <tr><th>পূর্ণ নাম</th><th>আইডি / রোল</th><th>মোবাইল নম্বর</th></tr>
+            </thead>
+            <tbody>
+              ${rowsHtml}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    `;
+  }
+  
+  // main filter + render pipeline
+  function applyFiltersAndRender() {
+    filteredStudents = computeFilteredStudents();
+    renderGroupedStudents(filteredStudents);
+  }
+  
+  // Refresh data and preserve current filter/search (re-fetch and re-filter)
+  async function refreshDataAndKeepState() {
+    if (isLoading) return;
+    // store current filter context to reapply after fetch
+    const currentClassChip = document.querySelector('.class-chip.active');
+    const currentClassVal = currentClassChip ? currentClassChip.getAttribute('data-class') : 'all';
+    const currentSearch = searchInput.value;
+    
+    await fetchStudentData(true);
+    // after fresh allStudents, reapply class & search UI state
+    // ensure active chip matches stored class (UI might be unchanged)
+    if (currentClassVal !== 'all') {
+      const targetChip = document.querySelector(`.class-chip[data-class="${currentClassVal}"]`);
+      if (targetChip && !targetChip.classList.contains('active')) {
+        document.querySelectorAll('.class-chip').forEach(c => c.classList.remove('active'));
+        targetChip.classList.add('active');
+      }
+    } else {
+      if (!document.querySelector('.class-chip[data-class="all"].active')) {
+        document.querySelectorAll('.class-chip').forEach(c => c.classList.remove('active'));
+        document.querySelector('.class-chip[data-class="all"]').classList.add('active');
+      }
+    }
+    // restore search input text
+    searchInput.value = currentSearch;
+    // re-run filters
+    applyFiltersAndRender();
+  }
+  
+  // reset search field and re-filter
+  function clearSearch() {
+    searchInput.value = '';
+    applyFiltersAndRender();
+    searchInput.focus();
+  }
+  
+  // event binding
+  function bindEvents() {
+    // search input
+    searchInput.addEventListener('input', () => {
+      applyFiltersAndRender();
+    });
+    clearSearchBtn.addEventListener('click', clearSearch);
+    refreshBtn.addEventListener('click', () => {
+      refreshDataAndKeepState();
+    });
+    // class chips
+    document.querySelectorAll('.class-chip').forEach(chip => {
+      chip.addEventListener('click', function(e) {
+        if (this.classList.contains('active')) return;
+        document.querySelectorAll('.class-chip').forEach(c => c.classList.remove('active'));
+        this.classList.add('active');
+        applyFiltersAndRender();
+      });
+    });
+  }
+  
+  // initial load
+  async function init() {
+    bindEvents();
+    await fetchStudentData(true);
+  }
+  
+  init();
+</script>
+</body>
+</html>
