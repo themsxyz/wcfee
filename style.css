@@ -345,6 +345,7 @@
       background: var(--input-bg-light);
       border: 1.5px solid var(--input-border-light);
       height: 54px;
+      width: 100%;
     }
     /* ===== PROFESSIONAL FEE FORM LAYOUT ===== */
     .fee-form-grid {
