@@ -1,91 +1,417 @@
 <!DOCTYPE html>
-<html>
+<html lang="bn">
 <head>
-    <title>Student Fee Dashboard</title>
-    <style>
-        body { font-family: Arial, sans-serif; margin: 20px; background: #f5f5f5; }
-        .stats-container { display: flex; gap: 20px; flex-wrap: wrap; margin-bottom: 30px; }
-        .card { background: white; border-radius: 8px; padding: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); flex: 1 1 200px; }
-        .card h3 { margin: 0 0 10px; color: #333; }
-        .card .number { font-size: 2em; font-weight: bold; color: #2c3e50; }
-        .class-stats { background: white; border-radius: 8px; padding: 20px; margin-bottom: 30px; }
-        table { width: 100%; border-collapse: collapse; background: white; }
-        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
-        th { background: #2c3e50; color: white; }
-        tr:nth-child(even) { background: #f9f9f9; }
-        .pending { color: #e74c3c; font-weight: bold; }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>ফি ব্যবস্থাপনা ড্যাশবোর্ড</title>
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', 'Roboto', 'Noto Sans Bengali', system-ui, sans-serif;
+      background: #f4f7fc;
+      padding: 2rem 1rem;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      font-size: 1.8rem;
+      color: #1e466e;
+      margin-bottom: 0.5rem;
+    }
+
+    .subtitle {
+      color: #5a6e8a;
+      margin-bottom: 2rem;
+      border-left: 4px solid #1976D2;
+      padding-left: 1rem;
+    }
+
+    /* cards row */
+    .stats-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .card {
+      background: white;
+      border-radius: 24px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+      padding: 1.5rem;
+      flex: 1;
+      min-width: 180px;
+      transition: transform 0.2s;
+    }
+
+    .card:hover {
+      transform: translateY(-3px);
+    }
+
+    .card-title {
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #5f7f9e;
+      margin-bottom: 0.5rem;
+    }
+
+    .card-value {
+      font-size: 2.2rem;
+      font-weight: 700;
+      color: #1e466e;
+    }
+
+    /* control bar */
+    .control-bar {
+      background: white;
+      border-radius: 24px;
+      padding: 1.2rem 1.5rem;
+      margin-bottom: 2rem;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: flex-end;
+      gap: 1.5rem;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+
+    .input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+
+    .input-group label {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #2c5a7a;
+    }
+
+    .input-group input {
+      padding: 0.6rem 1rem;
+      border: 1px solid #cbd5e1;
+      border-radius: 40px;
+      font-size: 1rem;
+      width: 200px;
+    }
+
+    button {
+      background: #1976D2;
+      color: white;
+      border: none;
+      padding: 0.6rem 1.5rem;
+      border-radius: 40px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    button:hover {
+      background: #0b5ba6;
+    }
+
+    /* classwise section */
+    .section {
+      background: white;
+      border-radius: 28px;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    }
+
+    .section h2 {
+      font-size: 1.4rem;
+      color: #1e466e;
+      margin-bottom: 1.2rem;
+      border-left: 4px solid #1976D2;
+      padding-left: 1rem;
+    }
+
+    .classwise-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+    }
+
+    @media (max-width: 800px) {
+      .classwise-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.9rem;
+    }
+
+    th, td {
+      text-align: left;
+      padding: 0.75rem 0.5rem;
+      border-bottom: 1px solid #e2e8f0;
+    }
+
+    th {
+      background: #f1f5f9;
+      font-weight: 600;
+      color: #1e466e;
+    }
+
+    .pending-table {
+      overflow-x: auto;
+    }
+
+    .pending-table table {
+      min-width: 500px;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 2rem;
+      color: #5a6e8a;
+    }
+
+    .error {
+      color: #d32f2f;
+      background: #ffebee;
+      padding: 1rem;
+      border-radius: 16px;
+      margin-bottom: 1rem;
+    }
+  </style>
 </head>
 <body>
-    <h1>Fee Dashboard</h1>
-    <div class="stats-container" id="globalStats"></div>
-    <div class="class-stats" id="classStats"></div>
-    <h2>All Students</h2>
-    <table id="studentTable">
+<div class="container">
+  <h1>📊 ফি ব্যবস্থাপনা ড্যাশবোর্ড</h1>
+  <div class="subtitle">ফি সিস্টেমের রিয়েল-টাইম বিশ্লেষণ</div>
+
+  <div class="control-bar">
+    <div class="input-group">
+      <label>🎯 বার্ষিক ফি (প্রতি শিক্ষার্থী) (টাকা)</label>
+      <input type="number" id="perStudentFee" placeholder="যেমন 12000" value="12000">
+    </div>
+    <button id="refreshBtn">⟳ ড্যাশবোর্ড রিফ্রেশ</button>
+  </div>
+
+  <!-- KPI cards -->
+  <div class="stats-row" id="kpiRow">
+    <div class="card"><div class="card-title">মোট শিক্ষার্থী</div><div class="card-value" id="totalStudents">—</div></div>
+    <div class="card"><div class="card-title">মোট আয় (টাকা)</div><div class="card-value" id="totalEarnings">—</div></div>
+    <div class="card"><div class="card-title">মোট বাকি (টাকা)</div><div class="card-value" id="totalPendings">—</div></div>
+  </div>
+
+  <!-- Classwise stats + pie chart -->
+  <div class="section">
+    <h2>📚 শ্রেণি-ভিত্তিক পরিসংখ্যান</h2>
+    <div class="classwise-grid">
+      <div class="classwise-table" id="classTable">
+        <table>
+          <thead>
+            <tr><th>শ্রেণি</th><th>শিক্ষার্থী</th><th>আয় (টাকা)</th><th>বাকি (টাকা)</th></tr>
+          </thead>
+          <tbody id="classTableBody">
+            <tr><td colspan="4" class="loading">তথ্য লোড হচ্ছে...</td></tr>
+          </tbody>
+         </table>
+      </div>
+      <div class="classwise-chart">
+        <canvas id="pendingChart" width="400" height="300" style="max-width:100%; height:auto;"></canvas>
+        <p style="font-size:0.8rem; text-align:center; margin-top:0.5rem;">শ্রেণি অনুযায়ী বকেয়া ফি</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pending students list -->
+  <div class="section">
+    <h2>⚠️ বকেয়া ফি সহ শিক্ষার্থীরা</h2>
+    <div class="pending-table" id="pendingList">
+      <table>
         <thead>
-            <tr>
-                <th>Name</th>
-                <th>ID</th>
-                <th>Class</th>
-                <th>Mobile</th>
-                <th>Total Fee</th>
-                <th>Missing Months</th>
-                <th>Status</th>
-            </tr>
+          <tr><th>শ্রেণি</th><th>আইডি</th><th>নাম</th><th>মোবাইল</th><th>বাকি (টাকা)</th></tr>
         </thead>
-        <tbody></tbody>
-    </table>
+        <tbody id="pendingTableBody">
+          <tr><td colspan="5" class="loading">তথ্য লোড হচ্ছে...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
 
-    <script>
-        const scriptUrl = 'https://script.google.com/macros/s/AKfycbyyc_YzHp9dAOnnuZjKFsth9OPGa8dfgf3UrJ6inpkeetLbdc0360-xPYlxq42rI1KT/exec'; // Replace with your deployed URL
+  <div class="section">
+    <h2>📈 লক্ষ্য ও অগ্রগতি</h2>
+    <div id="targetInfo">বার্ষিক ফি দিন এবং রিফ্রেশ করুন।</div>
+  </div>
+</div>
 
-        async function loadDashboard() {
-            try {
-                const response = await fetch(scriptUrl + '?action=getDashboardData');
-                const data = await response.json();
+<script>
+  // Apps Script URL
+  const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxMwcjeNjNsi5ttOkjZ7TXxYwSZJNam12E5RLToiqRJCb25k_KY9WEV-moPACwYiDY6/exec';
 
-                if (data.error) {
-                    document.body.innerHTML = `<p style="color:red">Error: ${data.error}</p>`;
-                    return;
-                }
+  let chartInstance = null;
 
-                // Global stats
-                const globalHtml = `
-                    <div class="card"><h3>Total Students</h3><div class="number">${data.totalStudents}</div></div>
-                    <div class="card"><h3>Total Earnings</h3><div class="number">₹${data.totalEarnings}</div></div>
-                    <div class="card"><h3>Students with Pending</h3><div class="number">${data.totalPendingCount}</div></div>
-                `;
-                document.getElementById('globalStats').innerHTML = globalHtml;
+  async function fetchDashboardData(perStudentFee) {
+    const url = `${SCRIPT_URL}?action=getDashboardData&perStudentFee=${encodeURIComponent(perStudentFee)}`;
+    try {
+      const response = await fetch(url);
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      const data = await response.json();
+      if (data.error) throw new Error(data.error);
+      return data;
+    } catch (err) {
+      console.error(err);
+      throw err;
+    }
+  }
 
-                // Class stats
-                let classHtml = '<h3>Class-wise Statistics</h3><table><tr><th>Class</th><th>Students</th><th>Earnings</th><th>Pending Count</th></tr>';
-                for (let cls in data.classStats) {
-                    classHtml += `<tr><td>${cls}</td><td>${data.classStats[cls].totalStudents}</td><td>₹${data.classStats[cls].totalEarnings}</td><td>${data.classStats[cls].totalPending}</td></tr>`;
-                }
-                classHtml += '</table>';
-                document.getElementById('classStats').innerHTML = classHtml;
+  function formatTk(num) {
+    if (num === null || num === undefined) return '—';
+    return new Intl.NumberFormat('bn-IN').format(Math.round(num)) + ' টাকা';
+  }
 
-                // Student table
-                let rows = '';
-                data.students.forEach(s => {
-                    rows += `<tr>
-                        <td>${s.name}</td>
-                        <td>${s.id}</td>
-                        <td>${s.class}</td>
-                        <td>${s.mobile}</td>
-                        <td>₹${s.totalFee}</td>
-                        <td>${s.missingCount}</td>
-                        <td class="${s.hasPending ? 'pending' : ''}">${s.hasPending ? 'Pending' : 'Paid'}</td>
-                    </tr>`;
-                });
-                document.querySelector('#studentTable tbody').innerHTML = rows;
-            } catch (err) {
-                console.error(err);
-                document.body.innerHTML = '<p style="color:red">Failed to load data.</p>';
-            }
+  function renderDashboard(data, perStudentFee) {
+    // KPI cards
+    document.getElementById('totalStudents').innerText = data.totalStudents || 0;
+    document.getElementById('totalEarnings').innerText = formatTk(data.totalEarnings);
+    if (data.totalPendings !== null && data.totalPendings !== undefined) {
+      document.getElementById('totalPendings').innerText = formatTk(data.totalPendings);
+    } else {
+      document.getElementById('totalPendings').innerText = '— (ফি নির্ধারণ করুন)';
+    }
+
+    // Classwise table
+    const classStats = data.classStats || {};
+    const sortedClasses = Object.keys(classStats).sort((a,b) => {
+      const order = ['Play', 'Nursery', 'KG', '1', '2', '3', '4', '5'];
+      return order.indexOf(a) - order.indexOf(b);
+    });
+    const tbody = document.getElementById('classTableBody');
+    tbody.innerHTML = '';
+    for (let cls of sortedClasses) {
+      const stat = classStats[cls];
+      const row = tbody.insertRow();
+      row.insertCell(0).innerText = cls;
+      row.insertCell(1).innerText = stat.count;
+      row.insertCell(2).innerText = formatTk(stat.earnings);
+      row.insertCell(3).innerText = (stat.pending !== undefined && stat.pending !== null) ? formatTk(stat.pending) : '—';
+    }
+    if (sortedClasses.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="4">কোন শ্রেণির তথ্য পাওয়া যায়নি</td></tr>';
+    }
+
+    // Pie chart: pending per class
+    const pendingValues = sortedClasses.map(cls => classStats[cls].pending || 0);
+    const hasNonZero = pendingValues.some(v => v > 0);
+    const chartCtx = document.getElementById('pendingChart').getContext('2d');
+    if (chartInstance) chartInstance.destroy();
+    if (hasNonZero && sortedClasses.length) {
+      chartInstance = new Chart(chartCtx, {
+        type: 'pie',
+        data: {
+          labels: sortedClasses,
+          datasets: [{
+            data: pendingValues,
+            backgroundColor: ['#42a5f5', '#66bb6a', '#ffa726', '#ef5350', '#ab47bc', '#7e57ff', '#26c6da', '#ff7043'],
+            borderWidth: 0
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: true,
+          plugins: {
+            tooltip: { callbacks: { label: (ctx) => `${ctx.label}: ${ctx.raw.toLocaleString('bn-IN')} টাকা` } },
+            legend: { position: 'bottom' }
+          }
         }
+      });
+      chartCtx.canvas.style.display = 'block';
+    } else {
+      chartCtx.canvas.style.display = 'none';
+      // Show a message if no pending data
+      const parent = chartCtx.canvas.parentElement;
+      let msgDiv = parent.querySelector('.no-pending-msg');
+      if (!msgDiv) {
+        msgDiv = document.createElement('div');
+        msgDiv.className = 'loading no-pending-msg';
+        msgDiv.innerText = 'বকেয়া ফি নেই (সকল শিক্ষার্থী ফি পরিশোধ করেছে)';
+        parent.appendChild(msgDiv);
+      }
+    }
 
-        loadDashboard();
-    </script>
+    // Pending students list
+    const pendingStudents = data.pendingStudents || [];
+    const pendingTbody = document.getElementById('pendingTableBody');
+    pendingTbody.innerHTML = '';
+    if (pendingStudents.length === 0) {
+      pendingTbody.innerHTML = '<tr><td colspan="5">🎉 সব শিক্ষার্থী ফি পরিশোধ করেছে!</td></tr>';
+    } else {
+      for (let student of pendingStudents) {
+        const row = pendingTbody.insertRow();
+        row.insertCell(0).innerText = student.class;
+        row.insertCell(1).innerText = student.id;
+        row.insertCell(2).innerText = student.name;
+        row.insertCell(3).innerText = student.mobile;
+        row.insertCell(4).innerText = formatTk(student.pending);
+      }
+    }
+
+    // Target info
+    const targetInfo = document.getElementById('targetInfo');
+    if (data.target !== null && data.target !== undefined) {
+      const progress = (data.totalEarnings / data.target * 100).toFixed(1);
+      targetInfo.innerHTML = `
+        <div style="background:#eef2ff; border-radius:20px; padding:1rem;">
+          <strong>🎯 লক্ষ্যমাত্রা:</strong> ${formatTk(data.target)}<br>
+          <strong>📈 অগ্রগতি:</strong> ${formatTk(data.totalEarnings)} সংগৃহীত (${progress}%)<br>
+          <strong>⚠️ বাকি:</strong> ${formatTk(data.totalPendings)}
+        </div>
+      `;
+    } else {
+      targetInfo.innerHTML = `<div class="loading">বার্ষিক ফি দিন এবং রিফ্রেশ করুন।</div>`;
+    }
+  }
+
+  async function refresh() {
+    const perStudentFee = parseFloat(document.getElementById('perStudentFee').value);
+    if (isNaN(perStudentFee) || perStudentFee <= 0) {
+      alert('দয়া করে একটি বৈধ ধনাত্মক বার্ষিক ফি লিখুন।');
+      return;
+    }
+
+    // Show loading indicators
+    document.getElementById('totalStudents').innerText = '...';
+    document.getElementById('totalEarnings').innerText = '...';
+    document.getElementById('totalPendings').innerText = '...';
+    document.getElementById('classTableBody').innerHTML = '<tr><td colspan="4" class="loading">লোড হচ্ছে...</td></tr>';
+    document.getElementById('pendingTableBody').innerHTML = '<tr><td colspan="5" class="loading">লোড হচ্ছে...</td></tr>';
+    document.getElementById('targetInfo').innerHTML = '<div class="loading">লক্ষ্য লোড হচ্ছে...</div>';
+
+    try {
+      const dashboardData = await fetchDashboardData(perStudentFee);
+      renderDashboard(dashboardData, perStudentFee);
+    } catch (err) {
+      alert('ড্যাশবোর্ড ডাটা লোড করতে ব্যর্থ হয়েছে। কনসোল দেখুন।');
+      console.error(err);
+      document.getElementById('totalStudents').innerText = 'ত্রুটি';
+      document.getElementById('totalEarnings').innerText = 'ত্রুটি';
+      document.getElementById('totalPendings').innerText = 'ত্রুটি';
+      document.getElementById('classTableBody').innerHTML = '<tr><td colspan="4" class="error">তথ্য আনতে ব্যর্থ হয়েছে</td></tr>';
+      document.getElementById('pendingTableBody').innerHTML = '<tr><td colspan="5" class="error">তথ্য আনতে ব্যর্থ হয়েছে</td></tr>';
+      document.getElementById('targetInfo').innerHTML = '<div class="error">তথ্য আনতে ব্যর্থ হয়েছে। অ্যাপস স্ক্রিপ্ট URL এবং অনুমতি পরীক্ষা করুন।</div>';
+    }
+  }
+
+  document.getElementById('refreshBtn').addEventListener('click', refresh);
+  refresh();
+</script>
 </body>
 </html>
