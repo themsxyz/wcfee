@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>ফি ম্যানেজমেন্ট</title>
+  <title>ফি ম্যানেজমেন্ট | প্রফেশনাল UI</title>
   <!-- Google Fonts: Poppins + Tiro Bangla -->
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Tiro+Bangla&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Tiro+Bangla&display=swap" rel="stylesheet">
   <!-- Font Awesome 6 (free) -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <!-- pdfmake -->
@@ -16,7 +16,7 @@
       margin: 0;
       padding: 0;
       box-sizing: border-box;
-      transition: background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, color 0.1s;
+      transition: all 0.2s cubic-bezier(0.2, 0.9, 0.4, 1.1);
     }
 
     /* ----- TYPOGRAPHY (Bengali + English) ----- */
@@ -24,40 +24,41 @@
       font-family: 'Poppins', 'Tiro Bangla', system-ui, -apple-system, sans-serif;
     }
 
-    /* ----- CSS VARIABLES (SOFT SHARP THEME) ----- */
+    /* ----- CSS VARIABLES (SOFT SHARP PREMIUM) ----- */
     :root {
-      --bg-light: #f1f5f9;
+      --bg-light: #f4f7fc;
       --card-light: #ffffff;
-      --text-primary-light: #0f172a;
-      --text-secondary-light: #334155;
-      --border-light: #e2e8f0;
+      --text-primary-light: #0a1c2f;
+      --text-secondary-light: #2c3e50;
+      --border-light: #e9edf2;
       --input-bg-light: #ffffff;
-      --input-border-light: #cbd5e1;
-      --accent: #1e3a5f;
-      --accent-soft: #2c4b78;
-      --accent-glow: rgba(30, 58, 95, 0.08);
-      --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.03), 0 1px 2px rgba(0, 0, 0, 0.05);
-      --shadow-md: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.02);
-      --radius-card: 28px;
-      --radius-input: 32px;
-      --radius-button: 40px;
-      --nav-blur: rgba(255, 255, 255, 0.75);
+      --input-border-light: #dce3ec;
+      --accent: #1e466e;
+      --accent-soft: #2c5a86;
+      --accent-glow: rgba(30, 70, 110, 0.08);
+      --shadow-sm: 0 8px 20px rgba(0, 0, 0, 0.02), 0 2px 6px rgba(0, 0, 0, 0.03);
+      --shadow-md: 0 20px 35px -12px rgba(0, 0, 0, 0.08), 0 1px 3px rgba(0, 0, 0, 0.02);
+      --radius-card: 32px;
+      --radius-input: 28px;
+      --radius-button: 44px;
+      --nav-blur: rgba(255, 255, 255, 0.8);
+      --icon-dim: 2.8rem;
     }
 
     body.dark {
-      --bg-light: #0b1120;
-      --card-light: #111827;
-      --text-primary-light: #eef2ff;
-      --text-secondary-light: #cbd5e6;
-      --border-light: #1f2a3e;
-      --input-bg-light: #1e293b;
-      --input-border-light: #334155;
-      --accent: #3b82f6;
-      --accent-soft: #2563eb;
-      --accent-glow: rgba(59, 130, 246, 0.15);
-      --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.4);
-      --shadow-md: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
-      --nav-blur: rgba(17, 24, 39, 0.85);
+      --bg-light: #0a0f1c;
+      --card-light: #121826;
+      --text-primary-light: #ecf3fa;
+      --text-secondary-light: #b9c7d9;
+      --border-light: #232b38;
+      --input-bg-light: #1e2535;
+      --input-border-light: #2f3a4a;
+      --accent: #3f7bc9;
+      --accent-soft: #5690dd;
+      --accent-glow: rgba(63, 123, 201, 0.18);
+      --shadow-sm: 0 8px 18px rgba(0, 0, 0, 0.3);
+      --shadow-md: 0 20px 30px -12px rgba(0, 0, 0, 0.5);
+      --nav-blur: rgba(18, 24, 38, 0.88);
     }
 
     body {
@@ -71,25 +72,24 @@
     }
 
     .container {
-      max-width: 1000px;
+      max-width: 1100px;
       width: 100%;
     }
 
     /* ----- NAVBAR (GLASS) ----- */
     .navbar {
       width: 100%;
-      max-width: 1000px;
-      margin-bottom: 1.8rem;
+      max-width: 1100px;
+      margin-bottom: 2rem;
       background: var(--nav-blur);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border-radius: 48px;
-      padding: 0.5rem 1.5rem;
+      backdrop-filter: blur(18px);
+      border-radius: 60px;
+      padding: 0.4rem 1.8rem;
       box-shadow: var(--shadow-sm);
-      border: 1px solid rgba(255, 255, 255, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.3);
     }
     body.dark .navbar {
-      border: 1px solid rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.06);
     }
     .nav-container {
       display: flex;
@@ -97,29 +97,27 @@
       justify-content: space-between;
     }
     .logo-area {
-      font-weight: 600;
-      font-size: 1.3rem;
-      letter-spacing: -0.02em;
+      font-weight: 700;
+      font-size: 1.4rem;
+      letter-spacing: -0.3px;
       color: var(--text-primary-light);
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 12px;
     }
     .logo-area span {
       background: var(--accent);
       color: white;
       font-size: 0.7rem;
-      padding: 2px 12px;
+      padding: 4px 14px;
       border-radius: 100px;
-      font-weight: 500;
+      font-weight: 600;
     }
-    /* dark mode toggle + hamburger container */
     .nav-actions {
       display: flex;
-      gap: 6px;
-      align-items: center;
+      gap: 8px;
     }
-    .dark-toggle {
+    .dark-toggle, .hamburger {
       background: transparent;
       border: none;
       width: 44px;
@@ -130,50 +128,27 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      transition: all 0.2s;
       color: var(--text-primary-light);
+      transition: 0.2s;
     }
-    .dark-toggle:hover {
+    .dark-toggle:hover, .hamburger:hover {
       background: var(--accent-glow);
-      transform: scale(0.96);
+      transform: scale(0.95);
     }
-    /* hamburger icon (font awesome animated) */
-    .hamburger {
-      background: transparent;
-      border: none;
-      width: 44px;
-      height: 44px;
-      border-radius: 50%;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.6rem;
-      color: var(--text-primary-light);
-      transition: all 0.2s;
-    }
-    .hamburger:hover {
-      background: var(--accent-glow);
-      transform: scale(0.96);
-    }
-    .hamburger i {
-      transition: transform 0.2s ease;
-    }
-    /* menu dropdown */
     .nav-menu {
       position: absolute;
-      top: calc(3.8rem + 0.5rem);
-      right: 1.5rem;
+      top: 4.2rem;
+      right: 2rem;
       background: var(--card-light);
       backdrop-filter: blur(20px);
       border-radius: 28px;
       box-shadow: var(--shadow-md);
-      padding: 0.75rem 0;
-      min-width: 210px;
+      padding: 0.6rem 0;
+      min-width: 220px;
       opacity: 0;
       transform: translateY(-12px);
       pointer-events: none;
-      transition: 0.2s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+      transition: 0.2s ease;
       z-index: 1000;
       border: 1px solid var(--border-light);
     }
@@ -185,13 +160,12 @@
     .nav-menu a {
       display: flex;
       align-items: center;
-      gap: 12px;
-      padding: 0.75rem 1.6rem;
+      gap: 14px;
+      padding: 0.7rem 1.8rem;
       color: var(--text-primary-light);
       text-decoration: none;
-      font-size: 1rem;
-      font-weight: 470;
-      transition: background 0.15s;
+      font-weight: 500;
+      font-size: 0.95rem;
     }
     .nav-menu a:hover {
       background: var(--accent-glow);
@@ -202,7 +176,7 @@
       margin: 0.5rem 1rem;
     }
 
-    /* ----- CARDS (SOFT SHARP) ----- */
+    /* ----- CARDS (ELEVATED) ----- */
     .card {
       background: var(--card-light);
       border-radius: var(--radius-card);
@@ -210,182 +184,302 @@
       margin-bottom: 2rem;
       box-shadow: var(--shadow-sm);
       border: 1px solid var(--border-light);
-      transition: transform 0.1s ease, box-shadow 0.2s;
+      transition: transform 0.2s, box-shadow 0.3s;
     }
     .card:hover {
       box-shadow: var(--shadow-md);
     }
     h2 {
-      font-weight: 620;
-      font-size: 2rem;
-      color: var(--text-primary-light);
-      letter-spacing: -0.01em;
-      margin-bottom: 0.25rem;
+      font-weight: 700;
+      font-size: 2.1rem;
+      background: linear-gradient(135deg, var(--text-primary-light) 0%, var(--accent) 100%);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+      letter-spacing: -0.5px;
     }
     .sub {
       color: var(--text-secondary-light);
       margin-bottom: 2rem;
-      border-left: 3px solid var(--accent);
-      padding-left: 1rem;
-      font-weight: 420;
-    }
-    .card h3 {
-      font-weight: 560;
-      font-size: 1.5rem;
-      color: var(--text-primary-light);
-      margin-bottom: 1.6rem;
-    }
-    label {
-      display: block;
-      font-size: 0.9rem;
-      font-weight: 510;
-      color: var(--text-secondary-light);
-      margin-bottom: 0.4rem;
-    }
-    /* SOFT SEARCH & INPUTS */
-    input, select {
-      width: 100%;
-      padding: 0.8rem 1.2rem;
-      border: 1px solid var(--input-border-light);
-      border-radius: var(--radius-input);
-      font-size: 0.95rem;
-      outline: none;
-      background: var(--input-bg-light);
-      color: var(--text-primary-light);
-      transition: 0.2s;
-    }
-    input:focus, select:focus {
-      border-color: var(--accent);
-      box-shadow: 0 0 0 3px var(--accent-glow);
-    }
-    button {
-      background: var(--accent);
-      border: none;
-      color: white;
-      font-weight: 520;
-      padding: 0.8rem 2rem;
-      border-radius: var(--radius-button);
-      font-size: 0.95rem;
-      cursor: pointer;
-      transition: all 0.2s;
-      box-shadow: 0 1px 1px rgba(0,0,0,0.05);
-    }
-    button:hover {
-      background: var(--accent-soft);
-      transform: scale(0.98);
-      box-shadow: 0 6px 14px rgba(0,0,0,0.08);
-    }
-    button:active {
-      transform: scale(0.96);
-    }
-    .search-row {
-      display: flex;
-      gap: 1rem;
-      align-items: flex-end;
-      flex-wrap: wrap;
-      margin-top: 0.5rem;
-    }
-    /* SEARCH WRAPPER with font awesome icon */
-    .search-wrapper {
-      flex: 2 1 280px;
-      position: relative;
-    }
-    .search-wrapper .search-icon {
-      position: absolute;
-      left: 18px;
-      top: 50%;
-      transform: translateY(-50%);
-      font-size: 1rem;
-      color: var(--text-secondary-light);
-      opacity: 0.7;
-      pointer-events: none;
-    }
-    .search-wrapper input {
-      padding-left: 44px;
-      background: var(--input-bg-light);
-      border-radius: 48px;
+      border-left: 4px solid var(--accent);
+      padding-left: 1.2rem;
       font-weight: 450;
     }
-    .search-row button {
-      margin-top: 0;
-      flex: 0 0 auto;
-      background: var(--accent);
-      border-radius: 48px;
-      padding: 0.8rem 1.8rem;
-    }
-    #feeInputs {
-      display: grid;
-      grid-template-columns: auto 1fr;
-      gap: 0.8rem 1.2rem;
+    .card h3 {
+      font-weight: 700;
+      font-size: 1.6rem;
+      margin-bottom: 1.8rem;
+      display: flex;
       align-items: center;
-      margin: 1.8rem 0 1.2rem;
+      gap: 12px;
     }
-    #feeInputs label {
-      margin: 0;
-      font-weight: 500;
-    }
+    /* ---- ACCOUNT FORM GLOW UP ---- */
     #accountInputs {
       display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 1.5rem 2rem;
-      margin: 1.5rem 0 2rem;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.6rem 2rem;
+      margin: 1rem 0 1.8rem;
     }
     .field-group {
       display: flex;
       flex-direction: column;
+      gap: 6px;
     }
     .field-group label {
-      margin-bottom: 0.4rem;
+      font-weight: 600;
+      font-size: 0.85rem;
+      letter-spacing: 0.3px;
+      color: var(--text-secondary-light);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .input-icon-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+    .input-icon-wrapper i {
+      position: absolute;
+      left: 18px;
+      font-size: 1.1rem;
+      color: var(--accent);
+      opacity: 0.7;
+      z-index: 2;
+      pointer-events: none;
+      transition: 0.2s;
+    }
+    .input-icon-wrapper input, .input-icon-wrapper select {
+      width: 100%;
+      padding: 0.85rem 1rem 0.85rem 2.8rem;
+      border: 1.5px solid var(--input-border-light);
+      border-radius: var(--radius-input);
+      font-size: 0.95rem;
+      background: var(--input-bg-light);
+      color: var(--text-primary-light);
+      outline: none;
+      font-weight: 500;
+      transition: all 0.2s;
+    }
+    .input-icon-wrapper select {
+      appearance: none;
+      background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>');
+      background-repeat: no-repeat;
+      background-position: right 1rem center;
+      background-size: 14px;
+      padding-right: 2.5rem;
+    }
+    .input-icon-wrapper input:focus, .input-icon-wrapper select:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 4px var(--accent-glow);
+      transform: translateY(-1px);
+    }
+    .input-hint {
+      font-size: 0.7rem;
+      color: var(--text-secondary-light);
+      opacity: 0.75;
+      margin-top: 4px;
+      margin-left: 8px;
+    }
+    .error-hint {
+      color: #e54c4c;
+      font-size: 0.75rem;
+      margin-top: 4px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    #validationErrors {
+      background: rgba(229, 76, 76, 0.08);
+      border-left: 3px solid #e54c4c;
+      padding: 10px 14px;
+      border-radius: 20px;
+      margin-bottom: 1.2rem;
+    }
+    /* Buttons premium */
+    .btn-primary, .btn-secondary {
+      border: none;
+      font-weight: 600;
+      padding: 0.85rem 2rem;
+      border-radius: var(--radius-button);
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      justify-content: center;
+    }
+    .btn-primary {
+      background: var(--accent);
+      color: white;
+      box-shadow: 0 6px 14px rgba(0, 0, 0, 0.08);
+    }
+    .btn-primary:hover {
+      background: var(--accent-soft);
+      transform: translateY(-2px);
+      box-shadow: 0 12px 22px -8px rgba(0, 0, 0, 0.2);
+    }
+    .btn-secondary {
+      background: #2d6a4f;
+      color: white;
+    }
+    .btn-secondary:hover {
+      background: #1f543e;
+      transform: translateY(-2px);
     }
     .button-group {
       display: flex;
       gap: 1rem;
       flex-wrap: wrap;
-      margin-top: 0.5rem;
+      margin-top: 1.2rem;
+    }
+    /* Search row improvements */
+    .search-row {
+      display: flex;
+      gap: 1rem;
+      align-items: flex-end;
+      flex-wrap: wrap;
+    }
+    .search-wrapper {
+      flex: 2 1 300px;
+      position: relative;
+    }
+    .search-wrapper .search-icon {
+      position: absolute;
+      left: 20px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--accent);
+      font-size: 1rem;
+    }
+    .search-wrapper input {
+      padding-left: 48px;
+      border-radius: 48px;
+      background: var(--input-bg-light);
+      border: 1.5px solid var(--input-border-light);
+      height: 54px;
+    }
+    /* ===== PROFESSIONAL FEE FORM LAYOUT ===== */
+    .fee-form-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      margin: 1.5rem 0;
+    }
+    .fee-row {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      background: var(--bg-light);
+      padding: 0.75rem 1rem;
+      border-radius: 60px;
+      transition: all 0.2s;
+      border: 1px solid transparent;
+    }
+    .fee-row:hover {
+      border-color: var(--border-light);
+      background: var(--card-light);
+      box-shadow: var(--shadow-sm);
+    }
+    .fee-label {
+      flex: 0 0 140px;
+      font-weight: 600;
+      color: var(--text-secondary-light);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.9rem;
+    }
+    .fee-label i {
+      width: 24px;
+      color: var(--accent);
+      font-size: 1rem;
+    }
+    .fee-input-wrapper {
+      flex: 1;
+      position: relative;
+    }
+    .fee-input-wrapper input {
+      width: 100%;
+      padding: 0.7rem 1rem;
+      border: 1.5px solid var(--input-border-light);
+      border-radius: 40px;
+      font-size: 0.95rem;
+      background: var(--input-bg-light);
+      color: var(--text-primary-light);
+      outline: none;
+      font-weight: 500;
+      transition: all 0.2s;
+      text-align: right;
+      padding-right: 2rem;
+    }
+    .fee-input-wrapper input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--accent-glow);
+    }
+    .currency-symbol {
+      position: absolute;
+      right: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 0.85rem;
+      color: var(--text-secondary-light);
+      opacity: 0.6;
+      pointer-events: none;
+    }
+    #month {
+      max-width: 280px;
+      border-radius: 40px;
+      padding: 0.8rem 1.2rem;
+      border: 1.5px solid var(--input-border-light);
+      background: var(--input-bg-light);
+      margin-bottom: 0.5rem;
+    }
+    @media (max-width: 760px) {
+      #accountInputs { grid-template-columns: 1fr; gap: 1.2rem; }
+      .card { padding: 1.4rem; }
+      .button-group { flex-direction: column; }
+      .search-row { flex-direction: column; align-items: stretch; }
+      .btn-primary, .btn-secondary { width: 100%; }
+      .navbar { padding: 0.2rem 1rem; }
+      .nav-menu { right: 1rem; }
+      .fee-row {
+        flex-direction: column;
+        align-items: stretch;
+        border-radius: 28px;
+        background: var(--card-light);
+        padding: 1rem;
+      }
+      .fee-label {
+        flex: auto;
+      }
     }
     .loader-overlay {
       display: none;
       position: fixed;
       top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(0,0,0,0.3);
-      backdrop-filter: blur(3px);
+      background: rgba(0,0,0,0.35);
+      backdrop-filter: blur(4px);
       justify-content: center;
       align-items: center;
-      z-index: 1100;
+      z-index: 1200;
     }
     .spinner {
-      width: 48px;
-      height: 48px;
-      border: 4px solid rgba(255,255,255,0.2);
+      width: 50px;
+      height: 50px;
+      border: 4px solid rgba(255,255,255,0.3);
       border-top-color: var(--accent);
       border-radius: 50%;
       animation: spin 0.7s linear infinite;
     }
     @keyframes spin { to { transform: rotate(360deg); } }
-    #month {
-      max-width: 220px;
-      margin-bottom: 1.2rem;
-    }
-    .input-hint {
-      font-size: 0.7rem;
-      color: var(--text-secondary-light);
-      margin-top: 0.2rem;
-      opacity: 0.7;
-    }
-    .error-hint {
-      color: #ef4444;
-      font-size: 0.75rem;
-    }
-    @media (max-width: 700px) {
-      #accountInputs { grid-template-columns: 1fr; }
-      body { padding: 1rem; }
-      .card { padding: 1.5rem; }
-      #feeInputs { grid-template-columns: 1fr; }
-      .search-row { flex-direction: column; align-items: stretch; }
-      button { width: 100%; }
-      .button-group { flex-direction: column; }
-      .navbar { padding: 0.2rem 1rem; }
-      .nav-menu { right: 1rem; }
+    .create-header-icon {
+      background: var(--accent-glow);
+      padding: 12px;
+      border-radius: 60px;
+      width: 48px;
+      text-align: center;
     }
   </style>
 </head>
@@ -393,7 +487,7 @@
   <nav class="navbar">
     <div class="nav-container">
       <div class="logo-area">
-        📋 ফি ম্যানেজার <span>ADMIN SECTION</span>
+        📘 ফি ম্যানেজার <span>PRO</span>
       </div>
       <div class="nav-actions">
         <button class="dark-toggle" id="darkModeToggle" aria-label="Dark mode">
@@ -405,18 +499,18 @@
       </div>
     </div>
     <div class="nav-menu" id="navMenu">
-      <a href="analysis.html"><i class="fas fa-chart-line"></i> Analysis</a>
-      <a href="sheet.html"><i class="fas fa-table"></i> Sheet</a>
+      <a href="analysis.html"><i class="fas fa-chart-line"></i> বিশ্লেষণ</a>
+      <a href="sheet.html"><i class="fas fa-table"></i> সব ছাত্র</a>
       <div class="nav-divider"></div>
-      <a href="mailto:muktadirshabab@hotmail.com"><i class="fas fa-headset"></i> Helpline</a>
+      <a href="mailto:muktadirshabab@hotmail.com"><i class="fas fa-headset"></i> সহায়তা</a>
     </div>
   </nav>
 
 <div class="container">
-  <h2>ফি ম্যানেজমেন্ট</h2>
-  <div class="sub">ছাত্রদের ফি সংক্রান্ত সব কার্যক্রম.</div>
+  <h2><i class="fas fa-hand-holding-usd"></i> ফি ম্যানেজমেন্ট</h2>
+  <div class="sub">ছাত্রদের ফি সংক্রান্ত সব কার্যক্রম | একাডেমিক ফি জমা & অ্যাকাউন্ট তৈরি</div>
 
-  <!-- SEARCH CARD with soft look + fontawesome icon -->
+  <!-- SEARCH CARD -->
   <div class="card">
     <label for="searchId"><i class="fas fa-id-card"></i> Student ID লিখুন</label>
     <div class="search-row">
@@ -424,28 +518,33 @@
         <i class="fas fa-search search-icon"></i>
         <input type="text" id="searchId" placeholder="যেমন: ST-2025-001" autocomplete="off">
       </div>
-      <button onclick="searchStudent()" id="searchBtn"><i class="fas fa-user-check"></i> সার্চ করুন</button>
+      <button onclick="searchStudent()" id="searchBtn" class="btn-primary"><i class="fas fa-user-check"></i> সার্চ করুন</button>
     </div>
   </div>
 
-  <!-- fee entry card -->
+  <!-- fee entry card - PROFESSIONAL LAYOUT -->
   <div class="card" id="feeFormDiv" style="display:none;">
     <h3><i class="fas fa-receipt"></i> ফি জমা ফর্ম</h3>
     <label for="month"><i class="far fa-calendar-alt"></i> মাস নির্বাচন</label>
     <select id="month"></select>
-    <div id="feeInputs"></div>
+    <div id="feeInputs" class="fee-form-grid"></div>
     <div class="button-group">
-      <button onclick="submitFee()" id="submitBtn"><i class="fas fa-save"></i> ফি জমা দিন</button>
-      <button onclick="printReceipt()" id="printBtn" style="background: #2d6a4f;"><i class="fas fa-print"></i> রশিদ প্রিন্ট</button>
+      <button onclick="submitFee()" id="submitBtn" class="btn-primary"><i class="fas fa-save"></i> ফি জমা দিন</button>
+      <button onclick="printReceipt()" id="printBtn" class="btn-secondary"><i class="fas fa-print"></i> রশিদ প্রিন্ট</button>
     </div>
   </div>
 
-  <!-- account creation card -->
+  <!-- NEW ACCOUNT CARD -->
   <div class="card" id="createFormDiv" style="display:none;">
-    <h3><i class="fas fa-user-plus"></i> নতুন ছাত্র অ্যাকাউন্ট</h3>
-    <div id="accountInputs" class="two-column"></div>
-    <div id="validationErrors" style="color: #ef4444; margin-bottom: 1rem; font-size: 0.85rem;"></div>
-    <button onclick="createAccount()" id="createBtn"><i class="fas fa-check-circle"></i> অ্যাকাউন্ট তৈরি করুন</button>
+    <h3>
+      <span class="create-header-icon"><i class="fas fa-user-graduate"></i></span> 
+      নতুন ছাত্র নিবন্ধন
+    </h3>
+    <div id="accountInputs" class="two-column-grid"></div>
+    <div id="validationErrors" style="color: #e54c4c; margin-bottom: 1rem; font-size: 0.85rem;"></div>
+    <div class="button-group">
+      <button onclick="createAccount()" id="createBtn" class="btn-primary"><i class="fas fa-check-circle"></i> অ্যাকাউন্ট তৈরি করুন</button>
+    </div>
   </div>
 </div>
 
@@ -454,114 +553,181 @@
 </div>
 
 <script>
-const webAppUrl = "https://script.google.com/macros/s/AKfycbyyc_YzHp9dAOnnuZjKFsth9OPGa8dfgf3UrJ6inpkeetLbdc0360-xPYlxq42rI1KT/exec"; 
+const webAppUrl = "https://script.google.com/macros/s/AKfycbwovXxiHdsUwHRLzQRyP4URWAuRfqo0ARbZnBitvfAEPi2UBWQzGY67LtyFnQUzYIFK/exec"; 
 
 function showLoader() { document.getElementById('loader').style.display = 'flex'; }
 function hideLoader() { document.getElementById('loader').style.display = 'none'; }
 
 const feeSections = ["tuition","admission","readmission","exam","computer","late","sports","tc","misc"];
 const feeLabels = ["Tuition Fee","Admission Fee","Re-Admission Fee","Exam Fee","Computer Fee","Late Fee","Sports Fee","T.C Fee","Miscellaneous"];
+const feeIcons = ["fa-graduation-cap","fa-door-open","fa-rotate-left","fa-pen-ruler","fa-laptop-code","fa-clock","fa-futbol","fa-file-signature","fa-coins"];
 const months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 const monthSelect = document.getElementById("month");
 months.forEach(m => monthSelect.innerHTML += `<option>${m}</option>`);
 
+// Build professional fee form rows (no placeholders)
 const feeInputsDiv = document.getElementById("feeInputs");
-feeLabels.forEach((f, i) => {
-  feeInputsDiv.innerHTML += `<label>${f}:</label><input type="number" id="${feeSections[i]}" value="" placeholder="0" step="1"><br>`;
+feeInputsDiv.innerHTML = "";
+feeLabels.forEach((label, idx) => {
+  const sectionKey = feeSections[idx];
+  const icon = feeIcons[idx];
+  const row = document.createElement('div');
+  row.className = 'fee-row';
+  row.innerHTML = `
+    <div class="fee-label">
+      <i class="fas ${icon}"></i> ${label}
+    </div>
+    <div class="fee-input-wrapper">
+      <input type="number" id="${sectionKey}" value="" step="1">
+      <span class="currency-symbol">৳</span>
+    </div>
+  `;
+  feeInputsDiv.appendChild(row);
 });
 
-// Account fields (soft sharp)
-const accountDiv = document.getElementById("accountInputs");
-const accountFields = [
-  { id: "studentName", label: "নাম", type: "text", validation: "name" },
-  { id: "father", label: "পিতার নাম", type: "text", validation: "uppercase" },
-  { id: "mother", label: "মাতার নাম", type: "text", validation: "uppercase" },
-  { id: "studentIdNew", label: "ছাত্র আইডি", type: "text", validation: "studentId", maxLength: 6 },
-  { id: "roll", label: "রোল নম্বর", type: "number", validation: "roll", maxLength: 3, max: 999 },
-  { id: "cls", label: "শ্রেণী", type: "text" },
-  { id: "section", label: "শাখা", type: "select", options: ["day", "morning"] },
-  { id: "mobile", label: "মোবাইল নম্বর", type: "tel", validation: "mobile", maxLength: 11 }
+// Class dropdown options
+const classOptions = ["Play", "Nursary", "Kg", "1", "2", "3", "4", "5"];
+
+// Account fields with updated class as dropdown and no placeholder text
+const accountFieldsMeta = [
+  { id: "studentName", label: "ছাত্রের নাম", type: "text", icon: "fas fa-user-graduate", validation: "name", noPlaceholder: true },
+  { id: "father", label: "পিতার নাম", type: "text", icon: "fas fa-user-tie", validation: "uppercase", noPlaceholder: true },
+  { id: "mother", label: "মাতার নাম", type: "text", icon: "fas fa-female", validation: "uppercase", noPlaceholder: true },
+  { id: "studentIdNew", label: "ছাত্র আইডি", type: "text", icon: "fas fa-id-card", placeholder: "ST-001", maxLength: 6, validation: "studentId" },
+  { id: "roll", label: "রোল নম্বর", type: "number", icon: "fas fa-hashtag", placeholder: "১ থেকে ৯৯৯", maxLength: 3, validation: "roll" },
+  { id: "cls", label: "শ্রেণী", type: "select", icon: "fas fa-graduation-cap", options: classOptions, validation: "none" },
+  { id: "section", label: "শাখা", type: "select", icon: "fas fa-clock", options: ["day", "morning"], optionLabels: ["ডে", "মর্নিং"] },
+  { id: "mobile", label: "মোবাইল নম্বর", type: "tel", icon: "fas fa-phone-alt", placeholder: "০১XXXXXXXXX", maxLength: 11, validation: "mobile" }
 ];
 
-accountDiv.innerHTML = '';
-accountFields.forEach(f => {
-  const group = document.createElement('div');
-  group.className = 'field-group';
-  const label = document.createElement('label');
-  label.htmlFor = f.id;
-  label.textContent = f.label;
-  let input;
-  if (f.type === 'select') {
-    input = document.createElement('select');
-    input.id = f.id;
-    f.options.forEach(opt => {
-      const option = document.createElement('option');
-      option.value = opt;
-      option.textContent = opt === 'day' ? 'ডে' : 'মর্নিং';
-      input.appendChild(option);
-    });
-  } else {
-    input = document.createElement('input');
-    input.type = f.type;
-    input.id = f.id;
-    if (f.maxLength) input.maxLength = f.maxLength;
-    if (f.max) input.max = f.max;
-  }
-  group.appendChild(label);
-  group.appendChild(input);
-  const hint = document.createElement('div');
-  hint.className = 'input-hint';
-  if (f.validation === 'name') hint.textContent = 'প্রথম অক্ষর বড় হাতের হবে';
-  else if (f.validation === 'uppercase') hint.textContent = 'শুধুমাত্র বড় হাতের অক্ষর';
-  else if (f.validation === 'roll') hint.textContent = 'সর্বোচ্চ ৩ ডিজিট';
-  else if (f.validation === 'studentId') hint.textContent = 'সর্বোচ্চ ৬ অক্ষর';
-  else if (f.validation === 'mobile') hint.textContent = '১১ ডিজিট দিন (+88 স্বয়ংক্রিয়)';
-  if (hint.textContent) group.appendChild(hint);
-  accountDiv.appendChild(group);
-});
+function buildAccountForm() {
+  const container = document.getElementById("accountInputs");
+  container.innerHTML = "";
+  accountFieldsMeta.forEach(field => {
+    const group = document.createElement("div");
+    group.className = "field-group";
 
-// formatting listeners
-document.getElementById('studentName').addEventListener('input', function(e) {
-  let val = e.target.value.toLowerCase().replace(/\b\w/g, c => c.toUpperCase());
-  e.target.value = val;
-});
-document.getElementById('father').addEventListener('input', e => e.target.value = e.target.value.toUpperCase());
-document.getElementById('mother').addEventListener('input', e => e.target.value = e.target.value.toUpperCase());
-document.getElementById('roll').addEventListener('input', function(e) {
-  let val = e.target.value.replace(/[^0-9]/g, '').slice(0,3);
-  e.target.value = val;
-});
-document.getElementById('studentIdNew').addEventListener('input', function(e) {
-  e.target.value = e.target.value.replace(/[^a-zA-Z0-9]/g, '').toUpperCase().slice(0,6);
-});
-document.getElementById('mobile').addEventListener('input', function(e) {
-  let val = e.target.value.replace(/[^0-9]/g, '').slice(0,11);
-  e.target.value = val;
-});
+    const label = document.createElement("label");
+    label.htmlFor = field.id;
+    label.innerHTML = `<i class="${field.icon}" style="font-size:0.8rem;"></i> ${field.label}`;
+    
+    const iconWrapper = document.createElement("div");
+    iconWrapper.className = "input-icon-wrapper";
+    
+    const iconSpan = document.createElement("i");
+    iconSpan.className = field.icon;
+    iconWrapper.appendChild(iconSpan);
+    
+    let inputField;
+    if (field.type === "select") {
+      inputField = document.createElement("select");
+      inputField.id = field.id;
+      if (field.options) {
+        field.options.forEach((opt, idx) => {
+          const option = document.createElement("option");
+          option.value = opt;
+          if (field.optionLabels && field.optionLabels[idx]) {
+            option.textContent = field.optionLabels[idx];
+          } else {
+            option.textContent = opt === 'day' ? 'ডে' : (opt === 'morning' ? 'মর্নিং' : opt);
+          }
+          inputField.appendChild(option);
+        });
+      }
+    } else {
+      inputField = document.createElement("input");
+      inputField.type = field.type;
+      inputField.id = field.id;
+      // Only add placeholder if explicitly defined and noPlaceholder is false
+      if (field.placeholder && !field.noPlaceholder) {
+        inputField.placeholder = field.placeholder;
+      }
+      if (field.maxLength) inputField.maxLength = field.maxLength;
+      if (field.type === "number") inputField.setAttribute("min", "1");
+    }
+    iconWrapper.appendChild(inputField);
+    group.appendChild(label);
+    group.appendChild(iconWrapper);
+    
+    const hintSpan = document.createElement("div");
+    hintSpan.className = "input-hint";
+    if (field.validation === "name") hintSpan.innerHTML = "<i class='fas fa-info-circle'></i> প্রথম অক্ষর বড় হাতের হবে";
+    else if (field.validation === "uppercase") hintSpan.innerHTML = "<i class='fas fa-arrow-up'></i> শুধুমাত্র বড় হাতের অক্ষর";
+    else if (field.validation === "roll") hintSpan.innerHTML = "<i class='fas fa-sort-numeric-up'></i> সর্বোচ্চ ৩ ডিজিট";
+    else if (field.validation === "studentId") hintSpan.innerHTML = "<i class='fas fa-key'></i> সর্বোচ্চ ৬ অক্ষর (ST-XXX)";
+    else if (field.validation === "mobile") hintSpan.innerHTML = "<i class='fas fa-mobile-alt'></i> ১১ ডিজিট দিন (+88 স্বয়ংক্রিয়)";
+    else if (field.id === "cls") hintSpan.innerHTML = "<i class='fas fa-school'></i> শ্রেণি নির্বাচন করুন";
+    if (hintSpan.innerHTML) group.appendChild(hintSpan);
+    
+    container.appendChild(group);
+  });
+  attachAccountFormatters();
+}
+
+function attachAccountFormatters() {
+  const nameField = document.getElementById('studentName');
+  const fatherField = document.getElementById('father');
+  const motherField = document.getElementById('mother');
+  const rollField = document.getElementById('roll');
+  const studentIdField = document.getElementById('studentIdNew');
+  const mobileField = document.getElementById('mobile');
+  if (nameField) {
+    nameField.addEventListener('input', function(e) {
+      let val = e.target.value.toLowerCase().replace(/\b\w/g, c => c.toUpperCase());
+      e.target.value = val;
+    });
+  }
+  if (fatherField) {
+    fatherField.addEventListener('input', e => e.target.value = e.target.value.toUpperCase());
+  }
+  if (motherField) {
+    motherField.addEventListener('input', e => e.target.value = e.target.value.toUpperCase());
+  }
+  if (rollField) {
+    rollField.addEventListener('input', function(e) {
+      let val = e.target.value.replace(/[^0-9]/g, '').slice(0,3);
+      e.target.value = val;
+    });
+  }
+  if (studentIdField) {
+    studentIdField.addEventListener('input', function(e) {
+      e.target.value = e.target.value.replace(/[^a-zA-Z0-9\-]/g, '').toUpperCase().slice(0,6);
+    });
+  }
+  if (mobileField) {
+    mobileField.addEventListener('input', function(e) {
+      let val = e.target.value.replace(/[^0-9]/g, '').slice(0,11);
+      e.target.value = val;
+    });
+  }
+}
 
 function validateForm() {
   const errors = [];
-  const name = document.getElementById('studentName').value;
-  if (name && !/^[A-Z]/.test(name)) errors.push('নামের প্রথম অক্ষর বড় হাতের হতে হবে');
-  const father = document.getElementById('father').value;
-  const mother = document.getElementById('mother').value;
-  if (father && father !== father.toUpperCase()) errors.push('পিতার নাম শুধুমাত্র বড় হাতের');
-  if (mother && mother !== mother.toUpperCase()) errors.push('মাতার নাম শুধুমাত্র বড় হাতের');
-  const roll = document.getElementById('roll').value;
-  if (roll && (roll.length > 3 || !/^\d+$/.test(roll))) errors.push('রোল সর্বোচ্চ ৩ ডিজিট সংখ্যা');
-  const studentId = document.getElementById('studentIdNew').value;
+  const name = document.getElementById('studentName')?.value || "";
+  if (name && !/^[A-Z\u0980-\u09FF]/.test(name)) errors.push('নামের প্রথম অক্ষর বড় হাতের হতে হবে');
+  const father = document.getElementById('father')?.value || "";
+  const mother = document.getElementById('mother')?.value || "";
+  if (father && father !== father.toUpperCase()) errors.push('পিতার নাম শুধুমাত্র বড় হাতের অক্ষর');
+  if (mother && mother !== mother.toUpperCase()) errors.push('মাতার নাম শুধুমাত্র বড় হাতের অক্ষর');
+  const roll = document.getElementById('roll')?.value || "";
+  if (roll && (roll.length > 3 || !/^\d+$/.test(roll))) errors.push('রোল সর্বোচ্চ ৩ ডিজিট সংখ্যা হতে হবে');
+  const studentId = document.getElementById('studentIdNew')?.value || "";
   if (studentId && studentId.length > 6) errors.push('আইডি সর্বোচ্চ ৬ অক্ষর');
-  const mobile = document.getElementById('mobile').value;
-  if (mobile && !/^\d{11}$/.test(mobile)) errors.push('মোবাইল ১১ ডিজিট হতে হবে');
+  const mobile = document.getElementById('mobile')?.value || "";
+  if (mobile && !/^\d{11}$/.test(mobile)) errors.push('মোবাইল ১১ ডিজিট হতে হবে (উদা: 017XXXXXXXX)');
   const errorDiv = document.getElementById('validationErrors');
-  if (errors.length) { errorDiv.innerHTML = errors.join('<br>'); return false; }
+  if (errors.length) { 
+    errorDiv.innerHTML = errors.map(e => `<i class="fas fa-exclamation-circle"></i> ${e}`).join('<br>'); 
+    return false; 
+  }
   errorDiv.innerHTML = '';
   return true;
 }
 
 function searchStudent() {
   const id = document.getElementById("searchId").value.trim();
-  if (!id) { alert("Student ID দিন"); return; }
+  if (!id) { alert("ছাত্র আইডি লিখুন"); return; }
   showLoader();
   fetch(webAppUrl)
     .then(res => res.json())
@@ -586,8 +752,8 @@ function searchStudent() {
 function createAccount() {
   if (!validateForm()) return;
   const data = { action: "create" };
-  accountFields.forEach(f => {
-    let value = document.getElementById(f.id).value.trim();
+  accountFieldsMeta.forEach(f => {
+    let value = document.getElementById(f.id)?.value.trim() || "";
     if (f.id === 'mobile' && value) value = '+88' + value;
     data[f.id] = value;
   });
@@ -599,7 +765,7 @@ function createAccount() {
     .then(res => res.json())
     .then(resp => {
       if (resp.result === "created") {
-        alert("অ্যাকাউন্ট তৈরি হয়েছে!");
+        alert("🎉 অ্যাকাউন্ট সফলভাবে তৈরি হয়েছে!");
         document.getElementById("searchId").value = data.studentIdNew;
         searchStudent();
       } else { alert("ত্রুটি! আবার চেষ্টা করুন।"); }
@@ -611,15 +777,13 @@ function createAccount() {
 function submitFee() {
   const fees = {};
   feeSections.forEach(f => {
-    const val = document.getElementById(f).value;
+    const val = document.getElementById(f)?.value;
     fees[f] = val === '' ? 0 : Number(val);
   });
-  const data = {
-    action: "fee",
-    studentId: document.getElementById("searchId").value.trim(),
-    month: document.getElementById("month").value,
-    fees: fees
-  };
+  const studentId = document.getElementById("searchId").value.trim();
+  const month = document.getElementById("month").value;
+  if (!studentId) { alert("ছাত্র আইডি পাওয়া যায়নি"); return; }
+  const data = { action: "fee", studentId, month, fees };
   showLoader();
   fetch(webAppUrl, {
     method: "POST",
@@ -627,7 +791,7 @@ function submitFee() {
   })
     .then(res => res.json())
     .then(resp => {
-      if (resp.result === "success") alert("ফি জমা হয়েছে!");
+      if (resp.result === "success") alert("✅ ফি জমা হয়েছে!");
       else alert("ত্রুটি! ফি জমা হয়নি।");
     })
     .catch(err => alert("ত্রুটি: " + err))
@@ -639,139 +803,54 @@ async function printReceipt() {
   const month = document.getElementById("month").value;
   if (!studentId || !month) { alert("ছাত্র আইডি ও মাস নির্বাচন করুন"); return; }
   const fees = {};
-  feeSections.forEach(f => {
-    const val = document.getElementById(f).value;
-    fees[f] = val === '' ? 0 : Number(val);
-  });
+  feeSections.forEach(f => { const val = document.getElementById(f)?.value; fees[f] = val === '' ? 0 : Number(val); });
   showLoader();
   try {
     const detailsUrl = webAppUrl + "?action=getStudentDetails&studentId=" + encodeURIComponent(studentId);
     const detailsRes = await fetch(detailsUrl);
     const student = await detailsRes.json();
     if (student.error) throw new Error(student.error);
-    const receiptRes = await fetch(webAppUrl, {
-      method: "POST",
-      body: JSON.stringify({ action: "generateReceipt", studentId, month })
-    });
+    const receiptRes = await fetch(webAppUrl, { method: "POST", body: JSON.stringify({ action: "generateReceipt", studentId, month }) });
     const receiptData = await receiptRes.json();
     if (!receiptData.receiptNumber) throw new Error("রশিদ নম্বর পাওয়া যায়নি");
     const receiptNo = receiptData.receiptNumber;
-    const currentDateTime = new Date().toLocaleString();
-    function buildStudentRows() {
-      return [
-        ['Name', student.name || '—'],
-        ['Class', student.class || '—'],
-        ['Roll', student.roll || '—'],
-        ['Section', student.section || '—'],
-        ['ID', student.id || '—'],
-        ['Mobile', student.mobile || '—']
-      ];
-    }
-    function buildFeeItems() {
-      const items = [];
-      let total = 0;
-      feeSections.forEach((key, idx) => {
-        const amount = fees[key];
-        items.push([feeLabels[idx], amount + ' Tk']);
-        total += amount;
-      });
-      return { items, total };
-    }
-    function createReceiptColumn(copyName) {
-      const studentRows = buildStudentRows();
-      const { items: feeItems, total } = buildFeeItems();
-      return {
-        stack: [
-          { text: 'WESTERN SCHOOL AND COLLEGE', style: 'schoolHeader', alignment: 'center' },
-          { text: 'Didar Market-Chawkbazar, Chittagong', alignment: 'center', fontSize: 8, margin: [0,0,0,4] },
-          { text: 'STUDENT FEE RECEIPT', style: 'receiptTitle', alignment: 'center', margin: [0,0,0,6] },
-          { text: copyName, style: 'copyTitle', alignment: 'center', margin: [0,0,0,8] },
-          { text: `Receipt No: ${receiptNo}`, alignment: 'center', margin: [0,0,0,2] },
-          { text: `Month: ${month}`, alignment: 'center', margin: [0,0,0,2] },
-          { text: `Fee taking date & time: ${currentDateTime}`, alignment: 'center', margin: [0,0,0,2] },
-          { table: { widths: ['auto','*'], body: studentRows }, layout: 'noBorders', margin:[0,0,0,12] },
-          { table: { widths: ['*', 'auto'], body: [[{ text: 'Description', style: 'tableHeader' }, { text: 'Amount', style: 'tableHeader' }], ...feeItems, [{ text: 'Total', style: 'totalLabel' }, { text: total + ' Tk', style: 'totalAmount' }]] }, layout: 'lightHorizontalLines', margin:[0,0,0,12] },
-          { text: 'Payment Method: Cash / Bank', margin:[0,0,0,10] },
-          { columns: [ { width:'50%', stack:[ { text:'_____________________', alignment:'left' }, { text:"Accountant's Sign", alignment:'left', margin:[0,2,0,0] } ] }, { width:'50%', stack:[ { text:'_____________________', alignment:'right' }, { text:"Guardian's Sign", alignment:'right', margin:[0,2,0,0] } ] } ] }
-        ]
-      };
-    }
-    const pageWidth = 841.89, pageHeight = 595.28, margin = 20;
-    const contentWidth = pageWidth - 2*margin, contentHeight = pageHeight - 2*margin;
-    const docDefinition = {
-      pageSize: 'A4', pageOrientation: 'landscape', pageMargins: [margin, margin, margin, margin],
-      content: [{ columns: [createReceiptColumn('School Copy'), createReceiptColumn('Bank Copy'), createReceiptColumn('Guardian Copy')], columnGap: 8 },
-        { canvas:[{ type:'line', x1: contentWidth/3, y1:0, x2: contentWidth/3, y2:contentHeight, lineWidth:1, dash:[3,3], lineColor:'#888' },{ type:'line', x1: 2*contentWidth/3, y1:0, x2: 2*contentWidth/3, y2:contentHeight, lineWidth:1, dash:[3,3], lineColor:'#888' }], absolutePosition: { x:margin, y:margin }, width: contentWidth, height: contentHeight }],
-      styles: { schoolHeader:{ fontSize:12, bold:true }, receiptTitle:{ fontSize:11, bold:true, decoration:'underline' }, copyTitle:{ fontSize:11, bold:true, italics:true }, tableHeader:{ bold:true, fillColor:'#f2f2f2' }, totalLabel:{ bold:true }, totalAmount:{ bold:true } }, defaultStyle: { fontSize:9 }
+    const currentDateTime = new Date().toLocaleString('bn-BD');
+    function buildStudentRows() { return [['নাম', student.name || '—'], ['শ্রেণী', student.class || '—'], ['রোল', student.roll || '—'], ['শাখা', student.section || '—'], ['আইডি', student.id || '—'], ['মোবাইল', student.mobile || '—']]; }
+    function buildFeeItems() { const items = []; let total = 0; feeSections.forEach((key, idx) => { const amt = fees[key]; if(amt>0 || key==='tuition'){ items.push([feeLabels[idx], amt + ' Tk']); total += amt; } }); return { items, total }; }
+    const createReceiptColumn = (copyName) => {
+      const studentRows = buildStudentRows(); const { items, total } = buildFeeItems();
+      return { stack: [ { text: 'WESTERN SCHOOL AND COLLEGE', style: 'schoolHeader', alignment: 'center' }, { text: 'Didar Market-Chawkbazar, Chittagong', alignment: 'center', fontSize: 8, margin: [0,0,0,4] }, { text: 'STUDENT FEE RECEIPT', style: 'receiptTitle', alignment: 'center', margin: [0,0,0,6] }, { text: copyName, style: 'copyTitle', alignment: 'center', margin: [0,0,0,8] }, { text: `Receipt No: ${receiptNo}`, alignment: 'center', margin: [0,0,0,2] }, { text: `Month: ${month}`, alignment: 'center', margin: [0,0,0,2] }, { text: `Fee taking date & time: ${currentDateTime}`, alignment: 'center', margin: [0,0,0,2] }, { table: { widths: ['auto','*'], body: studentRows }, layout: 'noBorders', margin:[0,0,0,12] }, { table: { widths: ['*', 'auto'], body: [[{ text: 'Description', style: 'tableHeader' }, { text: 'Amount', style: 'tableHeader' }], ...items, [{ text: 'Total', style: 'totalLabel' }, { text: total + ' Tk', style: 'totalAmount' }]] }, layout: 'lightHorizontalLines', margin:[0,0,0,12] }, { text: 'Payment Method: Cash / Bank', margin:[0,0,0,10] }, { columns: [ { width:'50%', stack:[ { text:'_____________________', alignment:'left' }, { text:"Accountant's Sign", alignment:'left', margin:[0,2,0,0] } ] }, { width:'50%', stack:[ { text:'_____________________', alignment:'right' }, { text:"Guardian's Sign", alignment:'right', margin:[0,2,0,0] } ] } ] } ] };
     };
+    const docDefinition = { pageSize: 'A4', pageOrientation: 'landscape', pageMargins: [20,20,20,20], content: [ { columns: [createReceiptColumn('School Copy'), createReceiptColumn('Bank Copy'), createReceiptColumn('Guardian Copy')], columnGap: 8 } ], styles: { schoolHeader:{ fontSize:12, bold:true }, receiptTitle:{ fontSize:11, bold:true, decoration:'underline' }, copyTitle:{ fontSize:11, bold:true, italics:true }, tableHeader:{ bold:true, fillColor:'#f2f2f2' }, totalLabel:{ bold:true }, totalAmount:{ bold:true } }, defaultStyle: { fontSize:9 } };
     pdfMake.createPdf(docDefinition).download(`Receipt_${receiptNo}.pdf`);
   } catch(err) { alert("রশিদ তৈরি করতে সমস্যা: " + err.message); } finally { hideLoader(); }
 }
 
-// ENTER key support
 document.addEventListener('keypress', function(e) {
   if (e.key === 'Enter') {
     const active = document.activeElement;
     if (active.id === 'searchId') { e.preventDefault(); searchStudent(); }
-    else if (document.getElementById('createFormDiv').style.display === 'block' && accountFields.map(f => document.getElementById(f.id)).includes(active)) { e.preventDefault(); createAccount(); }
-    else if (document.getElementById('feeFormDiv').style.display === 'block' && (feeSections.map(f => document.getElementById(f)).includes(active) || active.id === 'month')) { e.preventDefault(); submitFee(); }
+    else if (document.getElementById('createFormDiv').style.display === 'block' && active.closest('#accountInputs')) { e.preventDefault(); createAccount(); }
+    else if (document.getElementById('feeFormDiv').style.display === 'block' && (feeSections.some(f => active.id === f) || active.id === 'month')) { e.preventDefault(); submitFee(); }
   }
 });
 
-// ---------- DARK MODE + HAMBURGER ANIMATION (Font Awesome) ----------
+// dark mode & hamburger
 const darkToggle = document.getElementById('darkModeToggle');
 const setTheme = (isDark) => {
-  if (isDark) {
-    document.body.classList.add('dark');
-    darkToggle.innerHTML = '<i class="fas fa-sun"></i>';
-    localStorage.setItem('theme', 'dark');
-  } else {
-    document.body.classList.remove('dark');
-    darkToggle.innerHTML = '<i class="fas fa-moon"></i>';
-    localStorage.setItem('theme', 'light');
-  }
+  if (isDark) { document.body.classList.add('dark'); darkToggle.innerHTML = '<i class="fas fa-sun"></i>'; localStorage.setItem('theme', 'dark'); }
+  else { document.body.classList.remove('dark'); darkToggle.innerHTML = '<i class="fas fa-moon"></i>'; localStorage.setItem('theme', 'light'); }
 };
-const savedTheme = localStorage.getItem('theme');
-if (savedTheme === 'dark') setTheme(true);
-darkToggle.addEventListener('click', () => {
-  const isDark = document.body.classList.contains('dark');
-  setTheme(!isDark);
-});
+if (localStorage.getItem('theme') === 'dark') setTheme(true);
+darkToggle.addEventListener('click', () => setTheme(!document.body.classList.contains('dark')));
 
-// animated hamburger <-> close icon
 const hamburgerBtn = document.getElementById('hamburgerBtn');
-const hamburgerIcon = hamburgerBtn.querySelector('i');
 const navMenu = document.getElementById('navMenu');
+hamburgerBtn.addEventListener('click', (e) => { e.stopPropagation(); navMenu.classList.toggle('show'); });
+document.addEventListener('click', (e) => { if (!navMenu.contains(e.target) && !hamburgerBtn.contains(e.target)) navMenu.classList.remove('show'); });
 
-function updateHamburgerIcon(open) {
-  if (open) {
-    hamburgerIcon.className = 'fas fa-times';
-  } else {
-    hamburgerIcon.className = 'fas fa-bars';
-  }
-}
-
-hamburgerBtn.addEventListener('click', (e) => {
-  e.stopPropagation();
-  const willOpen = !navMenu.classList.contains('show');
-  navMenu.classList.toggle('show');
-  updateHamburgerIcon(willOpen);
-});
-
-document.addEventListener('click', (e) => {
-  if (!navMenu.contains(e.target) && !hamburgerBtn.contains(e.target)) {
-    const wasOpen = navMenu.classList.contains('show');
-    if (wasOpen) {
-      navMenu.classList.remove('show');
-      updateHamburgerIcon(false);
-    }
-  }
-});
-
-navMenu.querySelectorAll('a').forEach(link => link.addEventListener('click', () => {
-  navMenu.classList.remove('show');
-  updateHamburgerIcon(false);
-}));
+// initialize account form
+buildAccountForm();
 </script>
 </body>
 </html>
