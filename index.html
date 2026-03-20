@@ -338,7 +338,7 @@
   </nav>
 
 <div class="container">
-  <h2>📘 ফি ম্যানেজমেন্ট</h2>
+  <h2>📘 ফি ম্যানেজমেন্ট Dashboard</h2>
   <div class="sub">ছাত্রদের ফি সংক্রান্ত সব কার্যক্রম</div>
 
   <!-- search card -->
@@ -348,7 +348,6 @@
       <input type="text" id="searchId" placeholder="যেমন: ST-2025-001">
       <button onclick="searchStudent()" id="searchBtn">Search</button>
     </div>
-    <div style="font-size:0.9rem; color:#64748b; margin-top:0.8rem;">আইডি না পেলে নতুন অ্যাকাউন্ট তৈরির ফর্ম দেখাবে</div>
   </div>
 
   <!-- fee entry card (hidden initially) -->
@@ -359,7 +358,7 @@
     <div id="feeInputs"></div>
     <div class="button-group">
       <button onclick="submitFee()" id="submitBtn">✅ ফি জমা দিন</button>
-      <button onclick="printReceipt()" id="printBtn" style="background: #2d6a4f;">🖨️ প্রিন্ট রশিদ</button>
+      <button onclick="printReceipt()" id="printBtn" style="background: #2d6a4f;">🖨️ রশিদ</button>
     </div>
   </div>
 
@@ -443,7 +442,7 @@ accountFields.forEach(f => {
   const hint = document.createElement('div');
   hint.className = 'input-hint';
   if (f.validation === 'name') {
-    hint.textContent = 'প্রথম অক্ষর স্বয়ংক্রিয়ভাবে বড় হবে';
+    hint.textContent = '';
   } else if (f.validation === 'uppercase') {
     hint.textContent = 'শুধুমাত্র বড় হাতের অক্ষর';
   } else if (f.validation === 'roll') {
@@ -451,7 +450,7 @@ accountFields.forEach(f => {
   } else if (f.validation === 'studentId') {
     hint.textContent = 'সর্বোচ্চ ৬ ডিজিট';
   } else if (f.validation === 'mobile') {
-    hint.textContent = '+88 স্বয়ংক্রিয় যোগ হবে, ১১ ডিজিট দিন';
+    hint.textContent = '১১ ডিজিট দিন';
   }
   if (hint.textContent) group.appendChild(hint);
   
