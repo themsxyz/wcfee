@@ -2,46 +2,94 @@
 <html lang="bn">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ফি ম্যানেজমেন্ট – অ্যাডমিন</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>ফি ম্যানেজমেন্ট</title>
+  <!-- Google Fonts: Poppins + Tiro Bangla -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Tiro+Bangla&display=swap" rel="stylesheet">
+  <!-- Font Awesome 6 (free) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <!-- pdfmake -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
   <style>
-    /* ----- RESET & BASE (keep existing + new navbar styles) ----- */
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
-      font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+      transition: background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, color 0.1s;
     }
+
+    /* ----- TYPOGRAPHY (Bengali + English) ----- */
+    body, input, select, button, .navbar, .card, .nav-menu a {
+      font-family: 'Poppins', 'Tiro Bangla', system-ui, -apple-system, sans-serif;
+    }
+
+    /* ----- CSS VARIABLES (SOFT SHARP THEME) ----- */
+    :root {
+      --bg-light: #f1f5f9;
+      --card-light: #ffffff;
+      --text-primary-light: #0f172a;
+      --text-secondary-light: #334155;
+      --border-light: #e2e8f0;
+      --input-bg-light: #ffffff;
+      --input-border-light: #cbd5e1;
+      --accent: #1e3a5f;
+      --accent-soft: #2c4b78;
+      --accent-glow: rgba(30, 58, 95, 0.08);
+      --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.03), 0 1px 2px rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.02);
+      --radius-card: 28px;
+      --radius-input: 32px;
+      --radius-button: 40px;
+      --nav-blur: rgba(255, 255, 255, 0.75);
+    }
+
+    body.dark {
+      --bg-light: #0b1120;
+      --card-light: #111827;
+      --text-primary-light: #eef2ff;
+      --text-secondary-light: #cbd5e6;
+      --border-light: #1f2a3e;
+      --input-bg-light: #1e293b;
+      --input-border-light: #334155;
+      --accent: #3b82f6;
+      --accent-soft: #2563eb;
+      --accent-glow: rgba(59, 130, 246, 0.15);
+      --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.4);
+      --shadow-md: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+      --nav-blur: rgba(17, 24, 39, 0.85);
+    }
+
     body {
-      background: #f8fafc;
+      background: var(--bg-light);
       padding: 2rem 1.5rem;
       display: flex;
       flex-direction: column;
       align-items: center;
-      color: #0f172a;
-      position: relative;
+      color: var(--text-primary-light);
       min-height: 100vh;
     }
+
     .container {
       max-width: 1000px;
       width: 100%;
     }
 
-    /* ----- APPLE‑STYLE NAVBAR ----- */
+    /* ----- NAVBAR (GLASS) ----- */
     .navbar {
       width: 100%;
       max-width: 1000px;
-      margin-bottom: 1.5rem;
-      background: rgba(255,255,255,0.8);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      border-radius: 40px;
+      margin-bottom: 1.8rem;
+      background: var(--nav-blur);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-radius: 48px;
       padding: 0.5rem 1.5rem;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.02), 0 0 0 1px rgba(0,0,0,0.02);
-      border: 1px solid rgba(255,255,255,0.6);
+      box-shadow: var(--shadow-sm);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    body.dark .navbar {
+      border: 1px solid rgba(255, 255, 255, 0.05);
     }
     .nav-container {
       display: flex;
@@ -49,67 +97,85 @@
       justify-content: space-between;
     }
     .logo-area {
-      font-weight: 500;
-      font-size: 1.25rem;
+      font-weight: 600;
+      font-size: 1.3rem;
       letter-spacing: -0.02em;
-      color: #1e293b;
+      color: var(--text-primary-light);
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 10px;
     }
     .logo-area span {
-      background: #1e3a5f;
+      background: var(--accent);
       color: white;
-      font-size: 0.75rem;
-      padding: 2px 10px;
+      font-size: 0.7rem;
+      padding: 2px 12px;
       border-radius: 100px;
-      font-weight: 400;
+      font-weight: 500;
     }
-    /* hamburger button */
+    /* dark mode toggle + hamburger container */
+    .nav-actions {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+    .dark-toggle {
+      background: transparent;
+      border: none;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 1.4rem;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+      color: var(--text-primary-light);
+    }
+    .dark-toggle:hover {
+      background: var(--accent-glow);
+      transform: scale(0.96);
+    }
+    /* hamburger icon (font awesome animated) */
     .hamburger {
       background: transparent;
       border: none;
       width: 44px;
       height: 44px;
       border-radius: 50%;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      gap: 6px;
       cursor: pointer;
-      transition: background 0.2s;
-      margin: 0;
-      padding: 0;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.6rem;
+      color: var(--text-primary-light);
+      transition: all 0.2s;
     }
     .hamburger:hover {
-      background: rgba(0,0,0,0.05);
+      background: var(--accent-glow);
+      transform: scale(0.96);
     }
-    .hamburger .line {
-      width: 22px;
-      height: 2px;
-      background: #1e293b;
-      border-radius: 2px;
-      transition: 0.2s;
+    .hamburger i {
+      transition: transform 0.2s ease;
     }
-    /* menu dropdown (hidden initially) */
+    /* menu dropdown */
     .nav-menu {
       position: absolute;
-      top: calc(3.5rem + 1rem); /* below navbar + spacing */
+      top: calc(3.8rem + 0.5rem);
       right: 1.5rem;
-      background: rgba(255,255,255,0.9);
+      background: var(--card-light);
       backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      border-radius: 24px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.1), 0 0 0 1px rgba(0,0,0,0.02);
+      border-radius: 28px;
+      box-shadow: var(--shadow-md);
       padding: 0.75rem 0;
-      min-width: 200px;
+      min-width: 210px;
       opacity: 0;
-      transform: translateY(-10px);
+      transform: translateY(-12px);
       pointer-events: none;
-      transition: 0.2s ease;
+      transition: 0.2s cubic-bezier(0.2, 0.9, 0.4, 1.1);
       z-index: 1000;
-      border: 1px solid rgba(255,255,255,0.8);
+      border: 1px solid var(--border-light);
     }
     .nav-menu.show {
       opacity: 1;
@@ -120,109 +186,132 @@
       display: flex;
       align-items: center;
       gap: 12px;
-      padding: 0.75rem 1.5rem;
-      color: #1e293b;
+      padding: 0.75rem 1.6rem;
+      color: var(--text-primary-light);
       text-decoration: none;
       font-size: 1rem;
-      font-weight: 450;
+      font-weight: 470;
       transition: background 0.15s;
     }
     .nav-menu a:hover {
-      background: rgba(0,0,0,0.03);
-    }
-    .nav-menu a i { /* simple emoji fallback for icons */
-      font-style: normal;
-      width: 24px;
-      text-align: center;
+      background: var(--accent-glow);
     }
     .nav-divider {
       height: 1px;
-      background: #e2e8f0;
+      background: var(--border-light);
       margin: 0.5rem 1rem;
     }
 
-    /* rest of your existing styles (unchanged) */
+    /* ----- CARDS (SOFT SHARP) ----- */
+    .card {
+      background: var(--card-light);
+      border-radius: var(--radius-card);
+      padding: 1.8rem 2rem;
+      margin-bottom: 2rem;
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--border-light);
+      transition: transform 0.1s ease, box-shadow 0.2s;
+    }
+    .card:hover {
+      box-shadow: var(--shadow-md);
+    }
     h2 {
-      font-weight: 500;
+      font-weight: 620;
       font-size: 2rem;
-      color: #0b2b4a;
+      color: var(--text-primary-light);
+      letter-spacing: -0.01em;
       margin-bottom: 0.25rem;
     }
     .sub {
-      color: #475569;
+      color: var(--text-secondary-light);
       margin-bottom: 2rem;
-      border-left: 3px solid #2563eb;
+      border-left: 3px solid var(--accent);
       padding-left: 1rem;
-    }
-    .card {
-      background: white;
-      border-radius: 20px;
-      padding: 1.8rem 2rem;
-      margin-bottom: 2rem;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-      border: 1px solid #e2e8f0;
-      position: relative;
+      font-weight: 420;
     }
     .card h3 {
-      font-weight: 500;
+      font-weight: 560;
       font-size: 1.5rem;
-      color: #1e293b;
-      margin-bottom: 1.5rem;
+      color: var(--text-primary-light);
+      margin-bottom: 1.6rem;
     }
     label {
       display: block;
       font-size: 0.9rem;
-      font-weight: 500;
-      color: #334155;
-      margin-bottom: 0.3rem;
+      font-weight: 510;
+      color: var(--text-secondary-light);
+      margin-bottom: 0.4rem;
     }
+    /* SOFT SEARCH & INPUTS */
     input, select {
       width: 100%;
-      padding: 0.7rem 1rem;
-      border: 1px solid #cbd5e1;
-      border-radius: 14px;
-      font-size: 1rem;
+      padding: 0.8rem 1.2rem;
+      border: 1px solid var(--input-border-light);
+      border-radius: var(--radius-input);
+      font-size: 0.95rem;
       outline: none;
-      background: white;
-      transition: 0.15s;
+      background: var(--input-bg-light);
+      color: var(--text-primary-light);
+      transition: 0.2s;
     }
     input:focus, select:focus {
-      border-color: #2563eb;
-      box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--accent-glow);
     }
     button {
-      background: #1e3a5f;
+      background: var(--accent);
       border: none;
       color: white;
-      font-weight: 500;
-      padding: 0.7rem 1.8rem;
-      border-radius: 40px;
-      font-size: 1rem;
+      font-weight: 520;
+      padding: 0.8rem 2rem;
+      border-radius: var(--radius-button);
+      font-size: 0.95rem;
       cursor: pointer;
-      transition: 0.15s;
-      border: 1px solid rgba(255,255,255,0.1);
-      margin-top: 0.5rem;
+      transition: all 0.2s;
+      box-shadow: 0 1px 1px rgba(0,0,0,0.05);
     }
     button:hover {
-      background: #2c4b78;
+      background: var(--accent-soft);
+      transform: scale(0.98);
+      box-shadow: 0 6px 14px rgba(0,0,0,0.08);
     }
-    button:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
+    button:active {
+      transform: scale(0.96);
     }
     .search-row {
       display: flex;
       gap: 1rem;
       align-items: flex-end;
       flex-wrap: wrap;
+      margin-top: 0.5rem;
     }
-    .search-row label {
-      flex: 2 1 250px;
-      margin-bottom: 0;
+    /* SEARCH WRAPPER with font awesome icon */
+    .search-wrapper {
+      flex: 2 1 280px;
+      position: relative;
+    }
+    .search-wrapper .search-icon {
+      position: absolute;
+      left: 18px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 1rem;
+      color: var(--text-secondary-light);
+      opacity: 0.7;
+      pointer-events: none;
+    }
+    .search-wrapper input {
+      padding-left: 44px;
+      background: var(--input-bg-light);
+      border-radius: 48px;
+      font-weight: 450;
     }
     .search-row button {
       margin-top: 0;
       flex: 0 0 auto;
+      background: var(--accent);
+      border-radius: 48px;
+      padding: 0.8rem 1.8rem;
     }
     #feeInputs {
       display: grid;
@@ -231,15 +320,10 @@
       align-items: center;
       margin: 1.8rem 0 1.2rem;
     }
-    #feeInputs br { display: none; }
     #feeInputs label {
       margin: 0;
       font-weight: 500;
-      color: #1e293b;
-      white-space: nowrap;
     }
-    #feeInputs input { margin: 0; }
-
     #accountInputs {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -251,152 +335,142 @@
       flex-direction: column;
     }
     .field-group label {
-      margin-bottom: 0.3rem;
-      font-weight: 500;
-      color: #1e293b;
+      margin-bottom: 0.4rem;
     }
-    .field-group input {
-      width: 100%;
-    }
-
-    .loader-overlay {
-      display: none;
-      position: fixed;
-      top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(255,255,255,0.7);
-      backdrop-filter: blur(2px);
-      justify-content: center;
-      align-items: center;
-      z-index: 1000;
-    }
-    .spinner {
-      width: 50px;
-      height: 50px;
-      border: 5px solid #e2e8f0;
-      border-top-color: #1e3a5f;
-      border-radius: 50%;
-      animation: spin 0.8s linear infinite;
-    }
-    @keyframes spin { to { transform: rotate(360deg); } }
-
-    #month { max-width: 200px; margin-bottom: 1.2rem; }
     .button-group {
       display: flex;
       gap: 1rem;
       flex-wrap: wrap;
-      align-items: center;
+      margin-top: 0.5rem;
     }
-
-    /* New styles for validation hints */
+    .loader-overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.3);
+      backdrop-filter: blur(3px);
+      justify-content: center;
+      align-items: center;
+      z-index: 1100;
+    }
+    .spinner {
+      width: 48px;
+      height: 48px;
+      border: 4px solid rgba(255,255,255,0.2);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    #month {
+      max-width: 220px;
+      margin-bottom: 1.2rem;
+    }
     .input-hint {
-      font-size: 0.75rem;
-      color: #64748b;
+      font-size: 0.7rem;
+      color: var(--text-secondary-light);
       margin-top: 0.2rem;
+      opacity: 0.7;
     }
     .error-hint {
-      color: #dc2626;
+      color: #ef4444;
       font-size: 0.75rem;
-      margin-top: 0.2rem;
     }
-
     @media (max-width: 700px) {
       #accountInputs { grid-template-columns: 1fr; }
-    }
-    @media (max-width: 600px) {
       body { padding: 1rem; }
       .card { padding: 1.5rem; }
       #feeInputs { grid-template-columns: 1fr; }
       .search-row { flex-direction: column; align-items: stretch; }
       button { width: 100%; }
       .button-group { flex-direction: column; }
-      /* navbar mobile adj */
       .navbar { padding: 0.2rem 1rem; }
-      .nav-menu { right: 1rem; min-width: 180px; }
+      .nav-menu { right: 1rem; }
     }
   </style>
 </head>
 <body>
-  <!-- 🍔 APPLE STYLE NAVBAR (added) -->
   <nav class="navbar">
     <div class="nav-container">
       <div class="logo-area">
-        📋 ফি ম্যানেজার <span>ADMIN</span>
+        📋 ফি ম্যানেজার <span>ADMIN SECTION</span>
       </div>
-      <button class="hamburger" id="hamburgerBtn" aria-label="Menu">
-        <div class="line"></div>
-        <div class="line"></div>
-        <div class="line"></div>
-      </button>
+      <div class="nav-actions">
+        <button class="dark-toggle" id="darkModeToggle" aria-label="Dark mode">
+          <i class="fas fa-moon"></i>
+        </button>
+        <button class="hamburger" id="hamburgerBtn" aria-label="Menu">
+          <i class="fas fa-bars"></i>
+        </button>
+      </div>
     </div>
-    <!-- dropdown menu -->
     <div class="nav-menu" id="navMenu">
-      <a href="analysis.html"><i>📊</i> Analysis</a>
-      <a href="sheet.html"><i>📑</i> Sheet</a>
+      <a href="analysis.html"><i class="fas fa-chart-line"></i> Analysis</a>
+      <a href="sheet.html"><i class="fas fa-table"></i> Sheet</a>
       <div class="nav-divider"></div>
-      <a href="mailto:muktadirshabab@hotmail.com"><i>📞</i> Helpline</a>
+      <a href="mailto:muktadirshabab@hotmail.com"><i class="fas fa-headset"></i> Helpline</a>
     </div>
   </nav>
 
 <div class="container">
-  <h2>📘 ফি ম্যানেজমেন্ট Dashboard</h2>
-  <div class="sub">ছাত্রদের ফি সংক্রান্ত সব কার্যক্রম</div>
+  <h2>ফি ম্যানেজমেন্ট</h2>
+  <div class="sub">ছাত্রদের ফি সংক্রান্ত সব কার্যক্রম.</div>
 
-  <!-- search card -->
+  <!-- SEARCH CARD with soft look + fontawesome icon -->
   <div class="card">
-    <label for="searchId">🔍 Student ID লিখুন</label>
+    <label for="searchId"><i class="fas fa-id-card"></i> Student ID লিখুন</label>
     <div class="search-row">
-      <input type="text" id="searchId" placeholder="যেমন: ST-2025-001">
-      <button onclick="searchStudent()" id="searchBtn">Search</button>
+      <div class="search-wrapper">
+        <i class="fas fa-search search-icon"></i>
+        <input type="text" id="searchId" placeholder="যেমন: ST-2025-001" autocomplete="off">
+      </div>
+      <button onclick="searchStudent()" id="searchBtn"><i class="fas fa-user-check"></i> সার্চ করুন</button>
     </div>
   </div>
 
-  <!-- fee entry card (hidden initially) -->
+  <!-- fee entry card -->
   <div class="card" id="feeFormDiv" style="display:none;">
-    <h3>📋 ফি জমা ফর্ম</h3>
-    <label for="month">মাস নির্বাচন</label>
+    <h3><i class="fas fa-receipt"></i> ফি জমা ফর্ম</h3>
+    <label for="month"><i class="far fa-calendar-alt"></i> মাস নির্বাচন</label>
     <select id="month"></select>
     <div id="feeInputs"></div>
     <div class="button-group">
-      <button onclick="submitFee()" id="submitBtn">✅ ফি জমা দিন</button>
-      <button onclick="printReceipt()" id="printBtn" style="background: #2d6a4f;">🖨️ রশিদ</button>
+      <button onclick="submitFee()" id="submitBtn"><i class="fas fa-save"></i> ফি জমা দিন</button>
+      <button onclick="printReceipt()" id="printBtn" style="background: #2d6a4f;"><i class="fas fa-print"></i> রশিদ প্রিন্ট</button>
     </div>
   </div>
 
-  <!-- account creation card (hidden initially) -->
+  <!-- account creation card -->
   <div class="card" id="createFormDiv" style="display:none;">
-    <h3>➕ নতুন ছাত্র অ্যাকাউন্ট</h3>
+    <h3><i class="fas fa-user-plus"></i> নতুন ছাত্র অ্যাকাউন্ট</h3>
     <div id="accountInputs" class="two-column"></div>
-    <div id="validationErrors" style="color: #dc2626; margin-bottom: 1rem; font-size: 0.9rem;"></div>
-    <button onclick="createAccount()" id="createBtn">📌 অ্যাকাউন্ট তৈরি করুন</button>
+    <div id="validationErrors" style="color: #ef4444; margin-bottom: 1rem; font-size: 0.85rem;"></div>
+    <button onclick="createAccount()" id="createBtn"><i class="fas fa-check-circle"></i> অ্যাকাউন্ট তৈরি করুন</button>
   </div>
 </div>
 
-<!-- Loader overlay -->
 <div class="loader-overlay" id="loader">
   <div class="spinner"></div>
 </div>
 
 <script>
-const webAppUrl = "https://script.google.com/macros/s/AKfycbyyc_YzHp9dAOnnuZjKFsth9OPGa8dfgf3UrJ6inpkeetLbdc0360-xPYlxq42rI1KT/exec"; // আপনার URL দিন
+const webAppUrl = "https://script.google.com/macros/s/AKfycbyyc_YzHp9dAOnnuZjKFsth9OPGa8dfgf3UrJ6inpkeetLbdc0360-xPYlxq42rI1KT/exec"; 
 
-// Loader functions
 function showLoader() { document.getElementById('loader').style.display = 'flex'; }
 function hideLoader() { document.getElementById('loader').style.display = 'none'; }
 
-// Fee sections & months
 const feeSections = ["tuition","admission","readmission","exam","computer","late","sports","tc","misc"];
 const feeLabels = ["Tuition Fee","Admission Fee","Re-Admission Fee","Exam Fee","Computer Fee","Late Fee","Sports Fee","T.C Fee","Miscellaneous"];
 const months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 const monthSelect = document.getElementById("month");
 months.forEach(m => monthSelect.innerHTML += `<option>${m}</option>`);
 
-// Fee inputs – start with empty (zero is blank)
 const feeInputsDiv = document.getElementById("feeInputs");
 feeLabels.forEach((f, i) => {
-  feeInputsDiv.innerHTML += `<label>${f}:</label><input type="number" id="${feeSections[i]}" value="" placeholder="0"><br>`;
+  feeInputsDiv.innerHTML += `<label>${f}:</label><input type="number" id="${feeSections[i]}" value="" placeholder="0" step="1"><br>`;
 });
 
-// Account inputs – two‑column with Bengali labels
+// Account fields (soft sharp)
 const accountDiv = document.getElementById("accountInputs");
 const accountFields = [
   { id: "studentName", label: "নাম", type: "text", validation: "name" },
@@ -416,7 +490,6 @@ accountFields.forEach(f => {
   const label = document.createElement('label');
   label.htmlFor = f.id;
   label.textContent = f.label;
-  
   let input;
   if (f.type === 'select') {
     input = document.createElement('select');
@@ -434,133 +507,60 @@ accountFields.forEach(f => {
     if (f.maxLength) input.maxLength = f.maxLength;
     if (f.max) input.max = f.max;
   }
-  
   group.appendChild(label);
   group.appendChild(input);
-  
-  // Add hint for validation
   const hint = document.createElement('div');
   hint.className = 'input-hint';
-  if (f.validation === 'name') {
-    hint.textContent = '';
-  } else if (f.validation === 'uppercase') {
-    hint.textContent = 'শুধুমাত্র বড় হাতের অক্ষর';
-  } else if (f.validation === 'roll') {
-    hint.textContent = 'সর্বোচ্চ ৩ ডিজিট';
-  } else if (f.validation === 'studentId') {
-    hint.textContent = 'সর্বোচ্চ ৬ ডিজিট';
-  } else if (f.validation === 'mobile') {
-    hint.textContent = '১১ ডিজিট দিন';
-  }
+  if (f.validation === 'name') hint.textContent = 'প্রথম অক্ষর বড় হাতের হবে';
+  else if (f.validation === 'uppercase') hint.textContent = 'শুধুমাত্র বড় হাতের অক্ষর';
+  else if (f.validation === 'roll') hint.textContent = 'সর্বোচ্চ ৩ ডিজিট';
+  else if (f.validation === 'studentId') hint.textContent = 'সর্বোচ্চ ৬ অক্ষর';
+  else if (f.validation === 'mobile') hint.textContent = '১১ ডিজিট দিন (+88 স্বয়ংক্রিয়)';
   if (hint.textContent) group.appendChild(hint);
-  
   accountDiv.appendChild(group);
 });
 
-// Input event listeners for auto-formatting
+// formatting listeners
 document.getElementById('studentName').addEventListener('input', function(e) {
-  // Auto capitalize first letter of each word
-  let value = e.target.value;
-  value = value.toLowerCase().replace(/\b\w/g, char => char.toUpperCase());
-  e.target.value = value;
+  let val = e.target.value.toLowerCase().replace(/\b\w/g, c => c.toUpperCase());
+  e.target.value = val;
 });
-
-document.getElementById('father').addEventListener('input', function(e) {
-  e.target.value = e.target.value.toUpperCase();
-});
-
-document.getElementById('mother').addEventListener('input', function(e) {
-  e.target.value = e.target.value.toUpperCase();
-});
-
+document.getElementById('father').addEventListener('input', e => e.target.value = e.target.value.toUpperCase());
+document.getElementById('mother').addEventListener('input', e => e.target.value = e.target.value.toUpperCase());
 document.getElementById('roll').addEventListener('input', function(e) {
-  // Limit to 3 digits
-  if (e.target.value.length > 3) {
-    e.target.value = e.target.value.slice(0, 3);
-  }
-  // Remove non-numeric characters
-  e.target.value = e.target.value.replace(/[^0-9]/g, '');
+  let val = e.target.value.replace(/[^0-9]/g, '').slice(0,3);
+  e.target.value = val;
 });
-
 document.getElementById('studentIdNew').addEventListener('input', function(e) {
-  // Limit to 6 digits
-  if (e.target.value.length > 6) {
-    e.target.value = e.target.value.slice(0, 6);
-  }
-  // Allow only alphanumeric, convert to uppercase
-  e.target.value = e.target.value.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
+  e.target.value = e.target.value.replace(/[^a-zA-Z0-9]/g, '').toUpperCase().slice(0,6);
 });
-
 document.getElementById('mobile').addEventListener('input', function(e) {
-  // Remove any non-numeric characters
-  let value = e.target.value.replace(/[^0-9]/g, '');
-  
-  // If user tries to type +88, we handle it automatically
-  if (value.length > 11) {
-    value = value.slice(0, 11);
-  }
-  
-  // Store the raw 11 digits (without +88) in the input value
-  // The +88 will be added when submitting
-  e.target.value = value;
+  let val = e.target.value.replace(/[^0-9]/g, '').slice(0,11);
+  e.target.value = val;
 });
 
-// Validation function
 function validateForm() {
   const errors = [];
-  
-  // Validate name (should have at least first letter capitalized)
   const name = document.getElementById('studentName').value;
-  if (name && !/^[A-Z]/.test(name)) {
-    errors.push('নামের প্রথম অক্ষর বড় হাতের হতে হবে');
-  }
-  
-  // Validate father/mother (should be uppercase)
+  if (name && !/^[A-Z]/.test(name)) errors.push('নামের প্রথম অক্ষর বড় হাতের হতে হবে');
   const father = document.getElementById('father').value;
   const mother = document.getElementById('mother').value;
-  if (father && father !== father.toUpperCase()) {
-    errors.push('পিতার নাম শুধুমাত্র বড় হাতের অক্ষরে হতে হবে');
-  }
-  if (mother && mother !== mother.toUpperCase()) {
-    errors.push('মাতার নাম শুধুমাত্র বড় হাতের অক্ষরে হতে হবে');
-  }
-  
-  // Validate roll (max 3 digits)
+  if (father && father !== father.toUpperCase()) errors.push('পিতার নাম শুধুমাত্র বড় হাতের');
+  if (mother && mother !== mother.toUpperCase()) errors.push('মাতার নাম শুধুমাত্র বড় হাতের');
   const roll = document.getElementById('roll').value;
-  if (roll && roll.length > 3) {
-    errors.push('রোল নম্বর সর্বোচ্চ ৩ ডিজিট হতে পারে');
-  }
-  if (roll && !/^\d+$/.test(roll)) {
-    errors.push('রোল নম্বর শুধুমাত্র সংখ্যা হতে পারে');
-  }
-  
-  // Validate student ID (max 6 chars)
+  if (roll && (roll.length > 3 || !/^\d+$/.test(roll))) errors.push('রোল সর্বোচ্চ ৩ ডিজিট সংখ্যা');
   const studentId = document.getElementById('studentIdNew').value;
-  if (studentId && studentId.length > 6) {
-    errors.push('ছাত্র আইডি সর্বোচ্চ ৬ অক্ষর হতে পারে');
-  }
-  
-  // Validate mobile (should be 11 digits)
+  if (studentId && studentId.length > 6) errors.push('আইডি সর্বোচ্চ ৬ অক্ষর');
   const mobile = document.getElementById('mobile').value;
-  if (mobile && !/^\d{11}$/.test(mobile)) {
-    errors.push('মোবাইল নম্বর ১১ ডিজিটের হতে হবে');
-  }
-  
-  // Display errors
+  if (mobile && !/^\d{11}$/.test(mobile)) errors.push('মোবাইল ১১ ডিজিট হতে হবে');
   const errorDiv = document.getElementById('validationErrors');
-  if (errors.length > 0) {
-    errorDiv.innerHTML = errors.join('<br>');
-    return false;
-  } else {
-    errorDiv.innerHTML = '';
-    return true;
-  }
+  if (errors.length) { errorDiv.innerHTML = errors.join('<br>'); return false; }
+  errorDiv.innerHTML = '';
+  return true;
 }
 
-// Search student
 function searchStudent() {
-  const raw = document.getElementById("searchId").value;
-  const id = raw.trim();
+  const id = document.getElementById("searchId").value.trim();
   if (!id) { alert("Student ID দিন"); return; }
   showLoader();
   fetch(webAppUrl)
@@ -568,11 +568,8 @@ function searchStudent() {
     .then(data => {
       let found = false;
       for (let i = 1; i < data.length; i++) {
-        const storedId = (data[i][3] || "").toString().trim(); // ID is column D (index 3)
-        if (storedId === id) {
-          found = true;
-          break;
-        }
+        const storedId = (data[i][3] || "").toString().trim();
+        if (storedId === id) { found = true; break; }
       }
       if (found) {
         document.getElementById("feeFormDiv").style.display = "block";
@@ -586,27 +583,14 @@ function searchStudent() {
     .finally(() => hideLoader());
 }
 
-// Create account
 function createAccount() {
-  if (!validateForm()) {
-    return;
-  }
-  
+  if (!validateForm()) return;
   const data = { action: "create" };
-  
-  // Process each field
   accountFields.forEach(f => {
-    const el = document.getElementById(f.id);
-    let value = el.value.trim();
-    
-    // Format mobile number with +88
-    if (f.id === 'mobile' && value) {
-      value = '+88' + value;
-    }
-    
+    let value = document.getElementById(f.id).value.trim();
+    if (f.id === 'mobile' && value) value = '+88' + value;
     data[f.id] = value;
   });
-  
   showLoader();
   fetch(webAppUrl, {
     method: "POST",
@@ -618,15 +602,12 @@ function createAccount() {
         alert("অ্যাকাউন্ট তৈরি হয়েছে!");
         document.getElementById("searchId").value = data.studentIdNew;
         searchStudent();
-      } else {
-        alert("ত্রুটি! আবার চেষ্টা করুন।");
-      }
+      } else { alert("ত্রুটি! আবার চেষ্টা করুন।"); }
     })
     .catch(err => alert("ত্রুটি: " + err))
     .finally(() => hideLoader());
 }
 
-// Submit fee – convert blank to 0
 function submitFee() {
   const fees = {};
   feeSections.forEach(f => {
@@ -653,28 +634,21 @@ function submitFee() {
     .finally(() => hideLoader());
 }
 
-// ---------- Print Receipt (three equal columns) ----------
 async function printReceipt() {
   const studentId = document.getElementById("searchId").value.trim();
   const month = document.getElementById("month").value;
   if (!studentId || !month) { alert("ছাত্র আইডি ও মাস নির্বাচন করুন"); return; }
-
   const fees = {};
   feeSections.forEach(f => {
     const val = document.getElementById(f).value;
     fees[f] = val === '' ? 0 : Number(val);
   });
-
   showLoader();
-
   try {
-    // Fetch student details
     const detailsUrl = webAppUrl + "?action=getStudentDetails&studentId=" + encodeURIComponent(studentId);
     const detailsRes = await fetch(detailsUrl);
     const student = await detailsRes.json();
     if (student.error) throw new Error(student.error);
-
-    // Generate receipt number
     const receiptRes = await fetch(webAppUrl, {
       method: "POST",
       body: JSON.stringify({ action: "generateReceipt", studentId, month })
@@ -682,8 +656,7 @@ async function printReceipt() {
     const receiptData = await receiptRes.json();
     if (!receiptData.receiptNumber) throw new Error("রশিদ নম্বর পাওয়া যায়নি");
     const receiptNo = receiptData.receiptNumber;
-
-    // Build fresh studentRows & feeItems for each column
+    const currentDateTime = new Date().toLocaleString();
     function buildStudentRows() {
       return [
         ['Name', student.name || '—'],
@@ -694,7 +667,6 @@ async function printReceipt() {
         ['Mobile', student.mobile || '—']
       ];
     }
-
     function buildFeeItems() {
       const items = [];
       let total = 0;
@@ -705,12 +677,9 @@ async function printReceipt() {
       });
       return { items, total };
     }
-
-    // Column generator
     function createReceiptColumn(copyName) {
       const studentRows = buildStudentRows();
       const { items: feeItems, total } = buildFeeItems();
-      const currentDateTime = new Date().toLocaleString(); // get local date & time
       return {
         stack: [
           { text: 'WESTERN SCHOOL AND COLLEGE', style: 'schoolHeader', alignment: 'center' },
@@ -721,123 +690,88 @@ async function printReceipt() {
           { text: `Month: ${month}`, alignment: 'center', margin: [0,0,0,2] },
           { text: `Fee taking date & time: ${currentDateTime}`, alignment: 'center', margin: [0,0,0,2] },
           { table: { widths: ['auto','*'], body: studentRows }, layout: 'noBorders', margin:[0,0,0,12] },
-          {
-            table: {
-              widths: ['*', 'auto'],
-              body: [
-                [{ text: 'Description', style: 'tableHeader' }, { text: 'Amount', style: 'tableHeader' }],
-                ...feeItems,
-                [{ text: 'Total', style: 'totalLabel' }, { text: total + ' Tk', style: 'totalAmount' }]
-              ]
-            },
-            layout: 'lightHorizontalLines',
-            margin:[0,0,0,12]
-          },
+          { table: { widths: ['*', 'auto'], body: [[{ text: 'Description', style: 'tableHeader' }, { text: 'Amount', style: 'tableHeader' }], ...feeItems, [{ text: 'Total', style: 'totalLabel' }, { text: total + ' Tk', style: 'totalAmount' }]] }, layout: 'lightHorizontalLines', margin:[0,0,0,12] },
           { text: 'Payment Method: Cash / Bank', margin:[0,0,0,10] },
-          {
-            columns: [
-              { width:'50%', stack:[ { text:'_____________________', alignment:'left' }, { text:"Accountant's Sign", alignment:'left', margin:[0,2,0,0] } ] },
-              { width:'50%', stack:[ { text:'_____________________', alignment:'right' }, { text:"Guardian's Sign", alignment:'right', margin:[0,2,0,0] } ] }
-            ]
-          }
+          { columns: [ { width:'50%', stack:[ { text:'_____________________', alignment:'left' }, { text:"Accountant's Sign", alignment:'left', margin:[0,2,0,0] } ] }, { width:'50%', stack:[ { text:'_____________________', alignment:'right' }, { text:"Guardian's Sign", alignment:'right', margin:[0,2,0,0] } ] } ] }
         ]
       };
     }
-
-    const pageWidth = 841.89;
-    const pageHeight = 595.28;
-    const margin = 20;
-    const contentWidth = pageWidth - 2*margin;
-    const contentHeight = pageHeight - 2*margin;
-
+    const pageWidth = 841.89, pageHeight = 595.28, margin = 20;
+    const contentWidth = pageWidth - 2*margin, contentHeight = pageHeight - 2*margin;
     const docDefinition = {
-      pageSize: 'A4',
-      pageOrientation: 'landscape',
-      pageMargins: [margin, margin, margin, margin],
-      content: [
-        {
-          columns: [
-            createReceiptColumn('School Copy'),
-            createReceiptColumn('Bank Copy'),
-            createReceiptColumn('Guardian Copy')
-          ],
-          columnGap: 8
-        },
-        {
-          canvas:[
-            { type:'line', x1: contentWidth/3, y1:0, x2: contentWidth/3, y2:contentHeight, lineWidth:1, dash:[3,3], lineColor:'#888' },
-            { type:'line', x1: 2*contentWidth/3, y1:0, x2: 2*contentWidth/3, y2:contentHeight, lineWidth:1, dash:[3,3], lineColor:'#888' }
-          ],
-          absolutePosition: { x:margin, y:margin },
-          width: contentWidth,
-          height: contentHeight
-        }
-      ],
-      styles: {
-        schoolHeader:{ fontSize:12, bold:true },
-        receiptTitle:{ fontSize:11, bold:true, decoration:'underline' },
-        copyTitle:{ fontSize:11, bold:true, italics:true },
-        tableHeader:{ bold:true, fillColor:'#f2f2f2' },
-        totalLabel:{ bold:true },
-        totalAmount:{ bold:true }
-      },
-      defaultStyle: { fontSize:9 }
+      pageSize: 'A4', pageOrientation: 'landscape', pageMargins: [margin, margin, margin, margin],
+      content: [{ columns: [createReceiptColumn('School Copy'), createReceiptColumn('Bank Copy'), createReceiptColumn('Guardian Copy')], columnGap: 8 },
+        { canvas:[{ type:'line', x1: contentWidth/3, y1:0, x2: contentWidth/3, y2:contentHeight, lineWidth:1, dash:[3,3], lineColor:'#888' },{ type:'line', x1: 2*contentWidth/3, y1:0, x2: 2*contentWidth/3, y2:contentHeight, lineWidth:1, dash:[3,3], lineColor:'#888' }], absolutePosition: { x:margin, y:margin }, width: contentWidth, height: contentHeight }],
+      styles: { schoolHeader:{ fontSize:12, bold:true }, receiptTitle:{ fontSize:11, bold:true, decoration:'underline' }, copyTitle:{ fontSize:11, bold:true, italics:true }, tableHeader:{ bold:true, fillColor:'#f2f2f2' }, totalLabel:{ bold:true }, totalAmount:{ bold:true } }, defaultStyle: { fontSize:9 }
     };
-
     pdfMake.createPdf(docDefinition).download(`Receipt_${receiptNo}.pdf`);
-
-  } catch(err) {
-    alert("রশিদ তৈরি করতে সমস্যা: " + err.message);
-  } finally {
-    hideLoader();
-  }
+  } catch(err) { alert("রশিদ তৈরি করতে সমস্যা: " + err.message); } finally { hideLoader(); }
 }
 
-// Enter key support
+// ENTER key support
 document.addEventListener('keypress', function(e) {
   if (e.key === 'Enter') {
     const active = document.activeElement;
-    if (active.id === 'searchId') {
-      e.preventDefault();
-      searchStudent();
-    } else if (document.getElementById('createFormDiv').style.display === 'block') {
-      const createInputs = accountFields.map(f => document.getElementById(f.id));
-      if (createInputs.includes(active)) {
-        e.preventDefault();
-        createAccount();
-      }
-    } else if (document.getElementById('feeFormDiv').style.display === 'block') {
-      const feeInputIds = feeSections.map(f => document.getElementById(f));
-      if (feeInputIds.includes(active) || active.id === 'month') {
-        e.preventDefault();
-        submitFee();
-      }
+    if (active.id === 'searchId') { e.preventDefault(); searchStudent(); }
+    else if (document.getElementById('createFormDiv').style.display === 'block' && accountFields.map(f => document.getElementById(f.id)).includes(active)) { e.preventDefault(); createAccount(); }
+    else if (document.getElementById('feeFormDiv').style.display === 'block' && (feeSections.map(f => document.getElementById(f)).includes(active) || active.id === 'month')) { e.preventDefault(); submitFee(); }
+  }
+});
+
+// ---------- DARK MODE + HAMBURGER ANIMATION (Font Awesome) ----------
+const darkToggle = document.getElementById('darkModeToggle');
+const setTheme = (isDark) => {
+  if (isDark) {
+    document.body.classList.add('dark');
+    darkToggle.innerHTML = '<i class="fas fa-sun"></i>';
+    localStorage.setItem('theme', 'dark');
+  } else {
+    document.body.classList.remove('dark');
+    darkToggle.innerHTML = '<i class="fas fa-moon"></i>';
+    localStorage.setItem('theme', 'light');
+  }
+};
+const savedTheme = localStorage.getItem('theme');
+if (savedTheme === 'dark') setTheme(true);
+darkToggle.addEventListener('click', () => {
+  const isDark = document.body.classList.contains('dark');
+  setTheme(!isDark);
+});
+
+// animated hamburger <-> close icon
+const hamburgerBtn = document.getElementById('hamburgerBtn');
+const hamburgerIcon = hamburgerBtn.querySelector('i');
+const navMenu = document.getElementById('navMenu');
+
+function updateHamburgerIcon(open) {
+  if (open) {
+    hamburgerIcon.className = 'fas fa-times';
+  } else {
+    hamburgerIcon.className = 'fas fa-bars';
+  }
+}
+
+hamburgerBtn.addEventListener('click', (e) => {
+  e.stopPropagation();
+  const willOpen = !navMenu.classList.contains('show');
+  navMenu.classList.toggle('show');
+  updateHamburgerIcon(willOpen);
+});
+
+document.addEventListener('click', (e) => {
+  if (!navMenu.contains(e.target) && !hamburgerBtn.contains(e.target)) {
+    const wasOpen = navMenu.classList.contains('show');
+    if (wasOpen) {
+      navMenu.classList.remove('show');
+      updateHamburgerIcon(false);
     }
   }
 });
 
-// ---------- HAMBURGER MENU TOGGLE (new) ----------
-const hamburgerBtn = document.getElementById('hamburgerBtn');
-const navMenu = document.getElementById('navMenu');
-
-hamburgerBtn.addEventListener('click', (e) => {
-  e.stopPropagation();
-  navMenu.classList.toggle('show');
-});
-
-// Close menu when clicking outside
-document.addEventListener('click', (e) => {
-  if (!navMenu.contains(e.target) && !hamburgerBtn.contains(e.target)) {
-    navMenu.classList.remove('show');
-  }
-});
-
-// Optional: close menu when a link is clicked (for single page, but links will navigate anyway)
-navMenu.querySelectorAll('a').forEach(link => {
-  link.addEventListener('click', () => {
-    navMenu.classList.remove('show');
-  });
-});
+navMenu.querySelectorAll('a').forEach(link => link.addEventListener('click', () => {
+  navMenu.classList.remove('show');
+  updateHamburgerIcon(false);
+}));
 </script>
 </body>
 </html>
