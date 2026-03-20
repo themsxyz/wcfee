@@ -287,6 +287,18 @@
       align-items: center;
     }
 
+    /* New styles for validation hints */
+    .input-hint {
+      font-size: 0.75rem;
+      color: #64748b;
+      margin-top: 0.2rem;
+    }
+    .error-hint {
+      color: #dc2626;
+      font-size: 0.75rem;
+      margin-top: 0.2rem;
+    }
+
     @media (max-width: 700px) {
       #accountInputs { grid-template-columns: 1fr; }
     }
@@ -355,6 +367,7 @@
   <div class="card" id="createFormDiv" style="display:none;">
     <h3>➕ নতুন ছাত্র অ্যাকাউন্ট</h3>
     <div id="accountInputs" class="two-column"></div>
+    <div id="validationErrors" style="color: #dc2626; margin-bottom: 1rem; font-size: 0.9rem;"></div>
     <button onclick="createAccount()" id="createBtn">📌 অ্যাকাউন্ট তৈরি করুন</button>
   </div>
 </div>
@@ -365,7 +378,7 @@
 </div>
 
 <script>
-const webAppUrl = "https://script.google.com/macros/s/AKfycby-nTZBtr6mvNTnaflN-wYdjYz8-oIgYHEtRhTHGYyELyepjp-H__7Aj35jWYm9u3nh/exec"; // আপনার URL দিন
+const webAppUrl = "https://script.google.com/macros/s/AKfycbzaa3nwXDac8wnIucgxhNpqlPuJmIR9bD6N3dx85D5MvvlxNc_syNz0NTv2au9tsOv2/exec"; // আপনার URL দিন
 
 // Loader functions
 function showLoader() { document.getElementById('loader').style.display = 'flex'; }
@@ -387,15 +400,16 @@ feeLabels.forEach((f, i) => {
 // Account inputs – two‑column with Bengali labels
 const accountDiv = document.getElementById("accountInputs");
 const accountFields = [
-  { id: "studentName", label: "নাম" },
-  { id: "father", label: "পিতার নাম" },
-  { id: "mother", label: "মাতার নাম" },
-  { id: "studentIdNew", label: "ছাত্র আইডি" },
-  { id: "roll", label: "রোল নম্বর" },
-  { id: "cls", label: "শ্রেণী" },
-  { id: "section", label: "শাখা" },
-  { id: "mobile", label: "মোবাইল নম্বর" }
+  { id: "studentName", label: "নাম", type: "text", validation: "name" },
+  { id: "father", label: "পিতার নাম", type: "text", validation: "uppercase" },
+  { id: "mother", label: "মাতার নাম", type: "text", validation: "uppercase" },
+  { id: "studentIdNew", label: "ছাত্র আইডি", type: "text", validation: "studentId", maxLength: 6 },
+  { id: "roll", label: "রোল নম্বর", type: "number", validation: "roll", maxLength: 3, max: 999 },
+  { id: "cls", label: "শ্রেণী", type: "text" },
+  { id: "section", label: "শাখা", type: "select", options: ["day", "morning"] },
+  { id: "mobile", label: "মোবাইল নম্বর", type: "tel", validation: "mobile", maxLength: 11 }
 ];
+
 accountDiv.innerHTML = '';
 accountFields.forEach(f => {
   const group = document.createElement('div');
@@ -403,13 +417,146 @@ accountFields.forEach(f => {
   const label = document.createElement('label');
   label.htmlFor = f.id;
   label.textContent = f.label;
-  const input = document.createElement('input');
-  input.type = 'text';
-  input.id = f.id;
+  
+  let input;
+  if (f.type === 'select') {
+    input = document.createElement('select');
+    input.id = f.id;
+    f.options.forEach(opt => {
+      const option = document.createElement('option');
+      option.value = opt;
+      option.textContent = opt === 'day' ? 'ডে' : 'মর্নিং';
+      input.appendChild(option);
+    });
+  } else {
+    input = document.createElement('input');
+    input.type = f.type;
+    input.id = f.id;
+    if (f.maxLength) input.maxLength = f.maxLength;
+    if (f.max) input.max = f.max;
+  }
+  
   group.appendChild(label);
   group.appendChild(input);
+  
+  // Add hint for validation
+  const hint = document.createElement('div');
+  hint.className = 'input-hint';
+  if (f.validation === 'name') {
+    hint.textContent = 'প্রথম অক্ষর স্বয়ংক্রিয়ভাবে বড় হবে';
+  } else if (f.validation === 'uppercase') {
+    hint.textContent = 'শুধুমাত্র বড় হাতের অক্ষর';
+  } else if (f.validation === 'roll') {
+    hint.textContent = 'সর্বোচ্চ ৩ ডিজিট';
+  } else if (f.validation === 'studentId') {
+    hint.textContent = 'সর্বোচ্চ ৬ ডিজিট';
+  } else if (f.validation === 'mobile') {
+    hint.textContent = '+88 স্বয়ংক্রিয় যোগ হবে, ১১ ডিজিট দিন';
+  }
+  if (hint.textContent) group.appendChild(hint);
+  
   accountDiv.appendChild(group);
 });
+
+// Input event listeners for auto-formatting
+document.getElementById('studentName').addEventListener('input', function(e) {
+  // Auto capitalize first letter of each word
+  let value = e.target.value;
+  value = value.toLowerCase().replace(/\b\w/g, char => char.toUpperCase());
+  e.target.value = value;
+});
+
+document.getElementById('father').addEventListener('input', function(e) {
+  e.target.value = e.target.value.toUpperCase();
+});
+
+document.getElementById('mother').addEventListener('input', function(e) {
+  e.target.value = e.target.value.toUpperCase();
+});
+
+document.getElementById('roll').addEventListener('input', function(e) {
+  // Limit to 3 digits
+  if (e.target.value.length > 3) {
+    e.target.value = e.target.value.slice(0, 3);
+  }
+  // Remove non-numeric characters
+  e.target.value = e.target.value.replace(/[^0-9]/g, '');
+});
+
+document.getElementById('studentIdNew').addEventListener('input', function(e) {
+  // Limit to 6 digits
+  if (e.target.value.length > 6) {
+    e.target.value = e.target.value.slice(0, 6);
+  }
+  // Allow only alphanumeric, convert to uppercase
+  e.target.value = e.target.value.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
+});
+
+document.getElementById('mobile').addEventListener('input', function(e) {
+  // Remove any non-numeric characters
+  let value = e.target.value.replace(/[^0-9]/g, '');
+  
+  // If user tries to type +88, we handle it automatically
+  if (value.length > 11) {
+    value = value.slice(0, 11);
+  }
+  
+  // Store the raw 11 digits (without +88) in the input value
+  // The +88 will be added when submitting
+  e.target.value = value;
+});
+
+// Validation function
+function validateForm() {
+  const errors = [];
+  
+  // Validate name (should have at least first letter capitalized)
+  const name = document.getElementById('studentName').value;
+  if (name && !/^[A-Z]/.test(name)) {
+    errors.push('নামের প্রথম অক্ষর বড় হাতের হতে হবে');
+  }
+  
+  // Validate father/mother (should be uppercase)
+  const father = document.getElementById('father').value;
+  const mother = document.getElementById('mother').value;
+  if (father && father !== father.toUpperCase()) {
+    errors.push('পিতার নাম শুধুমাত্র বড় হাতের অক্ষরে হতে হবে');
+  }
+  if (mother && mother !== mother.toUpperCase()) {
+    errors.push('মাতার নাম শুধুমাত্র বড় হাতের অক্ষরে হতে হবে');
+  }
+  
+  // Validate roll (max 3 digits)
+  const roll = document.getElementById('roll').value;
+  if (roll && roll.length > 3) {
+    errors.push('রোল নম্বর সর্বোচ্চ ৩ ডিজিট হতে পারে');
+  }
+  if (roll && !/^\d+$/.test(roll)) {
+    errors.push('রোল নম্বর শুধুমাত্র সংখ্যা হতে পারে');
+  }
+  
+  // Validate student ID (max 6 chars)
+  const studentId = document.getElementById('studentIdNew').value;
+  if (studentId && studentId.length > 6) {
+    errors.push('ছাত্র আইডি সর্বোচ্চ ৬ অক্ষর হতে পারে');
+  }
+  
+  // Validate mobile (should be 11 digits)
+  const mobile = document.getElementById('mobile').value;
+  if (mobile && !/^\d{11}$/.test(mobile)) {
+    errors.push('মোবাইল নম্বর ১১ ডিজিটের হতে হবে');
+  }
+  
+  // Display errors
+  const errorDiv = document.getElementById('validationErrors');
+  if (errors.length > 0) {
+    errorDiv.innerHTML = errors.join('<br>');
+    return false;
+  } else {
+    errorDiv.innerHTML = '';
+    return true;
+  }
+}
 
 // Search student
 function searchStudent() {
@@ -442,11 +589,25 @@ function searchStudent() {
 
 // Create account
 function createAccount() {
+  if (!validateForm()) {
+    return;
+  }
+  
   const data = { action: "create" };
+  
+  // Process each field
   accountFields.forEach(f => {
     const el = document.getElementById(f.id);
-    data[f.id] = el.value.trim();
+    let value = el.value.trim();
+    
+    // Format mobile number with +88
+    if (f.id === 'mobile' && value) {
+      value = '+88' + value;
+    }
+    
+    data[f.id] = value;
   });
+  
   showLoader();
   fetch(webAppUrl, {
     method: "POST",
